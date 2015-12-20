@@ -20,7 +20,7 @@
         </customObject>
         <menu title="Zeta" id="Xld-Up-BZ8">
             <items>
-                <menuItem title="ZFS Pools" enabled="NO" id="SFT-8i-4hp">
+                <menuItem title="ZFS Pools" tag="100" enabled="NO" id="SFT-8i-4hp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="V2G-dn-yYW"/>

@@ -8,8 +8,11 @@
 
 #import "ZetaWatchDelegate.h"
 
+#import "ZetaMenuDelegate.h"
+
 @interface ZetaWatchDelegate ()
 {
+	ZetaMenuDelegate * _menuDelegate;
 	NSStatusItem * _statusItem;
 }
 
@@ -22,14 +25,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	NSStatusBar *bar = [NSStatusBar systemStatusBar];
-
+	_menuDelegate = [[ZetaMenuDelegate alloc] init];
+	NSStatusBar * bar = [NSStatusBar systemStatusBar];
 	_statusItem = [bar statusItemWithLength:NSVariableStatusItemLength];
-
 	[_statusItem setTitle: NSLocalizedString(@"Zeta",@"")];
-
-	[_statusItem setHighlightMode:YES];
 	[_statusItem setMenu:_zetaMenu];
+	[_zetaMenu setDelegate:_menuDelegate];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

@@ -11,6 +11,7 @@
 		7006C4831C26CA1500929DAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4821C26CA1500929DAE /* main.m */; };
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
+		7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,8 @@
 		7006C4841C26CA1500929DAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7006C4871C26CA1500929DAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		7006C4891C26CA1500929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZetaMenuDelegate.m; sourceTree = "<group>"; };
+		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +58,8 @@
 			children = (
 				7006C47E1C26CA1500929DAE /* ZetaWatchDelegate.h */,
 				7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.m */,
+				7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */,
+				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
@@ -142,6 +147,7 @@
 			files = (
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.m in Sources */,
+				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
