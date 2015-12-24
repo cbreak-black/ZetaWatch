@@ -8,6 +8,8 @@
 
 #import "ZetaMenuDelegate.h"
 
+#include "ZFSUtils.hpp"
+
 @interface ZetaMenuDelegate ()
 {
 	NSMutableArray * _poolMenus;
@@ -38,12 +40,17 @@
 	if (poolMenuIdx < 0)
 		return;
 	NSInteger poolItemRootIdx = poolMenuIdx + 1;
-	for (NSUInteger i = 0; i < 3; ++i)
+	NSUInteger poolIdx = 0;
+	zfs::LibZFSHandle handle;
+	zfs::zpool_iter(handle, [&](zfs::ZPool pool)
 	{
-		NSMenuItem * testItem = [[NSMenuItem alloc] initWithTitle:@"Test Item" action:NULL keyEquivalent:@""];
-		[menu insertItem:testItem atIndex:poolItemRootIdx + i];
+		NSString * name = [NSString stringWithUTF8String:pool.name()];
+		NSMenuItem * testItem = [[NSMenuItem alloc] initWithTitle:name action:NULL keyEquivalent:@""];
+		[menu insertItem:testItem atIndex:poolItemRootIdx + poolIdx];
 		[_poolMenus addObject:testItem];
-	}
+		++poolIdx;
+		return 0;
+	});
 }
 
 - (void)clearPoolMenu:(NSMenu*)menu

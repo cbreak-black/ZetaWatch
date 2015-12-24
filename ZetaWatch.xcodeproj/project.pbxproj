@@ -11,7 +11,10 @@
 		7006C4831C26CA1500929DAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4821C26CA1500929DAE /* main.m */; };
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
-		7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */; };
+		7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */; };
+		70D85FB91C2C076E00929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
+		70D85FBC1C2C18BE00929DAE /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
+		70D85FBD1C2C18BE00929DAE /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,8 +25,12 @@
 		7006C4841C26CA1500929DAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7006C4871C26CA1500929DAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		7006C4891C26CA1500929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZetaMenuDelegate.m; sourceTree = "<group>"; };
+		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaMenuDelegate.mm; sourceTree = "<group>"; };
 		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
+		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
+		70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSUtils.hpp; sourceTree = "<group>"; };
+		70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs_core.1.dylib; sourceTree = "<group>"; };
+		70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs.2.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +38,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70D85FBC1C2C18BE00929DAE /* libzfs_core.1.dylib in Frameworks */,
+				70D85FBD1C2C18BE00929DAE /* libzfs.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,10 +68,13 @@
 				7006C47E1C26CA1500929DAE /* ZetaWatchDelegate.h */,
 				7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.m */,
 				7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */,
-				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.m */,
+				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */,
+				70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */,
+				70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
+				70D85FBE1C2C1D9100929DAE /* lib */,
 				7006C4811C26CA1500929DAE /* Supporting Files */,
 			);
 			path = ZetaWatch;
@@ -75,6 +87,16 @@
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
+		};
+		70D85FBE1C2C1D9100929DAE /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */,
+				70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */,
+			);
+			name = lib;
+			path = /usr/local/lib;
+			sourceTree = "<absolute>";
 		};
 /* End PBXGroup section */
 
@@ -146,8 +168,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
+				70D85FB91C2C076E00929DAE /* ZFSUtils.cpp in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.m in Sources */,
-				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.m in Sources */,
+				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,10 +272,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(ZFS_DIR)/include",
+					"$(ZFS_DIR)/lib/libspl/include",
+				);
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				ZFS_DIR = "~/zfs";
 			};
 			name = Debug;
 		};
@@ -261,10 +293,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(ZFS_DIR)/include",
+					"$(ZFS_DIR)/lib/libspl/include",
+				);
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				ZFS_DIR = "~/zfs";
 			};
 			name = Release;
 		};
@@ -287,6 +328,7 @@
 				7006C4A41C26CA1500929DAE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
