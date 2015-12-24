@@ -101,6 +101,17 @@ namespace zfs
 		};
 	}
 
+	std::vector<ZPool> zpool_list(LibZFSHandle const & handle)
+	{
+		std::vector<ZPool> zpools;
+		ZPoolCallback cb([&](ZPool pool)
+		 {
+			 zpools.push_back(std::move(pool));
+		 });
+		zpool_iter(handle.handle(), &ZPoolCallback::handle_s, &cb);
+		return zpools;
+	}
+
 	void zpool_iter(LibZFSHandle const & handle, std::function<void(ZPool)> callback)
 	{
 		ZPoolCallback cb(callback);

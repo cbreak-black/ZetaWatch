@@ -12,6 +12,7 @@
 #include <libzfs.h>
 #include <libzfs_core.h>
 
+#include <vector>
 #include <functional>
 
 namespace zfs
@@ -58,6 +59,11 @@ namespace zfs
 	private:
 		zpool_handle_t * m_handle;
 	};
+
+	/*!
+	 Returns a vector of all pools.
+	 */
+	std::vector<ZPool> zpool_list(LibZFSHandle const & handle);
 
 	/*!
 	 Iterates over all pools.

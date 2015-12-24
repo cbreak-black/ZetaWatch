@@ -13,6 +13,10 @@
 @interface ZetaMenuDelegate ()
 {
 	NSMutableArray * _poolMenus;
+
+	// ZFS
+	zfs::LibZFSHandle _zfsHandle;
+	std::vector<zfs::ZPool> _pools;
 }
 
 @end
@@ -39,18 +43,17 @@
 	NSInteger poolMenuIdx = [menu indexOfItemWithTag:ZPoolAnchorMenuTag];
 	if (poolMenuIdx < 0)
 		return;
+	[self refreshPools];
 	NSInteger poolItemRootIdx = poolMenuIdx + 1;
 	NSUInteger poolIdx = 0;
-	zfs::LibZFSHandle handle;
-	zfs::zpool_iter(handle, [&](zfs::ZPool pool)
+	for (auto && pool: _pools)
 	{
 		NSString * name = [NSString stringWithUTF8String:pool.name()];
 		NSMenuItem * testItem = [[NSMenuItem alloc] initWithTitle:name action:NULL keyEquivalent:@""];
 		[menu insertItem:testItem atIndex:poolItemRootIdx + poolIdx];
 		[_poolMenus addObject:testItem];
 		++poolIdx;
-		return 0;
-	});
+	}
 }
 
 - (void)clearPoolMenu:(NSMenu*)menu
@@ -60,6 +63,11 @@
 		[menu removeItem:poolMenu];
 	}
 	[_poolMenus removeAllObjects];
+}
+
+- (void)refreshPools
+{
+	_pools = zfs::zpool_list(_zfsHandle);
 }
 
 @end
