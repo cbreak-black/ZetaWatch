@@ -13,6 +13,7 @@
 #import "ZetaMenuDelegate.h"
 
 #include "ZFSUtils.hpp"
+#include "ZFSStrings.hpp"
 
 @interface ZetaMenuDelegate ()
 {
@@ -53,7 +54,7 @@
 	for (auto && pool: _pools)
 	{
 		zpool_status_t status = pool.status();
-		NSString * poolLine = [NSString stringWithFormat:@"%s (%s)", pool.name(), zfs::to_string(status)];
+		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)", pool.name(), zfs::to_localized_nsstring(status)];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
 		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
 		[_poolMenus addObject:poolItem];

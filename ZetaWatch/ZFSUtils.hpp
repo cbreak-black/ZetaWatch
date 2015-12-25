@@ -71,11 +71,6 @@ namespace zfs
 	bool healthy(zpool_status_t stat);
 
 	/*!
-	 Returns a string with english human-facing description of the status.
-	 */
-	char const * to_string(zpool_status_t stat);
-
-	/*!
 	 Returns a vector of all pools.
 	 */
 	std::vector<ZPool> zpool_list(LibZFSHandle const & handle);

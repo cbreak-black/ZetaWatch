@@ -15,6 +15,7 @@
 		70D85FB91C2C076E00929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		70D85FBC1C2C18BE00929DAE /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
 		70D85FBD1C2C18BE00929DAE /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		70D85FC01C2D9CB900929DAE /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSUtils.hpp; sourceTree = "<group>"; };
 		70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs_core.1.dylib; sourceTree = "<group>"; };
 		70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs.2.dylib; sourceTree = "<group>"; };
+		70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZFSStrings.mm; sourceTree = "<group>"; };
+		70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ZFSStrings.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +74,8 @@
 				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */,
 				70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */,
 				70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */,
+				70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */,
+				70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
@@ -171,6 +176,7 @@
 				70D85FB91C2C076E00929DAE /* ZFSUtils.cpp in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.m in Sources */,
 				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */,
+				70D85FC01C2D9CB900929DAE /* ZFSStrings.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
