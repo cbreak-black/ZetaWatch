@@ -52,10 +52,11 @@
 	NSUInteger poolIdx = 0;
 	for (auto && pool: _pools)
 	{
-		NSString * name = [NSString stringWithUTF8String:pool.name()];
-		NSMenuItem * testItem = [[NSMenuItem alloc] initWithTitle:name action:NULL keyEquivalent:@""];
-		[menu insertItem:testItem atIndex:poolItemRootIdx + poolIdx];
-		[_poolMenus addObject:testItem];
+		zpool_status_t status = pool.status();
+		NSString * poolLine = [NSString stringWithFormat:@"%s (%s)", pool.name(), zfs::to_string(status)];
+		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
+		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
+		[_poolMenus addObject:poolItem];
 		++poolIdx;
 	}
 }

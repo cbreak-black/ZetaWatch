@@ -56,6 +56,7 @@ namespace zfs
 
 	public:
 		char const * name() const;
+		zpool_status_t status() const;
 
 	public:
 		zpool_handle_t * handle() const;
@@ -63,6 +64,16 @@ namespace zfs
 	private:
 		zpool_handle_t * m_handle;
 	};
+
+	/*!
+	 Returns wether the given status indicates a healty pool.
+	 */
+	bool healthy(zpool_status_t stat);
+
+	/*!
+	 Returns a string with english human-facing description of the status.
+	 */
+	char const * to_string(zpool_status_t stat);
 
 	/*!
 	 Returns a vector of all pools.

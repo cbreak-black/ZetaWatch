@@ -76,9 +76,88 @@ namespace zfs
 		return zpool_get_name(m_handle);
 	}
 
+	zpool_status_t ZPool::status() const
+	{
+		char * cp = nullptr;
+		zpool_errata_t errata = {};
+		zpool_status_t stat = zpool_get_status(m_handle, &cp, &errata);
+		return stat;
+	}
+
 	zpool_handle_t * ZPool::handle() const
 	{
 		return m_handle;
+	}
+
+	bool healthy(zpool_status_t stat)
+	{
+		switch (stat)
+		{
+			case ZPOOL_STATUS_OK:
+			case ZPOOL_STATUS_VERSION_OLDER:
+			case ZPOOL_STATUS_FEAT_DISABLED:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	char const * to_string(zpool_status_t stat)
+	{
+		switch (stat)
+		{
+			case ZPOOL_STATUS_CORRUPT_CACHE:
+				return "corrupt /kernel/drv/zpool.cache";
+			case ZPOOL_STATUS_MISSING_DEV_R:
+				return "missing device with replicas";
+			case ZPOOL_STATUS_MISSING_DEV_NR:
+				return "missing device with no replicas";
+			case ZPOOL_STATUS_CORRUPT_LABEL_R:
+				return "bad device label with replicas";
+			case ZPOOL_STATUS_CORRUPT_LABEL_NR:
+				return "bad device label with no replicas";
+			case ZPOOL_STATUS_BAD_GUID_SUM:
+				return "sum of device guids didn't match";
+			case ZPOOL_STATUS_CORRUPT_POOL:
+				return "pool metadata is corrupted";
+			case ZPOOL_STATUS_CORRUPT_DATA:
+				return "data errors in user (meta)data";
+			case ZPOOL_STATUS_FAILING_DEV:
+				return "device experiencing errors";
+			case ZPOOL_STATUS_VERSION_NEWER:
+				return "newer on-disk version";
+			case ZPOOL_STATUS_HOSTID_MISMATCH:
+				return "last accessed by another system";
+			case ZPOOL_STATUS_IO_FAILURE_WAIT:
+				return "failed I/O, failmode 'wait'";
+			case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
+				return "failed I/O, failmode 'continue'";
+			case ZPOOL_STATUS_BAD_LOG:
+				return "cannot read log chain(s)";
+			case ZPOOL_STATUS_ERRATA:
+				return "informational errata available";
+			case ZPOOL_STATUS_UNSUP_FEAT_READ:
+				return "unsupported features for read";
+			case ZPOOL_STATUS_UNSUP_FEAT_WRITE:
+				return "unsupported features for write";
+			case ZPOOL_STATUS_FAULTED_DEV_R:
+				return "faulted device with replicas";
+			case ZPOOL_STATUS_FAULTED_DEV_NR:
+				return "faulted device with no replicas";
+			case ZPOOL_STATUS_VERSION_OLDER:
+				return "older legacy on-disk version";
+			case ZPOOL_STATUS_FEAT_DISABLED:
+				return "upported features are disabled";
+			case ZPOOL_STATUS_RESILVERING:
+				return "device being resilvered";
+			case ZPOOL_STATUS_OFFLINE_DEV:
+				return "device offline";
+			case ZPOOL_STATUS_REMOVED_DEV:
+				return "removed device";
+			case ZPOOL_STATUS_OK:
+				return "ok";
+		}
+		return "unknown status";
 	}
 
 	namespace
