@@ -89,6 +89,12 @@ namespace zfs
 		return NVList(zpool_get_config(m_handle, nullptr));
 	}
 
+	std::vector<zfs::NVList> ZPool::vdevs() const
+	{
+		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+		return vdevChildren(vdevtree);
+	}
+
 	zpool_handle_t * ZPool::handle() const
 	{
 		return m_handle;
@@ -147,4 +153,35 @@ namespace zfs
 		ZPoolCallback cb(callback);
 		zpool_iter(handle.handle(), &ZPoolCallback::handle_s, &cb);
 	}
+
+	std::string vdevType(NVList const & vdev)
+	{
+		return vdev.lookup<std::string>(ZPOOL_CONFIG_TYPE);
+	}
+
+	std::string vdevPath(NVList const & vdev)
+	{
+		auto path = vdev.lookup<std::string>(ZPOOL_CONFIG_PATH);
+		auto found = path.find_last_of('/');
+		if (found != std::string::npos && found + 1 < path.size())
+			path = path.substr(found + 1);
+		return path;
+	}
+
+	std::vector<NVList> vdevChildren(NVList const & vdev)
+	{
+		return vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);
+	}
+
+	vdev_stat_t vdevStat(NVList const & vdev)
+	{
+		auto statVec = vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_VDEV_STATS);
+		vdev_stat_t stat = {};
+		if (sizeof(stat) != statVec.size() * sizeof(uint64_t))
+			throw std::logic_error("Internal nvlist structure is inconsistent");
+		// Note: this is somewhat non-portable but the equivalent C Code does the same
+		std::copy(statVec.begin(), statVec.end(), &stat.vs_timestamp);
+		return stat;
+	}
+
 }

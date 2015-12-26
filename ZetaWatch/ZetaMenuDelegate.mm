@@ -48,26 +48,20 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
 	try
 	{
-		zfs::NVList config = pool.config();
-		auto vdevtree = config.lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
-		auto children = vdevtree.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);
-		for (auto && vdev: children)
+		auto vdevs = pool.vdevs();
+		for (auto && vdev: vdevs)
 		{
-			auto type = vdev.lookup<std::string>(ZPOOL_CONFIG_TYPE);
+			auto type = zfs::vdevType(vdev);
 			[vdevMenu addItemWithTitle:[NSString stringWithUTF8String:type.c_str()]
 								action:nullptr keyEquivalent:@""];
-			auto children = vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);
-			for (auto && device: children)
+			auto devices = zfs::vdevChildren(vdev);
+			for (auto && device: devices)
 			{
-				// See vdev_stat_t for layout
-				auto stat = device.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_VDEV_STATS);
-				auto path = device.lookup<std::string>(ZPOOL_CONFIG_PATH);
-				auto found = path.find_last_of('/');
-				if (found != std::string::npos && found + 1 < path.size())
-					path = path.substr(found + 1);
+				auto stat = zfs::vdevStat(device);
+				auto path = zfs::vdevPath(device);
 				NSString * devLine = [NSString stringWithFormat:@"  %s (%@)",
 					path.c_str(),
-					zfs::to_localized_nsstring(vdev_state_t(stat[1]), vdev_aux_t(stat[2]))
+					zfs::to_localized_nsstring(vdev_state_t(stat.vs_state), vdev_aux_t(stat.vs_aux))
 				];
 				[vdevMenu addItemWithTitle:devLine
 									action:nullptr keyEquivalent:@""];

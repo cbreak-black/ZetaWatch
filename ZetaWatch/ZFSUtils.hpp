@@ -60,6 +60,7 @@ namespace zfs
 		char const * name() const;
 		zpool_status_t status() const;
 		NVList config() const;
+		std::vector<zfs::NVList> vdevs() const;
 
 	public:
 		zpool_handle_t * handle() const;
@@ -82,6 +83,26 @@ namespace zfs
 	 Iterates over all pools.
 	 */
 	void zpool_iter(LibZFSHandle const & handle, std::function<void(ZPool)> callback);
+
+	/*!
+	 \returns A string describing the type of the vdev
+	 */
+	std::string vdevType(NVList const & vdev);
+
+	/*!
+	 \returns A string describing the path of the vdev
+	 */
+	std::string vdevPath(NVList const & vdev);
+
+	/*!
+	 \returns A vector containing the children of this vdev
+	 */
+	std::vector<NVList> vdevChildren(NVList const & vdev);
+
+	/*!
+	 \returns A struct describing the status of the given vdev
+	 */
+	vdev_stat_t vdevStat(NVList const & vdev);
 }
 
 #endif
