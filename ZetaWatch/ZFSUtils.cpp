@@ -31,13 +31,13 @@ namespace zfs
 			libzfs_fini(m_handle);
 	}
 
-	LibZFSHandle::LibZFSHandle(LibZFSHandle && other) :
+	LibZFSHandle::LibZFSHandle(LibZFSHandle && other) noexcept :
 	m_handle(other.m_handle)
 	{
 		other.m_handle = nullptr;
 	}
 
-	LibZFSHandle & LibZFSHandle::operator=(LibZFSHandle && other)
+	LibZFSHandle & LibZFSHandle::operator=(LibZFSHandle && other) noexcept
 	{
 		m_handle = other.m_handle;
 		other.m_handle = nullptr;
@@ -58,13 +58,13 @@ namespace zfs
 	{
 	}
 
-	ZPool::ZPool(ZPool && other) :
+	ZPool::ZPool(ZPool && other) noexcept :
 		m_handle(other.m_handle)
 	{
 		other.m_handle = nullptr;
 	}
 
-	ZPool & ZPool::operator=(ZPool && other)
+	ZPool & ZPool::operator=(ZPool && other) noexcept
 	{
 		m_handle = other.m_handle;
 		other.m_handle = nullptr;
@@ -82,6 +82,11 @@ namespace zfs
 		zpool_errata_t errata = {};
 		zpool_status_t stat = zpool_get_status(m_handle, &cp, &errata);
 		return stat;
+	}
+
+	NVList ZPool::config() const
+	{
+		return NVList(zpool_get_config(m_handle, nullptr));
 	}
 
 	zpool_handle_t * ZPool::handle() const

@@ -13,6 +13,8 @@
 #ifndef ZETA_ZFSUTILS_HPP
 #define ZETA_ZFSUTILS_HPP
 
+#include "ZFSNVList.hpp"
+
 #include <libzfs.h>
 #include <libzfs_core.h>
 
@@ -31,8 +33,8 @@ namespace zfs
 		~LibZFSHandle();
 
 	public:
-		LibZFSHandle(LibZFSHandle && other);
-		LibZFSHandle & operator=(LibZFSHandle && other);
+		LibZFSHandle(LibZFSHandle && other) noexcept;
+		LibZFSHandle & operator=(LibZFSHandle && other) noexcept;
 
 	public:
 		libzfs_handle_t * handle() const;
@@ -51,12 +53,13 @@ namespace zfs
 		~ZPool();
 
 	public:
-		ZPool(ZPool && other);
-		ZPool & operator=(ZPool && other);
+		ZPool(ZPool && other) noexcept;
+		ZPool & operator=(ZPool && other) noexcept;
 
 	public:
 		char const * name() const;
 		zpool_status_t status() const;
+		NVList config() const;
 
 	public:
 		zpool_handle_t * handle() const;
