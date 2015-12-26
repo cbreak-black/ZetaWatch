@@ -28,6 +28,16 @@ namespace zfs
 	 Returns a localized string description of the zpool status.
 	 */
 	NSString * to_localized_nsstring(zpool_status_t stat);
+
+	/*!
+	 Returns a string with english human-facing description of the vdev status.
+	 */
+	char const * to_string(vdev_state_t stat, vdev_aux_t aux);
+
+	/*!
+	 Returns a localized string description of the vdev status.
+	 */
+	NSString * to_localized_nsstring(vdev_state_t stat, vdev_aux_t aux);
 }
 
 #endif

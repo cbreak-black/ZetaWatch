@@ -78,4 +78,17 @@ namespace zfs
 	{
 		return NSLocalizedString([NSString stringWithUTF8String:to_string(stat)], @"zpool_status_t");
 	}
+
+	char const * to_string(vdev_state_t stat, vdev_aux_t aux)
+	{
+		return zpool_state_to_name(stat, aux);
+	}
+
+	/*!
+	 Returns a localized string description of the vdev status.
+	 */
+	NSString * to_localized_nsstring(vdev_state_t stat, vdev_aux_t aux)
+	{
+		return NSLocalizedString([NSString stringWithUTF8String:to_string(stat, aux)], @"vdev_state_t");
+	}
 }
