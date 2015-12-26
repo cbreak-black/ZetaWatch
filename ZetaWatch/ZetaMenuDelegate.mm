@@ -43,6 +43,22 @@
 	[self createPoolMenu:menu];
 }
 
+NSString * formatErrorStat(vdev_stat_t stat)
+{
+	NSString * status = zfs::to_localized_nsstring(vdev_state_t(stat.vs_state), vdev_aux_t(stat.vs_aux));
+	NSString * errors = nil;
+	if (stat.vs_read_errors == 0 && stat.vs_write_errors == 0 && stat.vs_checksum_errors == 0)
+	{
+		errors = NSLocalizedString(@"No Errors", @"Format vdev_stat_t");
+	}
+	else
+	{
+		NSString * format = NSLocalizedString(@"%ll Read Errors, %ll Write Errors, %ll Checksum Errors", @"Format vdev_stat_t");
+		errors = [NSString stringWithFormat:format, stat.vs_read_errors, stat.vs_write_errors, stat.vs_checksum_errors];
+	}
+	return [NSString stringWithFormat:@"%@, %@", status, errors];
+}
+
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
@@ -60,8 +76,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 				auto stat = zfs::vdevStat(device);
 				auto path = zfs::vdevPath(device);
 				NSString * devLine = [NSString stringWithFormat:@"  %s (%@)",
-					path.c_str(),
-					zfs::to_localized_nsstring(vdev_state_t(stat.vs_state), vdev_aux_t(stat.vs_aux))
+					path.c_str(), formatErrorStat(stat)
 				];
 				[vdevMenu addItemWithTitle:devLine
 									action:nullptr keyEquivalent:@""];
@@ -70,7 +85,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	}
 	catch (std::exception const & e)
 	{
-		[vdevMenu addItemWithTitle:@"Error reading pool configuration"
+		[vdevMenu addItemWithTitle:NSLocalizedString(@"Error reading pool configuration", @"")
 							action:nullptr keyEquivalent:@""];
 	}
 	return vdevMenu;
