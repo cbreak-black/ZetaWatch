@@ -43,7 +43,7 @@ namespace zfs
 	{
 	}
 
-	NVPair::NVPair(nvpair * pair) :
+	NVPair::NVPair(nvpair_t * pair) :
 		m_pair(pair)
 	{
 	}
@@ -269,7 +269,7 @@ namespace zfs
 	{
 	}
 
-	NVList::NVList(nvlist * list) :
+	NVList::NVList(nvlist_t * list) :
 		m_list(list), m_ownsList(false)
 	{
 	}

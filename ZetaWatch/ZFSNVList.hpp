@@ -27,8 +27,15 @@ namespace zfs
 	class NVPair
 	{
 	public:
+		/*!
+		 Default construct an invalid NVPair, not refering to any nvpair_t.
+		 */
 		NVPair();
-		NVPair(nvpair * pair);
+
+		/*!
+		 Construct an NVPair that refers to an nvpair_t without taking ownership.
+		 */
+		NVPair(nvpair_t * pair);
 
 	public:
 		/*!
@@ -42,7 +49,7 @@ namespace zfs
 		std::string name() const;
 
 	public:
-		/*
+		/*!
 		 Converts the given nvpair to the given type if possible, writing the value into outValue.
 		 Only the types `bool`, `char`, `std::string`, `NVList`, `int8_t`, `uint8_t`, `int16_t`,
 		 `uint16_t`, `int32_t`, `uint32_t`, `int64_t`, `uint64_t` and vectors of them, as well
@@ -52,7 +59,7 @@ namespace zfs
 		template<typename T>
 		bool convertTo(T & outValue) const;
 
-		/*
+		/*!
 		 Converts the given nvpair to the given type if possible
 		 \returns the converted value
 		 \throws std::logic_error otherwise
@@ -61,7 +68,15 @@ namespace zfs
 		T convertTo() const;
 
 	public:
+		/*!
+		 \returns the type that the underlying nvpair_t contains
+		 \note Normally, convertTo() is more convenient for end users
+		 */
 		data_type_t type() const;
+
+		/*!
+		 \returns the underlying nvpair_t
+		 */
 		nvpair_t * toPair() const;
 
 	public:
@@ -81,12 +96,31 @@ namespace zfs
 	class NVList
 	{
 	public:
+		/*!
+		 Tag type for creation of an NVList that owns its underlying nvlist_t, and will free it.
+		 */
 		struct TakeOwnership {};
 
 	public:
+		/*!
+		 Create an invalid NVList, not refering to any nvlist_t.
+		 */
 		NVList();
-		NVList(nvlist * list);
-		explicit NVList(nvlist * list, TakeOwnership);
+
+		/*!
+		 Create an NVList that referrs to an existing nvlist_t without taking ownership.
+		 */
+		NVList(nvlist_t * list);
+
+		/*!
+		 Create an NVList that takes ownership of an existing nvlist_t. This will cause the
+		 destructor to free the list.
+		 */
+		explicit NVList(nvlist_t * list, TakeOwnership);
+
+		/*!
+		 Free owned resources.
+		 */
 		~NVList();
 
 	public:
@@ -125,9 +159,16 @@ namespace zfs
 		bool lookup(char const * key, T & outValue) const;
 
 	public:
+		/*!
+		 \returns the underlying nvlist_t
+		 */
 		nvlist_t * toList() const;
 
 	public:
+		/*!
+		 Creates a string representation of the underlying nvlist_t. This is mainly for testing and
+		 debug purposes. The result is roughly json formated.
+		 */
 		std::string toString() const;
 
 	private:
