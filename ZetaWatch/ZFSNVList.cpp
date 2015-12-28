@@ -14,6 +14,8 @@
 
 #include <sstream>
 
+#include <sys/nvpair.h>
+
 namespace zfs
 {
 	namespace
@@ -51,6 +53,11 @@ namespace zfs
 	bool NVPair::valid() const
 	{
 		return m_pair != nullptr;
+	}
+
+	NVPair::operator bool() const
+	{
+		return valid();
 	}
 
 	std::string NVPair::name() const
@@ -106,7 +113,7 @@ namespace zfs
 #undef NVPAIRCONVERTTOSIMPLE
 #undef NVPAIRCONVERTTO
 
-	data_type_t NVPair::type() const
+	int NVPair::type() const
 	{
 		return nvpair_type(m_pair);
 	}
@@ -181,7 +188,7 @@ namespace zfs
 
 	bool NVPair::streamValue(std::ostream & os) const
 	{
-		switch (type())
+		switch (data_type_t(type()))
 		{
 			case DATA_TYPE_UNKNOWN:
 				os << "unknown";
@@ -309,6 +316,11 @@ namespace zfs
 		return m_list != nullptr;
 	}
 
+	NVList::operator bool() const
+	{
+		return valid();
+	}
+
 	bool NVList::empty() const
 	{
 		return nvlist_empty(m_list) == B_TRUE;
@@ -317,6 +329,13 @@ namespace zfs
 	bool NVList::exists(char const * key) const
 	{
 		return nvlist_exists(m_list, key) == B_TRUE;
+	}
+
+	NVPair NVList::lookupPair(char const * key) const
+	{
+		nvpair_t * pair = nullptr;
+		nvlist_lookup_nvpair(m_list, key, &pair);
+		return NVPair(pair);
 	}
 
 	nvlist_t * NVList::toList() const

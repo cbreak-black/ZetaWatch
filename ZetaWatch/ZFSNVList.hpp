@@ -13,11 +13,13 @@
 #ifndef ZETA_ZFSNVLIST_HPP
 #define ZETA_ZFSNVLIST_HPP
 
-#include <sys/nvpair.h>
-
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+// sys/nvpair.h forward declarations
+typedef struct nvlist nvlist_t;
+typedef struct nvpair nvpair_t;
 
 namespace zfs
 {
@@ -42,6 +44,11 @@ namespace zfs
 		 \returns true if this NVPair is valid, and has an associated nvpair, false otherwise.
 		 */
 		bool valid() const;
+
+		/*!
+		 \see valid()
+		 */
+		explicit operator bool() const;
 
 		/*!
 		 \returns the name of this pair
@@ -69,10 +76,10 @@ namespace zfs
 
 	public:
 		/*!
-		 \returns the type that the underlying nvpair_t contains
+		 \returns the type that the underlying nvpair_t contains, as element of enum data_type_t
 		 \note Normally, convertTo() is more convenient for end users
 		 */
-		data_type_t type() const;
+		int type() const;
 
 		/*!
 		 \returns the underlying nvpair_t
@@ -133,6 +140,11 @@ namespace zfs
 		 */
 		bool valid() const;
 
+		/*!
+		 \see valid()
+		 */
+		explicit operator bool() const;
+
 		/*
 		 \returns true if the associated nvlist is empty, false otherwise.
 		 */
@@ -157,6 +169,12 @@ namespace zfs
 		 */
 		template<typename T>
 		bool lookup(char const * key, T & outValue) const;
+
+		/*!
+		 Looks up the given key. If it is found, an NVPair representing it is returned.
+		 \returns an NVPair representing the queried key, or an invalid NVPair
+		 */
+		NVPair lookupPair(char const * key) const;
 
 	public:
 		/*!
@@ -204,11 +222,9 @@ namespace zfs
 	template<typename T>
 	bool NVList::lookup(char const * key, T & outValue) const
 	{
-		nvpair_t * pair = nullptr;
-		if (nvlist_lookup_nvpair(m_list, key, &pair) != 0)
-			return false;
-		NVPair p(pair);
-		return p.convertTo(outValue);
+		if (NVPair pair = lookupPair(key))
+			return pair.convertTo(outValue);
+		return false;
 	}
 }
 
