@@ -14,11 +14,13 @@
 
 #import "Foundation/NSBundle.h"
 
+#include <libzfs.h>
+
 namespace zfs
 {
-	char const * to_string(zpool_status_t stat)
+	char const * describe_zpool_status_t(uint64_t stat)
 	{
-		switch (stat)
+		switch (zpool_status_t(stat))
 		{
 			case ZPOOL_STATUS_CORRUPT_CACHE:
 				return "corrupt /kernel/drv/zpool.cache";
@@ -74,21 +76,20 @@ namespace zfs
 		return "unknown status";
 	}
 
-	NSString * to_localized_nsstring(zpool_status_t stat)
+	NSString * localized_describe_zpool_status_t(uint64_t stat)
 	{
-		return NSLocalizedString([NSString stringWithUTF8String:to_string(stat)], @"zpool_status_t");
+		return NSLocalizedString([NSString stringWithUTF8String:describe_zpool_status_t(stat)],
+								 @"zpool_status_t");
 	}
 
-	char const * to_string(vdev_state_t stat, vdev_aux_t aux)
+	char const * describe_vdev_state_t(uint64_t stat, uint64_t aux)
 	{
-		return zpool_state_to_name(stat, aux);
+		return zpool_state_to_name(vdev_state_t(stat), vdev_aux_t(aux));
 	}
 
-	/*!
-	 Returns a localized string description of the vdev status.
-	 */
-	NSString * to_localized_nsstring(vdev_state_t stat, vdev_aux_t aux)
+	NSString * localized_describe_vdev_state_t(uint64_t stat, uint64_t aux)
 	{
-		return NSLocalizedString([NSString stringWithUTF8String:to_string(stat, aux)], @"vdev_state_t");
+		return NSLocalizedString([NSString stringWithUTF8String:describe_vdev_state_t(stat, aux)],
+								 @"vdev_state_t");
 	}
 }

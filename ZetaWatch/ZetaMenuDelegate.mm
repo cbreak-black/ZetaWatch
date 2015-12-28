@@ -45,7 +45,7 @@
 
 NSString * formatErrorStat(vdev_stat_t stat)
 {
-	NSString * status = zfs::to_localized_nsstring(vdev_state_t(stat.vs_state), vdev_aux_t(stat.vs_aux));
+	NSString * status = zfs::localized_describe_vdev_state_t(stat.vs_state, stat.vs_aux);
 	NSString * errors = nil;
 	if (stat.vs_read_errors == 0 && stat.vs_write_errors == 0 && stat.vs_checksum_errors == 0)
 	{
@@ -102,7 +102,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	for (auto && pool: _pools)
 	{
 		zpool_status_t status = pool.status();
-		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)", pool.name(), zfs::to_localized_nsstring(status)];
+		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
+			pool.name(), zfs::localized_describe_zpool_status_t(status)];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
 		NSMenu * vdevMenu = createVdevMenu(pool);
 		[poolItem setSubmenu:vdevMenu];

@@ -13,8 +13,6 @@
 #ifndef ZETA_ZFSSTRINGS_HPP
 #define ZETA_ZFSSTRINGS_HPP
 
-#include <libzfs.h>
-
 #import <Foundation/NSString.h>
 
 namespace zfs
@@ -22,22 +20,22 @@ namespace zfs
 	/*!
 	 Returns a string with english human-facing description of the zpool status.
 	 */
-	char const * to_string(zpool_status_t stat);
+	char const * describe_zpool_status_t(uint64_t stat);
 
 	/*!
 	 Returns a localized string description of the zpool status.
 	 */
-	NSString * to_localized_nsstring(zpool_status_t stat);
+	NSString * localized_describe_zpool_status_t(uint64_t stat);
 
 	/*!
 	 Returns a string with english human-facing description of the vdev status.
 	 */
-	char const * to_string(vdev_state_t stat, vdev_aux_t aux);
+	char const * describe_vdev_state_t(uint64_t stat, uint64_t aux);
 
 	/*!
 	 Returns a localized string description of the vdev status.
 	 */
-	NSString * to_localized_nsstring(vdev_state_t stat, vdev_aux_t aux);
+	NSString * localized_describe_vdev_state_t(uint64_t stat, uint64_t aux);
 }
 
 #endif
