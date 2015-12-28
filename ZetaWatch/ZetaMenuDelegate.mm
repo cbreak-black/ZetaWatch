@@ -43,18 +43,18 @@
 	[self createPoolMenu:menu];
 }
 
-NSString * formatErrorStat(vdev_stat_t stat)
+NSString * formatErrorStat(zfs::VDevStat stat)
 {
-	NSString * status = zfs::localized_describe_vdev_state_t(stat.vs_state, stat.vs_aux);
+	NSString * status = zfs::localized_describe_vdev_state_t(stat.state, stat.aux);
 	NSString * errors = nil;
-	if (stat.vs_read_errors == 0 && stat.vs_write_errors == 0 && stat.vs_checksum_errors == 0)
+	if (stat.errorRead == 0 && stat.errorWrite == 0 && stat.errorChecksum == 0)
 	{
 		errors = NSLocalizedString(@"No Errors", @"Format vdev_stat_t");
 	}
 	else
 	{
 		NSString * format = NSLocalizedString(@"%ll Read Errors, %ll Write Errors, %ll Checksum Errors", @"Format vdev_stat_t");
-		errors = [NSString stringWithFormat:format, stat.vs_read_errors, stat.vs_write_errors, stat.vs_checksum_errors];
+		errors = [NSString stringWithFormat:format, stat.errorRead, stat.errorWrite, stat.errorChecksum];
 	}
 	return [NSString stringWithFormat:@"%@, %@", status, errors];
 }
@@ -101,9 +101,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	NSUInteger poolIdx = 0;
 	for (auto && pool: _pools)
 	{
-		zpool_status_t status = pool.status();
 		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
-			pool.name(), zfs::localized_describe_zpool_status_t(status)];
+			pool.name(), zfs::localized_describe_zpool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
 		NSMenu * vdevMenu = createVdevMenu(pool);
 		[poolItem setSubmenu:vdevMenu];

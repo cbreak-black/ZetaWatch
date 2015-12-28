@@ -14,6 +14,9 @@
 
 #include <stdexcept>
 
+#include <libzfs.h>
+#include <libzfs_core.h>
+
 namespace zfs
 {
 	LibZFSHandle::LibZFSHandle() :
@@ -76,7 +79,7 @@ namespace zfs
 		return zpool_get_name(m_handle);
 	}
 
-	zpool_status_t ZPool::status() const
+	uint64_t ZPool::status() const
 	{
 		char * cp = nullptr;
 		zpool_errata_t errata = {};
@@ -100,9 +103,9 @@ namespace zfs
 		return m_handle;
 	}
 
-	bool healthy(zpool_status_t stat)
+	bool healthy(uint64_t stat)
 	{
-		switch (stat)
+		switch (zpool_status_t(stat))
 		{
 			case ZPOOL_STATUS_OK:
 			case ZPOOL_STATUS_VERSION_OLDER:
@@ -173,15 +176,20 @@ namespace zfs
 		return vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);
 	}
 
-	vdev_stat_t vdevStat(NVList const & vdev)
+	VDevStat vdevStat(NVList const & vdev)
 	{
 		auto statVec = vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_VDEV_STATS);
-		vdev_stat_t stat = {};
-		if (sizeof(stat) != statVec.size() * sizeof(uint64_t))
+		vdev_stat_t zfsStat = {};
+		if (sizeof(zfsStat) != statVec.size() * sizeof(uint64_t))
 			throw std::logic_error("Internal nvlist structure is inconsistent");
 		// Note: this is somewhat non-portable but the equivalent C Code does the same
-		std::copy(statVec.begin(), statVec.end(), &stat.vs_timestamp);
-		return stat;
+		std::copy(statVec.begin(), statVec.end(), &zfsStat.vs_timestamp);
+		VDevStat interfaceStat = {
+			zfsStat.vs_state, zfsStat.vs_aux,
+			zfsStat.vs_alloc, zfsStat.vs_space, zfsStat.vs_dspace,
+			zfsStat.vs_read_errors, zfsStat.vs_write_errors, zfsStat.vs_checksum_errors
+		};
+		return interfaceStat;
 	}
 
 }

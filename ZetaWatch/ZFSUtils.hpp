@@ -15,11 +15,13 @@
 
 #include "ZFSNVList.hpp"
 
-#include <libzfs.h>
-#include <libzfs_core.h>
-
 #include <vector>
 #include <functional>
+
+// libzfs.h forward declarations
+typedef struct zfs_handle zfs_handle_t;
+typedef struct zpool_handle zpool_handle_t;
+typedef struct libzfs_handle libzfs_handle_t;
 
 namespace zfs
 {
@@ -58,7 +60,7 @@ namespace zfs
 
 	public:
 		char const * name() const;
-		zpool_status_t status() const;
+		uint64_t status() const; //!< zpool_status_t
 		NVList config() const;
 		std::vector<zfs::NVList> vdevs() const;
 
@@ -72,7 +74,7 @@ namespace zfs
 	/*!
 	 Returns wether the given status indicates a healty pool.
 	 */
-	bool healthy(zpool_status_t stat);
+	bool healthy(uint64_t zpoolStatus);
 
 	/*!
 	 Returns a vector of all pools.
@@ -100,9 +102,25 @@ namespace zfs
 	std::vector<NVList> vdevChildren(NVList const & vdev);
 
 	/*!
+	 A stripped down replacement for libzfs' vdev_stat struct. It will be extended as needed when
+	 more information is required.
+	 */
+	struct VDevStat
+	{
+		uint64_t state;
+		uint64_t aux;
+		uint64_t alloc;
+		uint64_t space;
+		uint64_t deflatedSpace;
+		uint64_t errorRead;
+		uint64_t errorWrite;
+		uint64_t errorChecksum;
+	};
+
+	/*!
 	 \returns A struct describing the status of the given vdev
 	 */
-	vdev_stat_t vdevStat(NVList const & vdev);
+	VDevStat vdevStat(NVList const & vdev);
 }
 
 #endif
