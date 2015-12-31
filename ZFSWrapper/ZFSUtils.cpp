@@ -171,6 +171,16 @@ namespace zfs
 		return path;
 	}
 
+	uint64_t vdevGUID(NVList const & vdev)
+	{
+		return vdev.lookup<uint64_t>(ZPOOL_CONFIG_GUID);
+	}
+
+	uint64_t poolGUID(NVList const & vdev)
+	{
+		return vdev.lookup<uint64_t>(ZPOOL_CONFIG_POOL_GUID);
+	}
+
 	std::vector<NVList> vdevChildren(NVList const & vdev)
 	{
 		return vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);

@@ -120,13 +120,12 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	[_poolMenus removeAllObjects];
 }
 
-- (void)errorDetectedInPool:(std::string const &)pool onDevice:(std::string const &)device
+- (void)errorDetectedInPool:(std::string const &)pool
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
 	notification.title = NSLocalizedString(@"ZFS Pool Error", @"");
-	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s in device %s.", @"");
-	notification.informativeText = [NSString stringWithFormat:errorFormat,
-									pool.c_str(), device.c_str()];
+	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s.", @"");
+	notification.informativeText = [NSString stringWithFormat:errorFormat, pool.c_str()];
 	[[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
 }
 

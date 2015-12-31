@@ -97,6 +97,16 @@ namespace zfs
 	std::string vdevPath(NVList const & vdev);
 
 	/*!
+	 \returns The GUID of the given vdev / device config.
+	 */
+	uint64_t vdevGUID(NVList const & vdev);
+
+	/*!
+	 \returns the Pool GUID of the given pool.
+	 */
+	uint64_t poolGUID(NVList const & vdev);
+
+	/*!
 	 \returns A vector containing the children of this vdev
 	 */
 	std::vector<NVList> vdevChildren(NVList const & vdev);

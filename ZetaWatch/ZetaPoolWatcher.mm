@@ -21,7 +21,7 @@
 	std::vector<zfs::ZPool> _pools;
 
 	// Statistics
-	std::map<std::string,zfs::VDevStat> _errorStats;
+	std::map<uint64_t,zfs::VDevStat> _errorStats;
 
 	// Timing
 	NSTimer * _autoUpdateTimer;
@@ -59,8 +59,15 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 
 - (void)timedUpdate:(NSTimer*)timer
 {
-	[self refreshPools];
-	[self checkForNewErrors];
+	try
+	{
+		[self refreshPools];
+		[self checkForNewErrors];
+	}
+	catch (std::exception const & e)
+	{
+		NSLog(@"Update Error: %s", e.what());
+	}
 }
 
 - (void)refreshPools
@@ -68,27 +75,41 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	_pools = zfs::zpool_list(_zfsHandle);
 }
 
-- (void)checkForNewErrors
+- (bool)checkDev:(zfs::NVList const &)dev
+{
+	auto guid = vdevGUID(dev);
+	auto newStat = vdevStat(dev);
+	auto & oldStat = _errorStats[guid];
+	bool error = containsMoreErrors(oldStat, newStat);
+	oldStat = newStat;
+	return error;
+}
+
+- (bool)checkForNewErrors
 {
 	for (auto && pool: _pools)
 	{
 		auto vdevs = pool.vdevs();
 		for (auto && vdev: vdevs)
 		{
+			if ([self checkDev:vdev])
+			{
+				[[self delegate] errorDetectedInPool:pool.name()];
+				return true;
+			}
+
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
 			{
-				auto stat = zfs::vdevStat(device);
-				auto path = zfs::vdevPath(device);
-				auto & oldStat = _errorStats[path];
-				if (containsMoreErrors(oldStat, stat))
+				if ([self checkDev:device])
 				{
-					oldStat = stat;
-					[[self delegate] errorDetectedInPool:pool.name() onDevice:path];
+					[[self delegate] errorDetectedInPool:pool.name()];
+					return true;
 				}
 			}
 		}
 	}
+	return false;
 }
 
 - (std::vector<zfs::ZPool> const &)pools

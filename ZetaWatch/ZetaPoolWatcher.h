@@ -18,7 +18,7 @@
 
 @protocol ZetaPoolWatcherDelegate <NSObject>
 
-- (void)errorDetectedInPool:(std::string const &)pool onDevice:(std::string const &)device;
+- (void)errorDetectedInPool:(std::string const &)pool;
 
 @end
 
