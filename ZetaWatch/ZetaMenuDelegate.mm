@@ -53,7 +53,7 @@ NSString * formatErrorStat(zfs::VDevStat stat)
 	}
 	else
 	{
-		NSString * format = NSLocalizedString(@"%ll Read Errors, %ll Write Errors, %ll Checksum Errors", @"Format vdev_stat_t");
+		NSString * format = NSLocalizedString(@"%llu Read Errors, %llu Write Errors, %llu Checksum Errors", @"Format vdev_stat_t");
 		errors = [NSString stringWithFormat:format, stat.errorRead, stat.errorWrite, stat.errorChecksum];
 	}
 	return [NSString stringWithFormat:@"%@, %@", status, errors];
