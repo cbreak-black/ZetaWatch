@@ -22,6 +22,9 @@
 
 	// Statistics
 	std::map<std::string,zfs::VDevStat> _errorStats;
+
+	// Timing
+	NSTimer * _autoUpdateTimer;
 }
 
 @end
@@ -39,9 +42,25 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	if (self = [super init])
 	{
+		_autoUpdateTimer = [NSTimer timerWithTimeInterval:60
+			target:self selector:@selector(timedUpdate:) userInfo:nil repeats:YES];
+		_autoUpdateTimer.tolerance = 8;
+		[[NSRunLoop currentRunLoop] addTimer:_autoUpdateTimer forMode:NSDefaultRunLoopMode];
 		[self refreshPools];
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	[_autoUpdateTimer invalidate];
+	_autoUpdateTimer = nil;
+}
+
+- (void)timedUpdate:(NSTimer*)timer
+{
+	[self refreshPools];
+	[self checkForNewErrors];
 }
 
 - (void)refreshPools
