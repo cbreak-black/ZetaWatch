@@ -68,7 +68,10 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		for (auto && vdev: vdevs)
 		{
 			auto type = zfs::vdevType(vdev);
-			[vdevMenu addItemWithTitle:[NSString stringWithUTF8String:type.c_str()]
+			auto stat = zfs::vdevStat(vdev);
+			NSString * vdevLine = [NSString stringWithFormat:@"%s (%@)",
+				type.c_str(), formatErrorStat(stat)];
+			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
@@ -76,8 +79,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 				auto stat = zfs::vdevStat(device);
 				auto path = zfs::vdevPath(device);
 				NSString * devLine = [NSString stringWithFormat:@"  %s (%@)",
-					path.c_str(), formatErrorStat(stat)
-				];
+					path.c_str(), formatErrorStat(stat)];
 				[vdevMenu addItemWithTitle:devLine
 									action:nullptr keyEquivalent:@""];
 			}
