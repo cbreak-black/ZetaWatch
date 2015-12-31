@@ -11,6 +11,7 @@
 //
 
 #import "ZetaMenuDelegate.h"
+#import "ZetaPoolWatcher.h"
 
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
@@ -18,10 +19,7 @@
 @interface ZetaMenuDelegate ()
 {
 	NSMutableArray * _poolMenus;
-
-	// ZFS
-	zfs::LibZFSHandle _zfsHandle;
-	std::vector<zfs::ZPool> _pools;
+	ZetaPoolWatcher * _watcher;
 }
 
 @end
@@ -33,6 +31,7 @@
 	if (self = [super init])
 	{
 		_poolMenus = [[NSMutableArray alloc] init];
+		_watcher = [[ZetaPoolWatcher alloc] init];
 	}
 	return self;
 }
@@ -96,10 +95,9 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	NSInteger poolMenuIdx = [menu indexOfItemWithTag:ZPoolAnchorMenuTag];
 	if (poolMenuIdx < 0)
 		return;
-	[self refreshPools];
 	NSInteger poolItemRootIdx = poolMenuIdx + 1;
 	NSUInteger poolIdx = 0;
-	for (auto && pool: _pools)
+	for (auto && pool: [_watcher pools])
 	{
 		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
 			pool.name(), zfs::localized_describe_zpool_status_t(pool.status())];
@@ -119,11 +117,6 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		[menu removeItem:poolMenu];
 	}
 	[_poolMenus removeAllObjects];
-}
-
-- (void)refreshPools
-{
-	_pools = zfs::zpool_list(_zfsHandle);
 }
 
 @end
