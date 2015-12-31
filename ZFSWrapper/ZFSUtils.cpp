@@ -183,7 +183,9 @@ namespace zfs
 
 	std::vector<NVList> vdevChildren(NVList const & vdev)
 	{
-		return vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN);
+		std::vector<zfs::NVList> children;
+		vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN, children);
+		return children;
 	}
 
 	VDevStat vdevStat(NVList const & vdev)

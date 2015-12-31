@@ -59,6 +59,15 @@ NSString * formatErrorStat(zfs::VDevStat stat)
 	return [NSString stringWithFormat:@"%@, %@", status, errors];
 }
 
+std::string genName(zfs::NVList const & vdev)
+{
+	auto type = zfs::vdevType(vdev);
+	if (type == "file" || type == "disk")
+		return zfs::vdevPath(vdev);
+	else
+		return type;
+}
+
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
@@ -67,19 +76,17 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		auto vdevs = pool.vdevs();
 		for (auto && vdev: vdevs)
 		{
-			auto type = zfs::vdevType(vdev);
 			auto stat = zfs::vdevStat(vdev);
 			NSString * vdevLine = [NSString stringWithFormat:@"%s (%@)",
-				type.c_str(), formatErrorStat(stat)];
+				genName(vdev).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
 			{
 				auto stat = zfs::vdevStat(device);
-				auto path = zfs::vdevPath(device);
 				NSString * devLine = [NSString stringWithFormat:@"  %s (%@)",
-					path.c_str(), formatErrorStat(stat)];
+					genName(device).c_str(), formatErrorStat(stat)];
 				[vdevMenu addItemWithTitle:devLine
 									action:nullptr keyEquivalent:@""];
 			}
