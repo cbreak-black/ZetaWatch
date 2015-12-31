@@ -1,5 +1,5 @@
 //
-//  ZetaWatchDelegate.m
+//  ZetaWatchDelegate.mm
 //  ZetaWatch
 //
 //  Created by Gerhard Röthlin on 2015.12.20.

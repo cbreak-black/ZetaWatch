@@ -12,11 +12,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "ZetaPoolWatcher.h"
+
 enum ZetaMenuTags
 {
 	ZPoolAnchorMenuTag = 100
 };
 
-@interface ZetaMenuDelegate : NSObject <NSMenuDelegate>
+@interface ZetaMenuDelegate : NSObject <NSMenuDelegate,ZetaPoolWatcherDelegate>
 
 @end

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7006C4801C26CA1500929DAE /* ZetaWatchDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.m */; };
+		7006C4801C26CA1500929DAE /* ZetaWatchDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.mm */; };
 		7006C4831C26CA1500929DAE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4821C26CA1500929DAE /* main.m */; };
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
@@ -51,7 +51,7 @@
 /* Begin PBXFileReference section */
 		7006C47B1C26CA1500929DAE /* ZetaWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZetaWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7006C47E1C26CA1500929DAE /* ZetaWatchDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaWatchDelegate.h; sourceTree = "<group>"; };
-		7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaWatchDelegate.m; sourceTree = "<group>"; };
+		7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaWatchDelegate.mm; sourceTree = "<group>"; };
 		7006C4821C26CA1500929DAE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7006C4841C26CA1500929DAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7006C4871C26CA1500929DAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -118,7 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				7006C47E1C26CA1500929DAE /* ZetaWatchDelegate.h */,
-				7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.m */,
+				7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.mm */,
 				7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */,
 				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */,
 				709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */,
@@ -279,7 +279,7 @@
 			files = (
 				709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */,
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
-				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.m in Sources */,
+				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.mm in Sources */,
 				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

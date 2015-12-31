@@ -14,16 +14,21 @@
 
 #include "ZFSUtils.hpp"
 
+#include <string>
+
+@protocol ZetaPoolWatcherDelegate <NSObject>
+
+- (void)errorDetectedInPool:(std::string const &)pool onDevice:(std::string const &)device;
+
+@end
+
 @interface ZetaPoolWatcher : NSObject
-{
-	// ZFS
-	zfs::LibZFSHandle _zfsHandle;
-	std::vector<zfs::ZPool> _pools;
-}
 
 - (id)init;
 - (void)refreshPools;
 
 - (std::vector<zfs::ZPool> const &)pools;
+
+@property (weak) id<ZetaPoolWatcherDelegate> delegate;
 
 @end
