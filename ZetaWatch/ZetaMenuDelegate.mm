@@ -135,7 +135,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	notification.title = NSLocalizedString(@"ZFS Pool Error", @"");
 	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s.", @"");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, pool.c_str()];
-	[[NSUserNotificationCenter defaultUserNotificationCenter] scheduleNotification:notification];
+	notification.hasActionButton = NO;
+	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }
 
 @end
