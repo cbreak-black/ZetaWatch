@@ -12,7 +12,11 @@
 
 #import "ZetaPoolWatcher.h"
 
+#import <IOKit/pwr_mgt/IOPMLib.h>
+
 #include <map>
+
+CFStringRef reasonForKeepingAwake = CFSTR("ZFS Scrub in progress");
 
 @interface ZetaPoolWatcher ()
 {
@@ -22,6 +26,10 @@
 
 	// Statistics
 	std::map<uint64_t,zfs::VDevStat> _errorStats;
+
+	// Sleep Prevention
+	IOPMAssertionID assertionID;
+	bool keptAwake;
 
 	// Timing
 	NSTimer * _autoUpdateTimer;
@@ -55,6 +63,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	[_autoUpdateTimer invalidate];
 	_autoUpdateTimer = nil;
+	[self stopKeepingAwake];
 }
 
 - (void)timedUpdate:(NSTimer*)timer
@@ -63,6 +72,11 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	{
 		[self refreshPools];
 		[self checkForNewErrors];
+		auto scrubCounter = [self countScrubsInProgress];
+		if (scrubCounter > 0)
+			[self keepAwake];
+		else
+			[self stopKeepingAwake];
 	}
 	catch (std::exception const & e)
 	{
@@ -112,11 +126,59 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	return false;
 }
 
+- (uint64_t)countScrubsInProgress
+{
+	uint64_t scrubsInProgress = 0;
+	for (auto && pool: _pools)
+	{
+		auto vdevs = pool.vdevs();
+		for (auto && vdev: vdevs)
+		{
+			auto scan = scanStat(vdev);
+			if (scan.state == zfs::ScanStat::scanning)
+				++scrubsInProgress;
+		}
+	}
+	return scrubsInProgress;
+}
+
 - (std::vector<zfs::ZPool> const &)pools
 {
 	[self refreshPools];
 	[self checkForNewErrors];
 	return _pools;
+}
+
+- (void)keepAwake
+{
+	if (!keptAwake)
+	{
+		IOReturn success = IOPMAssertionCreateWithName(
+			kIOPMAssertPreventUserIdleSystemSleep,
+			kIOPMAssertionLevelOn, reasonForKeepingAwake, &assertionID);
+		if (success == kIOReturnSuccess)
+		{
+			keptAwake = true;
+		}
+		else
+		{
+			keptAwake = false;
+			assertionID = 0;
+		}
+	}
+}
+
+- (void)stopKeepingAwake
+{
+	if (keptAwake)
+	{
+		IOReturn success = IOPMAssertionRelease(assertionID);
+		if (success == kIOReturnSuccess)
+		{
+			keptAwake = false;
+			assertionID = 0;
+		}
+	}
 }
 
 @synthesize delegate;

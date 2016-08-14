@@ -29,6 +29,9 @@
 
 - (std::vector<zfs::ZPool> const &)pools;
 
+- (void)keepAwake;
+- (void)stopKeepingAwake;
+
 @property (weak) id<ZetaPoolWatcherDelegate> delegate;
 
 @end

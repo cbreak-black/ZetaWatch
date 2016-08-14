@@ -195,11 +195,27 @@ namespace zfs
 		if (sizeof(zfsStat) != statVec.size() * sizeof(uint64_t))
 			throw std::logic_error("Internal nvlist structure is inconsistent");
 		// Note: this is somewhat non-portable but the equivalent C Code does the same
-		std::copy(statVec.begin(), statVec.end(), &zfsStat.vs_timestamp);
+		std::copy(statVec.begin(), statVec.end(), reinterpret_cast<uint64_t*>(&zfsStat));
 		VDevStat interfaceStat = {
 			zfsStat.vs_state, zfsStat.vs_aux,
 			zfsStat.vs_alloc, zfsStat.vs_space, zfsStat.vs_dspace,
 			zfsStat.vs_read_errors, zfsStat.vs_write_errors, zfsStat.vs_checksum_errors
+		};
+		return interfaceStat;
+	}
+
+	ScanStat scanStat(NVList const & vdev)
+	{
+		auto statVec = vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_SCAN_STATS);
+		pool_scan_stat_t scanStat = {};
+		if (sizeof(scanStat) != statVec.size() * sizeof(uint64_t))
+			throw std::logic_error("Internal nvlist structure is inconsistent");
+		// Note: this is somewhat non-portable but the equivalent C Code does the same
+		std::copy(statVec.begin(), statVec.end(), reinterpret_cast<uint64_t*>(&scanStat));
+		ScanStat interfaceStat = {
+			static_cast<ScanStat::Func>(scanStat.pss_func),
+			static_cast<ScanStat::State>(scanStat.pss_state),
+			scanStat.pss_to_process, scanStat.pss_processed
 		};
 		return interfaceStat;
 	}

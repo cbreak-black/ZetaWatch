@@ -131,6 +131,25 @@ namespace zfs
 	 \returns A struct describing the status of the given vdev
 	 */
 	VDevStat vdevStat(NVList const & vdev);
+
+	/*!
+	 A stripped down replacement for libzfs' scan_stat struct. It will be extended as needed when
+	 more information is required.
+	 */
+	struct ScanStat
+	{
+		enum Func { funcNone, scrub, resilver };
+		enum State { stateNone, scanning, finished, canceled };
+		Func func;
+		State state;
+		uint64_t toProcess;
+		uint64_t processed;
+	};
+
+	/*!
+	 \returns A struct describing the scan status of the given vdev
+	 */
+	ScanStat scanStat(NVList const & vdev);
 }
 
 #endif
