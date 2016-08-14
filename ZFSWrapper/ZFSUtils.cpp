@@ -215,7 +215,7 @@ namespace zfs
 		ScanStat interfaceStat = {
 			static_cast<ScanStat::Func>(scanStat.pss_func),
 			static_cast<ScanStat::State>(scanStat.pss_state),
-			scanStat.pss_to_process, scanStat.pss_processed
+			scanStat.pss_to_examine, scanStat.pss_examined
 		};
 		return interfaceStat;
 	}

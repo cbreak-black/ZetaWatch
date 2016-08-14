@@ -142,8 +142,8 @@ namespace zfs
 		enum State { stateNone, scanning, finished, canceled };
 		Func func;
 		State state;
-		uint64_t toProcess;
-		uint64_t processed;
+		uint64_t toExamine;
+		uint64_t examined;
 	};
 
 	/*!

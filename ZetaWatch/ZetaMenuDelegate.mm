@@ -16,6 +16,10 @@
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
 
+#include <type_traits>
+#include <iomanip>
+#include <sstream>
+
 @interface ZetaMenuDelegate ()
 {
 	NSMutableArray * _poolMenus;
@@ -68,6 +72,43 @@ std::string genName(zfs::NVList const & vdev)
 		return type;
 }
 
+struct MetricPrefix
+{
+	uint64_t factor;
+	char const * prefix;
+};
+
+MetricPrefix metricPrefixes[] = {
+	{ 1000000000000000000, "E" },
+	{    1000000000000000, "P" },
+	{       1000000000000, "T" },
+	{	       1000000000, "G" },
+	{             1000000, "M" },
+	{                1000, "k" },
+};
+
+size_t prefixCount = std::extent<decltype(metricPrefixes)>::value;
+
+std::string formatPrefixedValue(uint64_t size)
+{
+	for (size_t p = 0; p < prefixCount; ++p)
+	{
+		if (size > metricPrefixes[p].factor)
+		{
+			double scaledSize = size / double(metricPrefixes[p].factor);
+			std::stringstream ss;
+			ss << std::setprecision(2) << std::fixed << scaledSize << " " << metricPrefixes[p].prefix;
+			return ss.str();
+		}
+	}
+	return std::to_string(size) + " ";
+}
+
+std::string formatBytes(uint64_t bytes)
+{
+	return formatPrefixedValue(bytes) + "b";
+}
+
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
@@ -76,11 +117,23 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		auto vdevs = pool.vdevs();
 		for (auto && vdev: vdevs)
 		{
+			// VDev
 			auto stat = zfs::vdevStat(vdev);
 			NSString * vdevLine = [NSString stringWithFormat:@"%s (%@)",
 				genName(vdev).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
+			auto scrub = zfs::scanStat(vdev);
+			if (scrub.state == zfs::ScanStat::scanning)
+			{
+				NSString * scanLine = [NSString stringWithFormat:@"    Scrub in Progress: %0.2f %% (%s out of %s)",
+					100.0*scrub.examined/scrub.toExamine,
+					formatBytes(scrub.examined).c_str(),
+					formatBytes(scrub.toExamine).c_str()];
+				[vdevMenu addItemWithTitle:scanLine
+									action:nullptr keyEquivalent:@""];
+			}
+			// Children
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
 			{
