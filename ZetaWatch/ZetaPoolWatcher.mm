@@ -16,7 +16,8 @@
 
 #include <map>
 
-CFStringRef reasonForKeepingAwake = CFSTR("ZFS Scrub in progress");
+CFStringRef powerAssertionName = CFSTR("ZFSScrub");
+CFStringRef powerAssertionReason = CFSTR("ZFS Scrub in progress");
 
 @interface ZetaPoolWatcher ()
 {
@@ -153,9 +154,9 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	if (!keptAwake)
 	{
-		IOReturn success = IOPMAssertionCreateWithName(
+		IOReturn success = IOPMAssertionCreateWithDescription(
 			kIOPMAssertPreventUserIdleSystemSleep,
-			kIOPMAssertionLevelOn, reasonForKeepingAwake, &assertionID);
+			powerAssertionName, powerAssertionReason, 0, 0, 0, 0, &assertionID);
 		if (success == kIOReturnSuccess)
 		{
 			keptAwake = true;
