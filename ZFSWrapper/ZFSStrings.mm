@@ -63,7 +63,7 @@ namespace zfs
 			case ZPOOL_STATUS_VERSION_OLDER:
 				return "older legacy on-disk version";
 			case ZPOOL_STATUS_FEAT_DISABLED:
-				return "upported features are disabled";
+				return "supported features are disabled";
 			case ZPOOL_STATUS_RESILVERING:
 				return "device being resilvered";
 			case ZPOOL_STATUS_OFFLINE_DEV:

@@ -31,10 +31,12 @@
 {
 	_menuDelegate = [[ZetaMenuDelegate alloc] init];
 	NSStatusBar * bar = [NSStatusBar systemStatusBar];
-	_statusItem = [bar statusItemWithLength:NSVariableStatusItemLength];
-	[_statusItem setTitle: NSLocalizedString(@"Zeta",@"")];
-	[_statusItem setMenu:_zetaMenu];
-	[_zetaMenu setDelegate:_menuDelegate];
+	_statusItem = [bar statusItemWithLength:NSSquareStatusItemLength];
+	NSImage * zetaImage = [NSImage imageNamed:@"Zeta"];
+	[zetaImage setTemplate:YES];
+	_statusItem.button.image = zetaImage;
+	_statusItem.menu = _zetaMenu;
+	_zetaMenu.delegate = _menuDelegate;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
