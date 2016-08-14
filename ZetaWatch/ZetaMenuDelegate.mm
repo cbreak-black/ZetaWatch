@@ -106,7 +106,7 @@ std::string formatPrefixedValue(uint64_t size)
 
 std::string formatBytes(uint64_t bytes)
 {
-	return formatPrefixedValue(bytes) + "b";
+	return formatPrefixedValue(bytes) + "B";
 }
 
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
