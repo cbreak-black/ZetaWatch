@@ -123,15 +123,22 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 				genName(vdev).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
-			auto scrub = zfs::scanStat(vdev);
-			if (scrub.state == zfs::ScanStat::scanning)
+			try
 			{
-				NSString * scanLine = [NSString stringWithFormat:@"    Scrub in Progress: %0.2f %% (%s out of %s)",
-					100.0*scrub.examined/scrub.toExamine,
-					formatBytes(scrub.examined).c_str(),
-					formatBytes(scrub.toExamine).c_str()];
-				[vdevMenu addItemWithTitle:scanLine
-									action:nullptr keyEquivalent:@""];
+				auto scrub = zfs::scanStat(vdev);
+				if (scrub.state == zfs::ScanStat::scanning)
+				{
+					NSString * scanLine = [NSString stringWithFormat:@"    Scrub in Progress: %0.2f %% (%s out of %s)",
+										   100.0*scrub.examined/scrub.toExamine,
+										   formatBytes(scrub.examined).c_str(),
+										   formatBytes(scrub.toExamine).c_str()];
+					[vdevMenu addItemWithTitle:scanLine
+										action:nullptr keyEquivalent:@""];
+				}
+			}
+			catch (std::out_of_range const &)
+			{
+				// scan stat not-found errors are non-critical and can be ignored
 			}
 			// Children
 			auto devices = zfs::vdevChildren(vdev);
