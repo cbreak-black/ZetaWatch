@@ -51,6 +51,7 @@ namespace zfs
 	class ZPool
 	{
 	public:
+		// Takes ownership
 		explicit ZPool(zpool_handle_t * handle);
 		~ZPool();
 

@@ -281,6 +281,11 @@ namespace zfs
 	{
 	}
 
+	NVList::NVList(nvlist_t * list, TakeOwnership) :
+		m_list(list), m_ownsList(true)
+	{
+	}
+
 	NVList::~NVList()
 	{
 		reset();

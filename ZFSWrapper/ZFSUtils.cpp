@@ -59,6 +59,8 @@ namespace zfs
 
 	ZPool::~ZPool()
 	{
+		if (m_handle)
+			zpool_close(m_handle);
 	}
 
 	ZPool::ZPool(ZPool && other) noexcept :
