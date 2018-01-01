@@ -21,4 +21,7 @@ enum ZetaMenuTags
 
 @interface ZetaMenuDelegate : NSObject <NSMenuDelegate,ZetaPoolWatcherDelegate>
 
+- (IBAction)importAllPools:(id)sender;
+- (IBAction)mountAllFilesystems:(id)sender;
+
 @end

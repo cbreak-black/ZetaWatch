@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -15,14 +15,29 @@
         <customObject id="Voe-Tx-rLC" customClass="ZetaWatchDelegate">
             <connections>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
+                <outlet property="zetaMenuDelegate" destination="8rf-zp-5r9" id="79g-6y-RnC"/>
             </connections>
         </customObject>
+        <customObject id="8rf-zp-5r9" userLabel="MenuDelegate" customClass="ZetaMenuDelegate"/>
         <menu title="Zeta" id="Xld-Up-BZ8">
             <items>
                 <menuItem title="ZFS Pools" tag="100" enabled="NO" id="SFT-8i-4hp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="V2G-dn-yYW"/>
+                <menuItem title="Import all Pools" id="IPA-0t-xwp">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="importAllPools:" target="8rf-zp-5r9" id="5cX-xu-eKd"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Mount all Filesystems" id="Gk5-sm-R9o">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="mountAllFilesystems:" target="8rf-zp-5r9" id="bPj-lW-Dmo"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="ZkL-mf-Ahh"/>
                 <menuItem title="Quit" id="PuA-D0-otp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -30,6 +45,9 @@
                     </connections>
                 </menuItem>
             </items>
+            <connections>
+                <outlet property="delegate" destination="8rf-zp-5r9" id="L78-mK-psa"/>
+            </connections>
         </menu>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>

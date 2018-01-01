@@ -12,6 +12,7 @@
 
 #import "ZetaMenuDelegate.h"
 #import "ZetaPoolWatcher.h"
+#import "ZetaAuthorization.h"
 
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
@@ -24,6 +25,7 @@
 {
 	NSMutableArray * _poolMenus;
 	ZetaPoolWatcher * _watcher;
+	ZetaAuthorization * _authorization;
 }
 
 @end
@@ -37,8 +39,14 @@
 		_poolMenus = [[NSMutableArray alloc] init];
 		_watcher = [[ZetaPoolWatcher alloc] init];
 		_watcher.delegate = self;
+		_authorization = [[ZetaAuthorization alloc] init];
 	}
 	return self;
+}
+
+- (void)awakeFromNib
+{
+	[_authorization connectToAuthorization];
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
@@ -46,6 +54,8 @@
 	[self clearPoolMenu:menu];
 	[self createPoolMenu:menu];
 }
+
+#pragma mark Formating
 
 NSString * formatErrorStat(zfs::VDevStat stat)
 {
@@ -108,6 +118,8 @@ std::string formatBytes(uint64_t bytes)
 {
 	return formatPrefixedValue(bytes) + "B";
 }
+
+#pragma mark ZFS Inspection
 
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
 {
@@ -197,6 +209,18 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	notification.informativeText = [NSString stringWithFormat:errorFormat, pool.c_str()];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+}
+
+#pragma mark ZFS Maintenance
+
+- (IBAction)importAllPools:(id)sender
+{
+	[_authorization autoinstall];
+}
+
+- (IBAction)mountAllFilesystems:(id)sender
+{
+
 }
 
 @end

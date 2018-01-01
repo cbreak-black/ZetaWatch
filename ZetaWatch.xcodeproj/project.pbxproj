@@ -22,6 +22,13 @@
 		70D85FF21C316FCB00929DAE /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
 		70D85FF31C316FCB00929DAE /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
 		70D85FF41C316FCB00929DAE /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */; };
+		70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
+		70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDCC1FF9ACB300BA39B8 /* main.m */; };
+		70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */; };
+		70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */; };
+		70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
+		70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +38,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 70D85FE11C316E8F00929DAE;
 			remoteInfo = ZFSWrapper;
+		};
+		70EABDD61FF9B69000BA39B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7006C4731C26CA1400929DAE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70EABDC91FF9ACB300BA39B8;
+			remoteInfo = ZetaAuthorizationHelper;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -44,6 +58,16 @@
 				70D85FEA1C316E8F00929DAE /* ZFSWrapper.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70EABDD81FF9B6A200BA39B8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -72,6 +96,18 @@
 		70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZFSWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70D85FE41C316E8F00929DAE /* ZFSWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZFSWrapper.h; sourceTree = "<group>"; };
 		70D85FE61C316E8F00929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaAuthorization.h; sourceTree = "<group>"; };
+		70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaAuthorization.m; sourceTree = "<group>"; };
+		70EABDC21FF9A8D100BA39B8 /* CommonAuthorization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonAuthorization.h; sourceTree = "<group>"; };
+		70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CommonAuthorization.m; sourceTree = "<group>"; };
+		70EABDC51FF9AAB800BA39B8 /* ZetaAuthorizationHelperProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaAuthorizationHelperProtocol.h; sourceTree = "<group>"; };
+		70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "net.the-color-black.ZetaAuthorizationHelper"; sourceTree = BUILT_PRODUCTS_DIR; };
+		70EABDCC1FF9ACB300BA39B8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		70EABDD11FF9AE2800BA39B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70EABDD21FF9B21C00BA39B8 /* ZetaAuthorizationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaAuthorizationHelper.h; sourceTree = "<group>"; };
+		70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaAuthorizationHelper.m; sourceTree = "<group>"; };
+		70EABDD51FF9B40F00BA39B8 /* Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Launchd.plist; sourceTree = "<group>"; };
+		70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = CommonAuthorization.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +129,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70EABDC71FF9ACB300BA39B8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -101,7 +144,10 @@
 			children = (
 				7006C47D1C26CA1500929DAE /* ZetaWatch */,
 				70D85FCC1C316B0900929DAE /* ZFSWrapper */,
+				70EABDCB1FF9ACB300BA39B8 /* ZetaAuthorizationHelper */,
+				70EABDC11FF9A81800BA39B8 /* CommonAuthorization */,
 				7006C47C1C26CA1500929DAE /* Products */,
+				70DB77B11FFAD8E300BA39B8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,6 +156,7 @@
 			children = (
 				7006C47B1C26CA1500929DAE /* ZetaWatch.app */,
 				70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */,
+				70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,6 +170,8 @@
 				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */,
 				709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */,
 				709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */,
+				70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */,
+				70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
@@ -166,6 +215,36 @@
 			path = ZFSWrapper;
 			sourceTree = "<group>";
 		};
+		70DB77B11FFAD8E300BA39B8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		70EABDC11FF9A81800BA39B8 /* CommonAuthorization */ = {
+			isa = PBXGroup;
+			children = (
+				70EABDC21FF9A8D100BA39B8 /* CommonAuthorization.h */,
+				70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */,
+				70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */,
+			);
+			path = CommonAuthorization;
+			sourceTree = "<group>";
+		};
+		70EABDCB1FF9ACB300BA39B8 /* ZetaAuthorizationHelper */ = {
+			isa = PBXGroup;
+			children = (
+				70EABDC51FF9AAB800BA39B8 /* ZetaAuthorizationHelperProtocol.h */,
+				70EABDD21FF9B21C00BA39B8 /* ZetaAuthorizationHelper.h */,
+				70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */,
+				70EABDCC1FF9ACB300BA39B8 /* main.m */,
+				70EABDD11FF9AE2800BA39B8 /* Info.plist */,
+				70EABDD51FF9B40F00BA39B8 /* Launchd.plist */,
+			);
+			path = ZetaAuthorizationHelper;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -188,10 +267,12 @@
 				7006C4781C26CA1400929DAE /* Frameworks */,
 				7006C4791C26CA1400929DAE /* Resources */,
 				70D85FEE1C316E8F00929DAE /* Embed Frameworks */,
+				70EABDD81FF9B6A200BA39B8 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				70EABDD71FF9B69000BA39B8 /* PBXTargetDependency */,
 				70D85FE81C316E8F00929DAE /* PBXTargetDependency */,
 			);
 			name = ZetaWatch;
@@ -217,6 +298,22 @@
 			productReference = 70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		70EABDC91FF9ACB300BA39B8 /* ZetaAuthorizationHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70EABDCE1FF9ACB300BA39B8 /* Build configuration list for PBXNativeTarget "ZetaAuthorizationHelper" */;
+			buildPhases = (
+				70EABDC61FF9ACB300BA39B8 /* Sources */,
+				70EABDC71FF9ACB300BA39B8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ZetaAuthorizationHelper;
+			productName = ZetaAuthorizationHelper;
+			productReference = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -228,9 +325,18 @@
 				TargetAttributes = {
 					7006C47A1C26CA1400929DAE = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 8THUW5GT6P;
+						ProvisioningStyle = Manual;
 					};
 					70D85FE11C316E8F00929DAE = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 8THUW5GT6P;
+						ProvisioningStyle = Manual;
+					};
+					70EABDC91FF9ACB300BA39B8 = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = 8THUW5GT6P;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -249,6 +355,7 @@
 			targets = (
 				7006C47A1C26CA1400929DAE /* ZetaWatch */,
 				70D85FE11C316E8F00929DAE /* ZFSWrapper */,
+				70EABDC91FF9ACB300BA39B8 /* ZetaAuthorizationHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -258,6 +365,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */,
 				7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */,
 				7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */,
 			);
@@ -281,6 +389,8 @@
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.mm in Sources */,
 				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */,
+				70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */,
+				70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +404,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70EABDC61FF9ACB300BA39B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */,
+				70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */,
+				70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -301,6 +421,11 @@
 			isa = PBXTargetDependency;
 			target = 70D85FE11C316E8F00929DAE /* ZFSWrapper */;
 			targetProxy = 70D85FE71C316E8F00929DAE /* PBXContainerItemProxy */;
+		};
+		70EABDD71FF9B69000BA39B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70EABDC91FF9ACB300BA39B8 /* ZetaAuthorizationHelper */;
+			targetProxy = 70EABDD61FF9B69000BA39B8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -333,7 +458,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -376,7 +501,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -399,11 +524,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -411,20 +540,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
 		70D85FEC1C316E8F00929DAE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -443,19 +579,23 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZFSWrapper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/zfs";
+				ZFS_DIR = /Volumes/Omega/Bulk/Installers/zfs/zfs;
 			};
 			name = Debug;
 		};
 		70D85FED1C316E8F00929DAE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -474,10 +614,89 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZFSWrapper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/zfs";
+				ZFS_DIR = /Volumes/Omega/Bulk/Installers/zfs/zfs;
+			};
+			name = Release;
+		};
+		70EABDCF1FF9ACB300BA39B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					ZetaAuthorizationHelper/Info.plist,
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					ZetaAuthorizationHelper/Launchd.plist,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaAuthorizationHelper";
+				PRODUCT_NAME = "net.the-color-black.ZetaAuthorizationHelper";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		70EABDD01FF9ACB300BA39B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					ZetaAuthorizationHelper/Info.plist,
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					ZetaAuthorizationHelper/Launchd.plist,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaAuthorizationHelper";
+				PRODUCT_NAME = "net.the-color-black.ZetaAuthorizationHelper";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -507,6 +726,15 @@
 			buildConfigurations = (
 				70D85FEC1C316E8F00929DAE /* Debug */,
 				70D85FED1C316E8F00929DAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70EABDCE1FF9ACB300BA39B8 /* Build configuration list for PBXNativeTarget "ZetaAuthorizationHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70EABDCF1FF9ACB300BA39B8 /* Debug */,
+				70EABDD01FF9ACB300BA39B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

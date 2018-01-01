@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSBackgroundOnly</key>
@@ -36,5 +36,10 @@
 	<string>NSApplication</string>
 	<key>NSUSerNotificationAlertStyle</key>
 	<string>alert</string>
+	<key>SMPrivilegedExecutables</key>
+	<dict>
+		<key>net.the-color-black.ZetaAuthorizationHelper</key>
+		<string>anchor apple generic and identifier "net.the-color-black.ZetaAuthorizationHelper" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "8THUW5GT6P")</string>
+	</dict>
 </dict>
 </plist>

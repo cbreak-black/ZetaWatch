@@ -16,12 +16,12 @@
 
 @interface ZetaWatchDelegate ()
 {
-	ZetaMenuDelegate * _menuDelegate;
 	NSStatusItem * _statusItem;
 }
 
 @property (weak) IBOutlet NSWindow * window;
 @property (weak) IBOutlet NSMenu * zetaMenu;
+@property (weak) IBOutlet ZetaMenuDelegate * zetaMenuDelegate;
 
 @end
 
@@ -29,14 +29,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-	_menuDelegate = [[ZetaMenuDelegate alloc] init];
 	NSStatusBar * bar = [NSStatusBar systemStatusBar];
 	_statusItem = [bar statusItemWithLength:NSSquareStatusItemLength];
 	NSImage * zetaImage = [NSImage imageNamed:@"Zeta"];
 	[zetaImage setTemplate:YES];
 	_statusItem.button.image = zetaImage;
 	_statusItem.menu = _zetaMenu;
-	_zetaMenu.delegate = _menuDelegate;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
