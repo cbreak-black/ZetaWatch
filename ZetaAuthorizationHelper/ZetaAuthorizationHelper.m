@@ -27,6 +27,7 @@
 		// Set up our XPC listener to handle requests on our Mach service.
 		self->_listener = [[NSXPCListener alloc] initWithMachServiceName:kHelperToolMachServiceName];
 		self->_listener.delegate = self;
+		self.prefixPath = @"/usr/local/sbin/";
 	}
 	return self;
 }
@@ -103,14 +104,53 @@
 	reply(nil, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]);
 }
 
+- (void)runCommand:(NSString *)command withArguments:(NSArray<NSString*>*)arguments
+		 withReply:(void (^)(NSError *))reply
+{
+	@try
+	{
+		NSTask * task = [[NSTask alloc] init];
+		task.launchPath = [self.prefixPath stringByAppendingString:command];
+		task.arguments = arguments;
+		task.terminationHandler = ^(NSTask * task)
+		{
+			if (task.terminationStatus == 0)
+			{
+				reply(nil);
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSCLIError" code:task.terminationStatus userInfo:nil]);
+			}
+		};
+		[task launch];
+	}
+	@catch(NSException * ex)
+	{
+		NSMutableDictionary * info = [NSMutableDictionary dictionary];
+		[info setValue:ex.name forKey:@"ExceptionName"];
+		[info setValue:ex.reason forKey:@"ExceptionReason"];
+		[info setValue:ex.callStackReturnAddresses forKey:@"ExceptionCallStackReturnAddresses"];
+		[info setValue:ex.callStackSymbols forKey:@"ExceptionCallStackSymbols"];
+		[info setValue:ex.userInfo forKey:@"ExceptionUserInfo"];
+
+		NSError * error = [[NSError alloc] initWithDomain:@"ZFSCLIError" code:-1 userInfo:info];
+		reply(error);
+	}
+}
+
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData
 		  withReply:(void (^)(NSError *))reply
 {
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
+		[self runCommand:@"zpool" withArguments:@[@"import", @"-a"] withReply:reply];
 	}
-	reply(error);
+	else
+	{
+		reply(error);
+	}
 }
 
 - (void)mountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData
@@ -119,8 +159,12 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
+		[self runCommand:@"zfs" withArguments:@[@"mount", @"-a"] withReply:reply];
 	}
-	reply(error);
+	else
+	{
+		reply(error);
+	}
 }
 
 - (void)scrubPool:(NSDictionary *)poolData authorization:(NSData *)authData
@@ -130,7 +174,10 @@
 	if (error == nil)
 	{
 	}
-	reply(error);
+	else
+	{
+		reply(error);
+	}
 }
 
 @end

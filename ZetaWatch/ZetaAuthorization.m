@@ -8,6 +8,8 @@
 
 #import "ZetaAuthorization.h"
 
+#import "ZetaAuthorizationHelperProtocol.h"
+
 #import "CommonAuthorization.h"
 
 #include <ServiceManagement/ServiceManagement.h>
@@ -131,6 +133,42 @@
 	{
 		reply(proxyError, nil);
 	}] getVersionWithReply:reply];
+}
+
+- (void)importPools:(NSDictionary *)importData
+		  withReply:(void(^)(NSError * error))reply
+{
+	// Ensure that there's a helper tool connection in place.
+	[self connectToHelperTool];
+
+	[[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+	  {
+		  reply(proxyError);
+	  }] importPools:importData authorization:self.authorization withReply:reply];
+}
+
+- (void)mountFilesystems:(NSDictionary *)mountData
+			   withReply:(void(^)(NSError * error))reply
+{
+	// Ensure that there's a helper tool connection in place.
+	[self connectToHelperTool];
+
+	[[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+	  {
+		  reply(proxyError);
+	  }] mountFilesystems:mountData authorization:self.authorization withReply:reply];
+}
+
+- (void)scrubPool:(NSDictionary *)poolData
+		withReply:(void(^)(NSError * error))reply
+{
+	// Ensure that there's a helper tool connection in place.
+	[self connectToHelperTool];
+
+	[[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+	  {
+		  reply(proxyError);
+	  }] scrubPool:poolData authorization:self.authorization withReply:reply];
 }
 
 @end

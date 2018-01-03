@@ -216,11 +216,19 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 - (IBAction)importAllPools:(id)sender
 {
 	[_authorization autoinstall];
+	[_authorization importPools:@{} withReply:^(NSError * error)
+	 {
+		 NSLog(@"Pool Import Error: %@\n", error);
+	 }];
 }
 
 - (IBAction)mountAllFilesystems:(id)sender
 {
-
+	[_authorization autoinstall];
+	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
+	 {
+		 NSLog(@"FS Mount Error: %@\n", error);
+	 }];
 }
 
 @end

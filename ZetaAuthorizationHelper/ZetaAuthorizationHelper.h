@@ -10,6 +10,8 @@
 
 @interface ZetaAuthorizationHelper : NSObject
 
+@property (copy) NSString * prefixPath;
+
 - (id)init;
 - (void)run;
 
