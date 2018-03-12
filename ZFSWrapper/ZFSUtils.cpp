@@ -208,17 +208,20 @@ namespace zfs
 
 	ScanStat scanStat(NVList const & vdev)
 	{
-		auto statVec = vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_SCAN_STATS);
+		ScanStat interfaceStat = { ScanStat::funcNone, ScanStat::stateNone };
+		std::vector<uint64_t> statVec;
+		if (!vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_SCAN_STATS, statVec))
+			return interfaceStat;
 		pool_scan_stat_t scanStat = {};
+		// Internal nvlist structure is inconsistent, not critical
 		if (sizeof(scanStat) != statVec.size() * sizeof(uint64_t))
-			throw std::logic_error("Internal nvlist structure is inconsistent");
+			return interfaceStat;
 		// Note: this is somewhat non-portable but the equivalent C Code does the same
 		std::copy(statVec.begin(), statVec.end(), reinterpret_cast<uint64_t*>(&scanStat));
-		ScanStat interfaceStat = {
-			static_cast<ScanStat::Func>(scanStat.pss_func),
-			static_cast<ScanStat::State>(scanStat.pss_state),
-			scanStat.pss_to_examine, scanStat.pss_examined
-		};
+		interfaceStat.func = static_cast<ScanStat::Func>(scanStat.pss_func);
+		interfaceStat.state = static_cast<ScanStat::State>(scanStat.pss_state);
+		interfaceStat.toExamine = scanStat.pss_to_examine;
+		interfaceStat.examined = scanStat.pss_examined;
 		return interfaceStat;
 	}
 
