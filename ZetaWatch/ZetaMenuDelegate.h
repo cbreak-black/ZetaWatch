@@ -23,5 +23,6 @@ enum ZetaMenuTags
 
 - (IBAction)importAllPools:(id)sender;
 - (IBAction)mountAllFilesystems:(id)sender;
+- (IBAction)mountAllFilesystemsWithKey:(id)sender;
 
 @end

@@ -37,6 +37,12 @@
                         <action selector="mountAllFilesystems:" target="8rf-zp-5r9" id="bPj-lW-Dmo"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Mount all Filesystems with Key" id="0cY-6F-ZNG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="mountAllFilesystemsWithKey:" target="8rf-zp-5r9" id="t2d-Xa-qSH"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZkL-mf-Ahh"/>
                 <menuItem title="Quit" id="PuA-D0-otp">
                     <modifierMask key="keyEquivalentModifierMask"/>

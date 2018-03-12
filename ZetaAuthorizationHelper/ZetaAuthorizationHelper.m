@@ -104,7 +104,7 @@
 	reply(nil, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]);
 }
 
-- (void)runCommand:(NSString *)command withArguments:(NSArray<NSString*>*)arguments
+- (NSTask*)runCommand:(NSString *)command withArguments:(NSArray<NSString*>*)arguments
 		 withReply:(void (^)(NSError *))reply
 {
 	@try
@@ -123,7 +123,10 @@
 				reply([NSError errorWithDomain:@"ZFSCLIError" code:task.terminationStatus userInfo:nil]);
 			}
 		};
+		NSPipe * pipe = [NSPipe pipe];
+		task.standardInput = pipe;
 		[task launch];
+		return task;
 	}
 	@catch(NSException * ex)
 	{
@@ -137,6 +140,7 @@
 		NSError * error = [[NSError alloc] initWithDomain:@"ZFSCLIError" code:-1 userInfo:info];
 		reply(error);
 	}
+	return nil;
 }
 
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData
@@ -159,7 +163,20 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		[self runCommand:@"zfs" withArguments:@[@"mount", @"-a"] withReply:reply];
+		NSString * key = [mountData objectForKey:@"key"];
+		if (key)
+		{
+			// Hacky send-password-once-no-matter-how-often-it-is-needed
+			NSTask * task = [self runCommand:@"zfs" withArguments:@[@"mount", @"-a", @"-l", @"-o", @"keylocation=prompt"] withReply:reply];
+			NSPipe * pipe = task.standardInput;
+			NSFileHandle * o = pipe.fileHandleForWriting;
+			[o writeData:[key dataUsingEncoding:NSUTF8StringEncoding]];
+			[o closeFile];
+		}
+		else
+		{
+			[self runCommand:@"zfs" withArguments:@[@"mount", @"-a"] withReply:reply];
+		}
 	}
 	else
 	{
