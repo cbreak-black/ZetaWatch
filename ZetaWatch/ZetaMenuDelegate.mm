@@ -156,6 +156,15 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 									action:nullptr keyEquivalent:@""];
 			}
 		}
+		// Filesystems
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		auto childFileSystems = pool.allFileSystems();
+		for (auto & fs : childFileSystems)
+		{
+			NSString * fsLine = [NSString stringWithFormat:@"%s (%s)",
+				fs.name(), fs.mounted() ? "mounted" : "not mounted"];
+			[vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
+		}
 	}
 	catch (std::exception const & e)
 	{

@@ -46,6 +46,33 @@ namespace zfs
 	};
 
 	/*!
+	 */
+	class ZFileSystem
+	{
+	public:
+		explicit ZFileSystem(zfs_handle_t * handle);
+		~ZFileSystem();
+
+	public:
+		ZFileSystem(ZFileSystem && other) noexcept;
+		ZFileSystem & operator=(ZFileSystem && other) noexcept;
+
+	public:
+		char const * name() const;
+		bool mounted() const;
+
+	public:
+		//! \returns all direct child filesystems
+		std::vector<ZFileSystem> childFileSystems() const;
+
+		//! \returns all direct and indirect child filesystems
+		std::vector<ZFileSystem> allFileSystems() const;
+
+	private:
+		zfs_handle_t * m_handle;
+	};
+
+	/*!
 	 \brief Represents a ZPool
 	 */
 	class ZPool
@@ -64,6 +91,13 @@ namespace zfs
 		uint64_t status() const; //!< zpool_status_t
 		NVList config() const;
 		std::vector<zfs::NVList> vdevs() const;
+
+	public:
+		//! \returns the root filesystem
+		ZFileSystem rootFileSystem() const;
+
+		//! \returns all child filesystems, recursively
+		std::vector<ZFileSystem> allFileSystems() const;
 
 	public:
 		zpool_handle_t * handle() const;

@@ -52,6 +52,87 @@ namespace zfs
 		return m_handle;
 	}
 
+	ZFileSystem::ZFileSystem(zfs_handle_t * handle) : m_handle(handle)
+	{
+	}
+
+	ZFileSystem::~ZFileSystem()
+	{
+		if (m_handle)
+			zfs_close(m_handle);
+	}
+
+	ZFileSystem::ZFileSystem(ZFileSystem && other) noexcept :
+		m_handle(other.m_handle)
+	{
+		other.m_handle = nullptr;
+	}
+
+	ZFileSystem & ZFileSystem::operator=(ZFileSystem && other) noexcept
+	{
+		m_handle = other.m_handle;
+		other.m_handle = nullptr;
+		return *this;
+	}
+
+	char const * ZFileSystem::name() const
+	{
+		return zfs_get_name(m_handle);
+	}
+
+	bool ZFileSystem::mounted() const
+	{
+		return zfs_is_mounted(m_handle, nullptr);
+	}
+
+	namespace
+	{
+		struct ZFileSystemCallback
+		{
+			ZFileSystemCallback(std::function<void(ZFileSystem)> callback) :
+				m_callback(callback)
+			{
+			}
+
+			int handle(zfs_handle_t * fs)
+			{
+				m_callback(ZFileSystem(fs));
+				return 0;
+			}
+
+			static int handle_s(zfs_handle_t * fs, void * stored_this)
+			{
+				return static_cast<ZFileSystemCallback*>(stored_this)->handle(fs);
+			}
+
+			std::function<void(ZFileSystem)> m_callback;
+		};
+	}
+
+	std::vector<ZFileSystem> ZFileSystem::childFileSystems() const
+	{
+		std::vector<ZFileSystem> children;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			children.push_back(std::move(fs));
+		});
+		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		return children;
+	}
+
+	std::vector<ZFileSystem> ZFileSystem::allFileSystems() const
+	{
+		std::vector<ZFileSystem> children;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			auto handle = fs.m_handle;
+			children.push_back(std::move(fs));
+			zfs_iter_filesystems(handle, ZFileSystemCallback::handle_s, &cb);
+		});
+		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		return children;
+	}
+
 	ZPool::ZPool(zpool_handle_t * handle) :
 		m_handle(handle)
 	{
@@ -98,6 +179,24 @@ namespace zfs
 	{
 		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
 		return vdevChildren(vdevtree);
+	}
+
+	ZFileSystem ZPool::rootFileSystem() const
+	{
+		auto lib = zpool_get_handle(m_handle);
+		auto name = zpool_get_name(m_handle);
+		auto fs = zfs_open(lib, name, ZFS_TYPE_FILESYSTEM);
+		if (!fs)
+			throw std::runtime_error("Unable to open root filesystem");
+		return ZFileSystem(fs);
+	}
+
+	std::vector<ZFileSystem> ZPool::allFileSystems() const
+	{
+		auto root = rootFileSystem();
+		std::vector<ZFileSystem> fileSystems = root.allFileSystems();
+		fileSystems.insert(fileSystems.begin(), std::move(root));
+		return fileSystems;
 	}
 
 	zpool_handle_t * ZPool::handle() const
