@@ -26,7 +26,7 @@
 		70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDCC1FF9ACB300BA39B8 /* main.m */; };
 		70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */; };
-		70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */; };
+		70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */; };
 /* End PBXBuildFile section */
@@ -320,7 +320,7 @@
 		7006C4731C26CA1400929DAE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "the-color-black.net";
 				TargetAttributes = {
 					7006C47A1C26CA1400929DAE = {
@@ -449,13 +449,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -492,13 +500,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -555,7 +571,7 @@
 		70D85FEC1C316E8F00929DAE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -590,7 +606,7 @@
 		70D85FED1C316E8F00929DAE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
