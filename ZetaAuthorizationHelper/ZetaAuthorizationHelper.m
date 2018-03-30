@@ -126,6 +126,7 @@
 		NSPipe * pipe = [NSPipe pipe];
 		task.standardInput = pipe;
 		[task launch];
+		NSLog(@"runCommand: %@ %@", command, arguments);
 		return task;
 	}
 	@catch(NSException * ex)

@@ -87,7 +87,14 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 
 - (void)refreshPools
 {
-	_pools = zfs::zpool_list(_zfsHandle);
+	try
+	{
+		_pools = zfs::zpool_list(_zfsHandle);
+	}
+	catch (std::exception const & e)
+	{
+		[[self delegate] errorDetected:e.what()];
+	}
 }
 
 - (bool)checkDev:(zfs::NVList const &)dev
@@ -102,27 +109,34 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 
 - (bool)checkForNewErrors
 {
-	for (auto && pool: _pools)
+	try
 	{
-		auto vdevs = pool.vdevs();
-		for (auto && vdev: vdevs)
+		for (auto && pool: _pools)
 		{
-			if ([self checkDev:vdev])
+			auto vdevs = pool.vdevs();
+			for (auto && vdev: vdevs)
 			{
-				[[self delegate] errorDetectedInPool:pool.name()];
-				return true;
-			}
-
-			auto devices = zfs::vdevChildren(vdev);
-			for (auto && device: devices)
-			{
-				if ([self checkDev:device])
+				if ([self checkDev:vdev])
 				{
 					[[self delegate] errorDetectedInPool:pool.name()];
 					return true;
 				}
+
+				auto devices = zfs::vdevChildren(vdev);
+				for (auto && device: devices)
+				{
+					if ([self checkDev:device])
+					{
+						[[self delegate] errorDetectedInPool:pool.name()];
+						return true;
+					}
+				}
 			}
 		}
+	}
+	catch (std::exception const & e)
+	{
+		[[self delegate] errorDetected:e.what()];
 	}
 	return false;
 }
@@ -130,15 +144,22 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 - (uint64_t)countScrubsInProgress
 {
 	uint64_t scrubsInProgress = 0;
-	for (auto && pool: _pools)
+	try
 	{
-		auto vdevs = pool.vdevs();
-		for (auto && vdev: vdevs)
+		for (auto && pool: _pools)
 		{
-			auto scan = scanStat(vdev);
-			if (scan.state == zfs::ScanStat::scanning)
-				++scrubsInProgress;
+			auto vdevs = pool.vdevs();
+			for (auto && vdev: vdevs)
+			{
+				auto scan = scanStat(vdev);
+				if (scan.state == zfs::ScanStat::scanning)
+					++scrubsInProgress;
+			}
 		}
+	}
+	catch (std::exception const & e)
+	{
+		[[self delegate] errorDetected:e.what()];
 	}
 	return scrubsInProgress;
 }

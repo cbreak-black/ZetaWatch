@@ -216,6 +216,16 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }
 
+- (void)errorDetected:(std::string const &)error
+{
+	NSUserNotification * notification = [[NSUserNotification alloc] init];
+	notification.title = NSLocalizedString(@"ZFS Error", @"");
+	NSString * errorFormat = NSLocalizedString(@"ZFS encountered an error: %s.", @"");
+	notification.informativeText = [NSString stringWithFormat:errorFormat, error.c_str()];
+	notification.hasActionButton = NO;
+	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+}
+
 #pragma mark ZFS Maintenance
 
 static NSString * getPassword()

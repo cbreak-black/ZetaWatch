@@ -294,7 +294,7 @@ namespace zfs
 		auto statVec = vdev.lookup<std::vector<uint64_t>>(ZPOOL_CONFIG_VDEV_STATS);
 		vdev_stat_t zfsStat = {};
 		if (sizeof(zfsStat) != statVec.size() * sizeof(uint64_t))
-			throw std::logic_error("Internal nvlist structure is inconsistent");
+			throw std::logic_error("Internal nvlist structure size does not match vdev_stat_t size");
 		// Note: this is somewhat non-portable but the equivalent C Code does the same
 		std::copy(statVec.begin(), statVec.end(), reinterpret_cast<uint64_t*>(&zfsStat));
 		VDevStat interfaceStat = {
