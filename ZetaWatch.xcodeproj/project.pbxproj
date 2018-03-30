@@ -583,7 +583,7 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = /Volumes/Omega/Bulk/Installers/zfs/zfs;
+				ZFS_DIR = "~/Documents/zfs";
 			};
 			name = Debug;
 		};
@@ -618,7 +618,7 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = /Volumes/Omega/Bulk/Installers/zfs/zfs;
+				ZFS_DIR = "~/Documents/zfs";
 			};
 			name = Release;
 		};
