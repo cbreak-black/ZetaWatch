@@ -121,6 +121,13 @@ std::string formatBytes(uint64_t bytes)
 
 #pragma mark ZFS Inspection
 
+NSMenu * createFSMenu(zfs::ZFileSystem const & filesystem)
+{
+	NSMenu * fsMenu = [[NSMenu alloc] init];
+	[fsMenu setAutoenablesItems:NO];
+	return fsMenu;
+}
+
 NSMenu * createVdevMenu(zfs::ZPool const & pool)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
@@ -166,7 +173,9 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		{
 			NSString * fsLine = [NSString stringWithFormat:@"%s (%s)",
 				fs.name(), fs.mounted() ? "mounted" : "not mounted"];
-			[vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
+			NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
+			item.representedObject = [NSString stringWithUTF8String:fs.name()];
+			item.submenu = createFSMenu(fs);
 		}
 	}
 	catch (std::exception const & e)
