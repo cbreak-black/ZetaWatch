@@ -27,7 +27,7 @@
 		// Set up our XPC listener to handle requests on our Mach service.
 		self->_listener = [[NSXPCListener alloc] initWithMachServiceName:kHelperToolMachServiceName];
 		self->_listener.delegate = self;
-		self.prefixPath = @"/usr/local/sbin/";
+		self.prefixPath = @"/usr/local/bin/";
 	}
 	return self;
 }
