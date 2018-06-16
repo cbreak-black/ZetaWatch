@@ -158,18 +158,18 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 
 NSString * formatStatus(zfs::ZFileSystem const & fs)
 {
-	char const * mountStatus = fs.mounted() ? "mounted" : "not mounted";
+	char const * mountStatus = fs.mounted() ? u8"🌕" : u8"🌒";
 	char const * encStatus = "";
 	switch (fs.keyStatus())
 	{
 		case zfs::ZFileSystem::none:
-			encStatus = "";
+			encStatus = u8"";
 			break;
 		case zfs::ZFileSystem::unavailable:
-			encStatus = ", locked";
+			encStatus = u8", 🔒";
 			break;
 		case zfs::ZFileSystem::available:
-			encStatus = ", unlocked";
+			encStatus = u8", 🔑";
 			break;
 	}
 	NSString * fsLine = [NSString stringWithFormat:@"%s (%s%s)",
@@ -250,8 +250,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	NSUInteger poolIdx = 0;
 	for (auto && pool: [_watcher pools])
 	{
-		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
-			pool.name(), zfs::localized_describe_zpool_status_t(pool.status())];
+		NSString * poolLine = [NSString stringWithFormat:@"%s (%s)",
+			pool.name(), zfs::emoji_pool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
 		NSMenu * vdevMenu = createVdevMenu(pool, self);
 		[poolItem setSubmenu:vdevMenu];

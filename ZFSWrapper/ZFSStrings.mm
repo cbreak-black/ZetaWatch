@@ -82,6 +82,64 @@ namespace zfs
 		return "unknown status";
 	}
 
+	char const * emoji_pool_status_t(uint64_t stat)
+	{
+		switch (zpool_status_t(stat))
+		{
+			case ZPOOL_STATUS_CORRUPT_CACHE:
+				return u8"❌";
+			case ZPOOL_STATUS_MISSING_DEV_R:
+				return u8"❌";
+			case ZPOOL_STATUS_MISSING_DEV_NR:
+				return u8"❌";
+			case ZPOOL_STATUS_CORRUPT_LABEL_R:
+				return u8"❌";
+			case ZPOOL_STATUS_CORRUPT_LABEL_NR:
+				return u8"❌";
+			case ZPOOL_STATUS_BAD_GUID_SUM:
+				return u8"❌";
+			case ZPOOL_STATUS_CORRUPT_POOL:
+				return u8"⚠️";
+			case ZPOOL_STATUS_CORRUPT_DATA:
+				return u8"⚠️";
+			case ZPOOL_STATUS_FAILING_DEV:
+				return u8"⚠️";
+			case ZPOOL_STATUS_VERSION_NEWER:
+				return u8"⚠️";
+			case ZPOOL_STATUS_HOSTID_MISMATCH:
+				return u8"⚠️";
+			case ZPOOL_STATUS_IO_FAILURE_WAIT:
+				return u8"❌";
+			case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
+				return u8"❌";
+			case ZPOOL_STATUS_BAD_LOG:
+				return u8"⚠️";
+			case ZPOOL_STATUS_ERRATA:
+				return u8"✅⚠️";
+			case ZPOOL_STATUS_UNSUP_FEAT_READ:
+				return u8"⛔️";
+			case ZPOOL_STATUS_UNSUP_FEAT_WRITE:
+				return u8"⛔️";
+			case ZPOOL_STATUS_FAULTED_DEV_R:
+				return u8"⚠️";
+			case ZPOOL_STATUS_FAULTED_DEV_NR:
+				return u8"❌";
+			case ZPOOL_STATUS_VERSION_OLDER:
+				return u8"✅💛";
+			case ZPOOL_STATUS_FEAT_DISABLED:
+				return u8"✅💚";
+			case ZPOOL_STATUS_RESILVERING:
+				return u8"♻️";
+			case ZPOOL_STATUS_OFFLINE_DEV:
+				return u8"📵";
+			case ZPOOL_STATUS_REMOVED_DEV:
+				return u8"📵";
+			case ZPOOL_STATUS_OK:
+				return u8"✅";
+		}
+		return u8"⁉️";
+	}
+
 	NSString * localized_describe_zpool_status_t(uint64_t stat)
 	{
 		return NSLocalizedString([NSString stringWithUTF8String:describe_zpool_status_t(stat)],
