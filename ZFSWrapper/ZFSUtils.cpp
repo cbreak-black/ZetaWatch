@@ -96,6 +96,35 @@ namespace zfs
 		return static_cast<Type>(zfs_get_type(m_handle));
 	}
 
+	bool ZFileSystem::isEncryptionRoot() const
+	{
+		boolean_t root = B_FALSE;
+		if (zfs_crypto_get_encryption_root(m_handle, &root, nullptr))
+		{
+			return root == B_TRUE;
+		}
+		return false;
+	}
+
+	std::pair<std::string, bool> ZFileSystem::encryptionRoot() const
+	{
+		boolean_t root = B_FALSE;
+		// MAXNAMELEN == 256 from spl's include/sys/sysmacros.h
+		std::string rootName(256+1, '\0');
+		zfs_crypto_get_encryption_root(m_handle, &root, &rootName[0]);
+		rootName.resize(std::strlen(rootName.data()));
+		return {rootName, root == B_TRUE};
+	}
+
+	ZFileSystem::KeyStatus ZFileSystem::keyStatus() const
+	{
+		static_assert(none == (int)ZFS_KEYSTATUS_NONE &&
+					  unavailable == (int)ZFS_KEYSTATUS_UNAVAILABLE &&
+					  available == (int)ZFS_KEYSTATUS_AVAILABLE,
+					  "ZFileSystem::KeyStatus == zfs_keystatus");
+		return static_cast<KeyStatus>(zfs_prop_get_int(m_handle, ZFS_PROP_KEYSTATUS));
+	}
+
 	namespace
 	{
 		struct ZFileSystemCallback

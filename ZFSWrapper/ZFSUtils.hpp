@@ -59,6 +59,13 @@ namespace zfs
 			bookmark	= (1 << 4)
 		};
 
+		enum KeyStatus
+		{
+			none = 0,
+			unavailable = 1,
+			available = 2
+		};
+
 	public:
 		explicit ZFileSystem(zfs_handle_t * handle);
 		~ZFileSystem();
@@ -71,6 +78,9 @@ namespace zfs
 		char const * name() const;
 		bool mounted() const;
 		Type type() const;
+		bool isEncryptionRoot() const;
+		std::pair<std::string, bool> encryptionRoot() const;
+		KeyStatus keyStatus() const;
 
 	public:
 		//! \returns all direct child filesystems

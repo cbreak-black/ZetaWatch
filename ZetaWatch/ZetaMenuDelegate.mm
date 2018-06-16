@@ -129,6 +129,14 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 	{
 		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
 		NSMenuItem * item;
+		auto [encRoot, isRoot] = fs.encryptionRoot();
+		if (isRoot)
+		{
+			item = [fsMenu addItemWithTitle:@"Load Key"
+									 action:@selector(loadKey:) keyEquivalent:@""];
+			item.representedObject = fsName;
+			item.target = delegate;
+		}
 		item = [fsMenu addItemWithTitle:@"Mount"
 								 action:@selector(mountFilesystem:) keyEquivalent:@""];
 		item.representedObject = fsName;
@@ -139,6 +147,27 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 		item.target = delegate;
 	}
 	return fsMenu;
+}
+
+NSString * formatStatus(zfs::ZFileSystem const & fs)
+{
+	char const * mountStatus = fs.mounted() ? "mounted" : "not mounted";
+	char const * encStatus = "";
+	switch (fs.keyStatus())
+	{
+		case zfs::ZFileSystem::none:
+			encStatus = "";
+			break;
+		case zfs::ZFileSystem::unavailable:
+			encStatus = ", locked";
+			break;
+		case zfs::ZFileSystem::available:
+			encStatus = ", unlocked";
+			break;
+	}
+	NSString * fsLine = [NSString stringWithFormat:@"%s (%s%s)",
+						 fs.name(), mountStatus, encStatus];
+	return fsLine;
 }
 
 NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
@@ -184,8 +213,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		auto childFileSystems = pool.allFileSystems();
 		for (auto & fs : childFileSystems)
 		{
-			NSString * fsLine = [NSString stringWithFormat:@"%s (%s)",
-				fs.name(), fs.mounted() ? "mounted" : "not mounted"];
+			auto fsLine = formatStatus(fs);
 			NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
 			item.representedObject = [NSString stringWithUTF8String:fs.name()];
 			item.submenu = createFSMenu(fs, delegate);
@@ -338,6 +366,10 @@ static NSString * getPassword()
 		 if (error)
 			 [self errorFromHelper:error];
 	 }];
+}
+
+- (IBAction)loadKey:(id)sender
+{
 }
 
 @end
