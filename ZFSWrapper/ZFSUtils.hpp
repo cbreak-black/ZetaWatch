@@ -50,6 +50,16 @@ namespace zfs
 	class ZFileSystem
 	{
 	public:
+		enum Type
+		{
+			filesystem	= (1 << 0),
+			snapshot	= (1 << 1),
+			volume		= (1 << 2),
+			pool		= (1 << 3),
+			bookmark	= (1 << 4)
+		};
+
+	public:
 		explicit ZFileSystem(zfs_handle_t * handle);
 		~ZFileSystem();
 
@@ -60,6 +70,7 @@ namespace zfs
 	public:
 		char const * name() const;
 		bool mounted() const;
+		Type type() const;
 
 	public:
 		//! \returns all direct child filesystems

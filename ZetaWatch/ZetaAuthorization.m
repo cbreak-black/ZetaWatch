@@ -159,6 +159,18 @@
 	  }] mountFilesystems:mountData authorization:self.authorization withReply:reply];
 }
 
+- (void)unmountFilesystems:(NSDictionary *)mountData
+			   withReply:(void(^)(NSError * error))reply
+{
+	// Ensure that there's a helper tool connection in place.
+	[self connectToHelperTool];
+
+	[[self.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError * proxyError)
+	  {
+		  reply(proxyError);
+	  }] unmountFilesystems:mountData authorization:self.authorization withReply:reply];
+}
+
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply
 {

@@ -164,11 +164,20 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
+		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
+		[arguments addObject:@"mount"];
 		NSString * key = [mountData objectForKey:@"key"];
+		NSString * fs = [mountData objectForKey:@"filesystem"];
+		if (key)
+			[arguments addObjectsFromArray:@[@"-l", @"-o", @"keylocation=prompt"]];
+		if (fs)
+			[arguments addObject:fs];
+		else
+			[arguments addObject:@"-a"];
 		if (key)
 		{
 			// Hacky send-password-once-no-matter-how-often-it-is-needed
-			NSTask * task = [self runCommand:@"zfs" withArguments:@[@"mount", @"-a", @"-l", @"-o", @"keylocation=prompt"] withReply:reply];
+			NSTask * task = [self runCommand:@"zfs" withArguments:arguments withReply:reply];
 			NSPipe * pipe = task.standardInput;
 			NSFileHandle * o = pipe.fileHandleForWriting;
 			[o writeData:[key dataUsingEncoding:NSUTF8StringEncoding]];
@@ -176,8 +185,29 @@
 		}
 		else
 		{
-			[self runCommand:@"zfs" withArguments:@[@"mount", @"-a"] withReply:reply];
+			[self runCommand:@"zfs" withArguments:arguments withReply:reply];
 		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
+- (void)unmountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData
+				 withReply:(void (^)(NSError *))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
+		[arguments addObject:@"unmount"];
+		NSString * fs = [mountData objectForKey:@"filesystem"];
+		if (fs)
+			[arguments addObject:fs];
+		else
+			[arguments addObject:@"-a"];
+		[self runCommand:@"zfs" withArguments:arguments withReply:reply];
 	}
 	else
 	{

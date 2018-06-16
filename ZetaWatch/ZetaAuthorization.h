@@ -25,15 +25,15 @@
 //! Internal function to force install the helper tool
 -(void)install;
 
-//! Call to import pools
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply;
 
-//! Call to mount filesystems
 - (void)mountFilesystems:(NSDictionary *)mountData
 			   withReply:(void(^)(NSError * error))reply;
 
-//! Call to scrub a pool
+- (void)unmountFilesystems:(NSDictionary *)mountData
+				 withReply:(void(^)(NSError * error))reply;
+
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply;
 

@@ -121,14 +121,27 @@ std::string formatBytes(uint64_t bytes)
 
 #pragma mark ZFS Inspection
 
-NSMenu * createFSMenu(zfs::ZFileSystem const & filesystem)
+NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 {
 	NSMenu * fsMenu = [[NSMenu alloc] init];
 	[fsMenu setAutoenablesItems:NO];
+	if (fs.type() == zfs::ZFileSystem::filesystem)
+	{
+		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+		NSMenuItem * item;
+		item = [fsMenu addItemWithTitle:@"Mount"
+								 action:@selector(mountFilesystem:) keyEquivalent:@""];
+		item.representedObject = fsName;
+		item.target = delegate;
+		item = [fsMenu addItemWithTitle:@"Unmount"
+								 action:@selector(unmountFilesystem:) keyEquivalent:@""];
+		item.representedObject = fsName;
+		item.target = delegate;
+	}
 	return fsMenu;
 }
 
-NSMenu * createVdevMenu(zfs::ZPool const & pool)
+NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
 	[vdevMenu setAutoenablesItems:NO];
@@ -175,7 +188,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 				fs.name(), fs.mounted() ? "mounted" : "not mounted"];
 			NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
 			item.representedObject = [NSString stringWithUTF8String:fs.name()];
-			item.submenu = createFSMenu(fs);
+			item.submenu = createFSMenu(fs, delegate);
 		}
 	}
 	catch (std::exception const & e)
@@ -198,7 +211,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool)
 		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
 			pool.name(), zfs::localized_describe_zpool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
-		NSMenu * vdevMenu = createVdevMenu(pool);
+		NSMenu * vdevMenu = createVdevMenu(pool, self);
 		[poolItem setSubmenu:vdevMenu];
 		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
 		[_poolMenus addObject:poolItem];
@@ -289,6 +302,26 @@ static NSString * getPassword()
 	[_authorization mountFilesystems:@{@"key": pass} withReply:^(NSError * error)
 	 {
 		 NSLog(@"FS Mount Error: %@\n", error);
+	 }];
+}
+
+- (IBAction)mountFilesystem:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization autoinstall];
+	[_authorization mountFilesystems:opts withReply:^(NSError * error)
+	 {
+		 NSLog(@"FS Mount Error: %@\n", error);
+	 }];
+}
+
+- (IBAction)unmountFilesystem:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization autoinstall];
+	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
+	 {
+		 NSLog(@"FS UnMount Error: %@\n", error);
 	 }];
 }
 

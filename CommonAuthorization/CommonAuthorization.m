@@ -59,6 +59,15 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 											   @"prompt shown when user is required to authorize a zfs mount"
 											   )
 		  };
+		NSDictionary * dictUnmount =
+		@{
+		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.unmount",
+		  kKeyAuthRightDefault: @kAuthorizationRuleClassAllow,
+		  kKeyAuthRightDesc: NSLocalizedString(
+											   @"ZetaWatch is trying to unmount a filesystem.",
+											   @"prompt shown when user is required to authorize a zfs unmount"
+											   )
+		  };
 		NSDictionary * dictScrub =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.scrub",
@@ -73,6 +82,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		@{
 		  NSStringFromSelector(@selector(importPools:authorization:withReply:)): dictImport,
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
+		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,
 		  NSStringFromSelector(@selector(scrubPool:authorization:withReply:)): dictScrub,
 		  };
 	});

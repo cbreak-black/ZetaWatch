@@ -85,6 +85,17 @@ namespace zfs
 		return zfs_is_mounted(m_handle, nullptr);
 	}
 
+	ZFileSystem::Type ZFileSystem::type() const
+	{
+		static_assert(filesystem == ZFS_TYPE_FILESYSTEM &&
+					  snapshot == ZFS_TYPE_SNAPSHOT &&
+					  volume == ZFS_TYPE_VOLUME &&
+					  pool == ZFS_TYPE_POOL &&
+					  bookmark == ZFS_TYPE_BOOKMARK,
+					  "ZFileSystem::Type == zfs_type_t");
+		return static_cast<Type>(zfs_get_type(m_handle));
+	}
+
 	namespace
 	{
 		struct ZFileSystemCallback
