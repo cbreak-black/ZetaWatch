@@ -248,6 +248,16 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }
 
+- (void)errorFromHelper:(NSError*)error
+{
+	NSUserNotification * notification = [[NSUserNotification alloc] init];
+	notification.title = NSLocalizedString(@"Helper Error", @"");
+	NSString * errorFormat = NSLocalizedString(@"Helper encountered an error: %@.", @"");
+	notification.informativeText = [NSString stringWithFormat:errorFormat, [error localizedDescription]];
+	notification.hasActionButton = NO;
+	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+}
+
 #pragma mark ZFS Maintenance
 
 static NSString * getPassword()
@@ -280,7 +290,8 @@ static NSString * getPassword()
 	[_authorization autoinstall];
 	[_authorization importPools:@{} withReply:^(NSError * error)
 	 {
-		 NSLog(@"Pool Import Error: %@\n", error);
+		 if (error)
+			 [self errorFromHelper:error];
 	 }];
 }
 
@@ -289,7 +300,8 @@ static NSString * getPassword()
 	[_authorization autoinstall];
 	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
 	 {
-		 NSLog(@"FS Mount Error: %@\n", error);
+		 if (error)
+			 [self errorFromHelper:error];
 	 }];
 }
 
@@ -301,7 +313,8 @@ static NSString * getPassword()
 		return;
 	[_authorization mountFilesystems:@{@"key": pass} withReply:^(NSError * error)
 	 {
-		 NSLog(@"FS Mount Error: %@\n", error);
+		 if (error)
+			 [self errorFromHelper:error];
 	 }];
 }
 
@@ -311,7 +324,8 @@ static NSString * getPassword()
 	[_authorization autoinstall];
 	[_authorization mountFilesystems:opts withReply:^(NSError * error)
 	 {
-		 NSLog(@"FS Mount Error: %@\n", error);
+		 if (error)
+			 [self errorFromHelper:error];
 	 }];
 }
 
@@ -321,7 +335,8 @@ static NSString * getPassword()
 	[_authorization autoinstall];
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
-		 NSLog(@"FS UnMount Error: %@\n", error);
+		 if (error)
+			 [self errorFromHelper:error];
 	 }];
 }
 
