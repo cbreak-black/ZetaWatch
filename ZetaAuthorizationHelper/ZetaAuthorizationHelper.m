@@ -19,6 +19,21 @@
 
 @implementation ZetaAuthorizationHelper
 
+- (NSString *)findCommand:(NSString*)command
+{
+	NSFileManager * manager = [NSFileManager defaultManager];
+	for (NSString * prefix in self.prefixPaths)
+	{
+		NSString * commandPath = [prefix stringByAppendingString:command];
+		if ([manager fileExistsAtPath:commandPath])
+		{
+			return commandPath;
+		}
+	}
+	@throw [NSException exceptionWithName:@"CommandNotFound"
+								   reason:@"Command not Found" userInfo:nil];
+}
+
 - (id)init
 {
 	self = [super init];
@@ -27,7 +42,7 @@
 		// Set up our XPC listener to handle requests on our Mach service.
 		self->_listener = [[NSXPCListener alloc] initWithMachServiceName:kHelperToolMachServiceName];
 		self->_listener.delegate = self;
-		self.prefixPath = @"/usr/local/bin/";
+		self.prefixPaths = @[@"/usr/local/bin/", @"/usr/local/sbin/"];
 	}
 	return self;
 }
@@ -110,7 +125,7 @@
 	@try
 	{
 		NSTask * task = [[NSTask alloc] init];
-		task.launchPath = [self.prefixPath stringByAppendingString:command];
+		task.launchPath = [self findCommand:command];;
 		task.arguments = arguments;
 		task.terminationHandler = ^(NSTask * task)
 		{
