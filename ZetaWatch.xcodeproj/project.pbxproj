@@ -599,7 +599,7 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/Documents/zfs";
+				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Debug;
 		};
@@ -634,7 +634,7 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/Documents/zfs";
+				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Release;
 		};
