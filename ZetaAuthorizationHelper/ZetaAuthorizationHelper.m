@@ -230,6 +230,40 @@
 	}
 }
 
+- (void)loadKeyForFilesystem:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
+		[arguments addObject:@"load-key"];
+		[arguments addObjectsFromArray:@[@"-L", @"prompt"]];
+		NSString * fs = [mountData objectForKey:@"filesystem"];
+		if (fs)
+			[arguments addObject:fs];
+		else
+			[arguments addObject:@"-a"];
+		NSString * key = [mountData objectForKey:@"key"];
+		if (key)
+		{
+			// Hacky send-password-once-no-matter-how-often-it-is-needed
+			NSTask * task = [self runCommand:@"zfs" withArguments:arguments withReply:reply];
+			NSPipe * pipe = task.standardInput;
+			NSFileHandle * o = pipe.fileHandleForWriting;
+			[o writeData:[key dataUsingEncoding:NSUTF8StringEncoding]];
+			[o closeFile];
+		}
+		else
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing key"}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
 - (void)scrubPool:(NSDictionary *)poolData authorization:(NSData *)authData
 		withReply:(void (^)(NSError *))reply
 {

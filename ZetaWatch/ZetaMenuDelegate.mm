@@ -370,6 +370,17 @@ static NSString * getPassword()
 
 - (IBAction)loadKey:(id)sender
 {
+	[_authorization autoinstall];
+	NSString * fs = [sender representedObject];
+	auto pass = getPassword();
+	if (!pass)
+		return;
+	NSDictionary * opts = @{@"filesystem": fs, @"key": pass};
+	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
 }
 
 @end

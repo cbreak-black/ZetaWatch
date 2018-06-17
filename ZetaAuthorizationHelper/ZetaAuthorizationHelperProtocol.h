@@ -20,6 +20,8 @@
 
 - (void)unmountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
+- (void)loadKeyForFilesystem:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
 - (void)scrubPool:(NSDictionary *)poolData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 @end
