@@ -17,6 +17,13 @@
 #include <libzfs.h>
 #include <libzfs_core.h>
 
+extern "C"
+{
+	// From #include <sys/zfs_context_userland.h>
+	extern void thread_init(void);
+	extern void thread_fini(void);
+}
+
 namespace zfs
 {
 	LibZFSHandle::LibZFSHandle() :
@@ -83,6 +90,16 @@ namespace zfs
 	bool ZFileSystem::mounted() const
 	{
 		return zfs_is_mounted(m_handle, nullptr);
+	}
+
+	bool ZFileSystem::mount()
+	{
+		return !zfs_mount(m_handle, nullptr, 0);
+	}
+
+	bool ZFileSystem::unmount()
+	{
+		return !zfs_unmount(m_handle, nullptr, 0);
 	}
 
 	ZFileSystem::Type ZFileSystem::type() const
@@ -281,21 +298,30 @@ namespace zfs
 		};
 	}
 
-	std::vector<ZPool> zpool_list(LibZFSHandle const & handle)
+	std::vector<ZPool> LibZFSHandle::pools() const
 	{
 		std::vector<ZPool> zpools;
 		ZPoolCallback cb([&](ZPool pool)
 		 {
 			 zpools.push_back(std::move(pool));
 		 });
-		zpool_iter(handle.handle(), &ZPoolCallback::handle_s, &cb);
+		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);
 		return zpools;
 	}
 
-	void zpool_iter(LibZFSHandle const & handle, std::function<void(ZPool)> callback)
+	void LibZFSHandle::poolIter(std::function<void(ZPool)> callback) const
 	{
 		ZPoolCallback cb(callback);
-		zpool_iter(handle.handle(), &ZPoolCallback::handle_s, &cb);
+		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);
+	}
+
+	NVList LibZFSHandle::importablePools() const
+	{
+		importargs_t args = {};
+		thread_init();
+		auto list = zpool_search_import(handle(), &args);
+		thread_fini();
+		return NVList(list, zfs::NVList::TakeOwnership());
 	}
 
 	std::string vdevType(NVList const & vdev)

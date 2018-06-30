@@ -89,7 +89,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	try
 	{
-		_pools = zfs::zpool_list(_zfsHandle);
+		_pools = _zfsHandle.pools();
 	}
 	catch (std::exception const & e)
 	{

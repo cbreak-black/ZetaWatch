@@ -25,6 +25,9 @@ typedef struct libzfs_handle libzfs_handle_t;
 
 namespace zfs
 {
+	class ZPool;
+	class ZFileSystem;
+
 	/*!
 	 \brief Represents libzfs initialization
 	 */
@@ -37,6 +40,23 @@ namespace zfs
 	public:
 		LibZFSHandle(LibZFSHandle && other) noexcept;
 		LibZFSHandle & operator=(LibZFSHandle && other) noexcept;
+
+	public:
+		/*!
+		 Returns a vector of all pools.
+		 */
+		std::vector<ZPool> pools() const;
+
+		/*!
+		 Iterates over all pools.
+		 */
+		void poolIter(std::function<void(ZPool)> callback) const;
+
+	public: // requires root permission
+		/*!
+		 Finds importable pools.
+		 */
+		NVList importablePools() const;
 
 	public:
 		libzfs_handle_t * handle() const;
@@ -89,6 +109,10 @@ namespace zfs
 		//! \returns all direct and indirect child filesystems
 		std::vector<ZFileSystem> allFileSystems() const;
 
+	public: // requires root permission
+		bool mount();
+		bool unmount();
+
 	private:
 		zfs_handle_t * m_handle;
 	};
@@ -131,16 +155,6 @@ namespace zfs
 	 Returns wether the given status indicates a healty pool.
 	 */
 	bool healthy(uint64_t zpoolStatus);
-
-	/*!
-	 Returns a vector of all pools.
-	 */
-	std::vector<ZPool> zpool_list(LibZFSHandle const & handle);
-
-	/*!
-	 Iterates over all pools.
-	 */
-	void zpool_iter(LibZFSHandle const & handle, std::function<void(ZPool)> callback);
 
 	/*!
 	 \returns A string describing the type of the vdev

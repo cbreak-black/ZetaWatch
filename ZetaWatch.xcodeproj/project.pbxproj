@@ -33,6 +33,10 @@
 		7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
 		7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
 		7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		7018765B20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
+		7018765C20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
+		7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
+		7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
 		70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
@@ -108,6 +112,7 @@
 		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaMenuDelegate.mm; sourceTree = "<group>"; };
 		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
 		7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZFSWrapperStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
 		709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaPoolWatcher.h; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
@@ -142,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
+				7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */,
 				7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */,
 				7018764D20E7B57700BA39B8 /* libzfs_core.1.dylib in Frameworks */,
 				7018764E20E7B57900BA39B8 /* libzfs.2.dylib in Frameworks */,
@@ -152,6 +158,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7018765C20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */,
 				7018764520E7B48C00BA39B8 /* libzfs_core.1.dylib in Frameworks */,
 				7018764620E7B48E00BA39B8 /* libzfs.2.dylib in Frameworks */,
 				7018764420E7B48A00BA39B8 /* libnvpair.1.dylib in Frameworks */,
@@ -162,6 +169,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7018765B20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */,
 				70D85FF31C316FCB00929DAE /* libzfs_core.1.dylib in Frameworks */,
 				70D85FF21C316FCB00929DAE /* libnvpair.1.dylib in Frameworks */,
 				70D85FF41C316FCB00929DAE /* libzfs.2.dylib in Frameworks */,
@@ -173,6 +181,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
+				7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */,
 				7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */,
 				7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */,
 				7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */,
@@ -238,6 +247,7 @@
 				70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */,
 				70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */,
 				70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */,
+				7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */,
 			);
 			name = lib;
 			path = /usr/local/lib;
@@ -585,6 +595,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(ZFS_DIR)/lib/libzfs/.libs/",
 					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libzpool/.libs/",
 					"$(ZFS_DIR)/lib/libnvpair/.libs/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -636,6 +647,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(ZFS_DIR)/lib/libzfs/.libs/",
 					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libzpool/.libs/",
 					"$(ZFS_DIR)/lib/libnvpair/.libs/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
