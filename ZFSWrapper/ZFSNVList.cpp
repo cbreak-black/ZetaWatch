@@ -343,6 +343,16 @@ namespace zfs
 		return NVPair(pair);
 	}
 
+	NVList::Iterator NVList::begin() const
+	{
+		return Iterator(toList());
+	}
+
+	NVList::Iterator NVList::end() const
+	{
+		return Iterator();
+	}
+
 	nvlist_t * NVList::toList() const
 	{
 		return m_list;
@@ -373,4 +383,40 @@ namespace zfs
 		return os;
 	}
 
+	NVList::Iterator::Iterator() : list(), pair()
+	{
+	}
+
+	NVList::Iterator::Iterator(nvlist_t * l) : list(l), pair()
+	{
+		pair = nvlist_next_nvpair(list, pair);
+	}
+
+	bool NVList::Iterator::operator==(Iterator const & other) const
+	{
+		return pair == other.pair;
+	}
+
+	bool NVList::Iterator::operator!=(Iterator const & other) const
+	{
+		return !(*this == other);
+	}
+
+	NVPair NVList::Iterator::operator*() const
+	{
+		return NVPair(pair);
+	}
+
+	NVList::Iterator & NVList::Iterator::operator++()
+	{
+		pair = nvlist_next_nvpair(list, pair);
+		return *this;
+	}
+
+	NVList::Iterator NVList::Iterator::operator++(int)
+	{
+		Iterator old = *this;
+		++(*this);
+		return old;
+	}
 }

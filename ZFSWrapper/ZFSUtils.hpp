@@ -53,10 +53,16 @@ namespace zfs
 		void poolIter(std::function<void(ZPool)> callback) const;
 
 	public: // requires root permission
+		struct Importable
+		{
+			std::string name;
+			uint64_t guid;
+		};
+
 		/*!
 		 Finds importable pools.
 		 */
-		NVList importablePools() const;
+		std::vector<Importable> importablePools() const;
 
 	public:
 		libzfs_handle_t * handle() const;

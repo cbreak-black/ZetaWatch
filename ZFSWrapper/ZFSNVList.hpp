@@ -103,6 +103,26 @@ namespace zfs
 	class NVList
 	{
 	public:
+		class Iterator
+		{
+		public:
+			bool operator==(Iterator const &) const;
+			bool operator!=(Iterator const &) const;
+			NVPair operator*() const;
+			Iterator & operator++();
+			Iterator operator++(int);
+
+		private:
+			friend class NVList;
+			Iterator();
+			Iterator(nvlist_t * l);
+
+		private:
+			nvlist_t * list;
+			nvpair_t * pair;
+		};
+
+	public:
 		/*!
 		 Tag type for creation of an NVList that owns its underlying nvlist_t, and will free it.
 		 */
@@ -175,6 +195,18 @@ namespace zfs
 		 \returns an NVPair representing the queried key, or an invalid NVPair
 		 */
 		NVPair lookupPair(char const * key) const;
+
+	public:
+		/*!
+		 NVList::Iterator iterates over all direct members as NVPair.
+		 \returns iterator to the beginning of this nvlist
+		 */
+		Iterator begin() const;
+
+		/*!
+		 \see begin()
+		 */
+		Iterator end() const;
 
 	public:
 		/*!
