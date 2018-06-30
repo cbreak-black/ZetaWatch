@@ -12,10 +12,29 @@
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
 		7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */; };
+		7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
+		7018764220E7B45B00BA39B8 /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
+		7018764320E7B45E00BA39B8 /* ZFSNVList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */; };
+		7018764420E7B48A00BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
+		7018764520E7B48C00BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
+		7018764620E7B48E00BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		7018764720E7B49A00BA39B8 /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; };
+		7018764820E7B4A100BA39B8 /* ZFSNVList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */; };
+		7018764920E7B4A300BA39B8 /* ZFSStrings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */; };
+		7018764A20E7B4A600BA39B8 /* ZFSUtils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */; };
+		7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */; };
+		7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
+		7018764D20E7B57700BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
+		7018764E20E7B57900BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		7018765120E7B6A500BA39B8 /* ZFSUtils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		7018765220E7B6A700BA39B8 /* ZFSStrings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		7018765320E7B6B500BA39B8 /* ZFSNVList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */; };
+		7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
+		7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
+		7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
 		70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		70D85FE91C316E8F00929DAE /* ZFSWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */; };
-		70D85FEA1C316E8F00929DAE /* ZFSWrapper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		70D85FF01C316F3100929DAE /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
 		70D85FF11C316F3100929DAE /* ZFSNVList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */; };
@@ -32,12 +51,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		70D85FE71C316E8F00929DAE /* PBXContainerItemProxy */ = {
+		7018764F20E7B62400BA39B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7006C4731C26CA1400929DAE /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 70D85FE11C316E8F00929DAE;
-			remoteInfo = ZFSWrapper;
+			remoteGlobalIDString = 7018763C20E7B44800BA39B8;
+			remoteInfo = ZFSWrapperStatic;
+		};
+		7018765420E7B79800BA39B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7006C4731C26CA1400929DAE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7018763C20E7B44800BA39B8;
+			remoteInfo = ZFSWrapperStatic;
 		};
 		70EABDD61FF9B69000BA39B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -55,7 +81,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				70D85FEA1C316E8F00929DAE /* ZFSWrapper.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +107,7 @@
 		7006C4891C26CA1500929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaMenuDelegate.mm; sourceTree = "<group>"; };
 		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
+		7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZFSWrapperStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
 		709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaPoolWatcher.h; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
@@ -115,7 +141,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70D85FE91C316E8F00929DAE /* ZFSWrapper.framework in Frameworks */,
+				7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
+				7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */,
+				7018764D20E7B57700BA39B8 /* libzfs_core.1.dylib in Frameworks */,
+				7018764E20E7B57900BA39B8 /* libzfs.2.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7018763A20E7B44800BA39B8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7018764520E7B48C00BA39B8 /* libzfs_core.1.dylib in Frameworks */,
+				7018764620E7B48E00BA39B8 /* libzfs.2.dylib in Frameworks */,
+				7018764420E7B48A00BA39B8 /* libnvpair.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +172,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
+				7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */,
+				7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */,
+				7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,6 +200,7 @@
 				7006C47B1C26CA1500929DAE /* ZetaWatch.app */,
 				70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */,
 				70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */,
+				7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -248,11 +292,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		7018763B20E7B44800BA39B8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7018764720E7B49A00BA39B8 /* ZFSWrapper.h in Headers */,
+				7018764A20E7B4A600BA39B8 /* ZFSUtils.hpp in Headers */,
+				7018764820E7B4A100BA39B8 /* ZFSNVList.hpp in Headers */,
+				7018764920E7B4A300BA39B8 /* ZFSStrings.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70D85FDF1C316E8F00929DAE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */,
+				7018765120E7B6A500BA39B8 /* ZFSUtils.hpp in Headers */,
+				7018765320E7B6B500BA39B8 /* ZFSNVList.hpp in Headers */,
+				7018765220E7B6A700BA39B8 /* ZFSStrings.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,13 +330,30 @@
 			buildRules = (
 			);
 			dependencies = (
+				7018765020E7B62400BA39B8 /* PBXTargetDependency */,
 				70EABDD71FF9B69000BA39B8 /* PBXTargetDependency */,
-				70D85FE81C316E8F00929DAE /* PBXTargetDependency */,
 			);
 			name = ZetaWatch;
 			productName = ZetaWatch;
 			productReference = 7006C47B1C26CA1500929DAE /* ZetaWatch.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7018763C20E7B44800BA39B8 /* ZFSWrapperStatic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7018763E20E7B44800BA39B8 /* Build configuration list for PBXNativeTarget "ZFSWrapperStatic" */;
+			buildPhases = (
+				7018763920E7B44800BA39B8 /* Sources */,
+				7018763A20E7B44800BA39B8 /* Frameworks */,
+				7018763B20E7B44800BA39B8 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ZFSWrapperStatic;
+			productName = ZFSWrapperStatic;
+			productReference = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		70D85FE11C316E8F00929DAE /* ZFSWrapper */ = {
 			isa = PBXNativeTarget;
@@ -308,6 +383,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7018765520E7B79800BA39B8 /* PBXTargetDependency */,
 			);
 			name = ZetaAuthorizationHelper;
 			productName = ZetaAuthorizationHelper;
@@ -327,6 +403,11 @@
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = 8THUW5GT6P;
 						ProvisioningStyle = Manual;
+					};
+					7018763C20E7B44800BA39B8 = {
+						CreatedOnToolsVersion = 9.4.1;
+						DevelopmentTeam = 8THUW5GT6P;
+						ProvisioningStyle = Automatic;
 					};
 					70D85FE11C316E8F00929DAE = {
 						CreatedOnToolsVersion = 7.2;
@@ -355,6 +436,7 @@
 			targets = (
 				7006C47A1C26CA1400929DAE /* ZetaWatch */,
 				70D85FE11C316E8F00929DAE /* ZFSWrapper */,
+				7018763C20E7B44800BA39B8 /* ZFSWrapperStatic */,
 				70EABDC91FF9ACB300BA39B8 /* ZetaAuthorizationHelper */,
 			);
 		};
@@ -394,6 +476,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7018763920E7B44800BA39B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */,
+				7018764220E7B45B00BA39B8 /* ZFSStrings.mm in Sources */,
+				7018764320E7B45E00BA39B8 /* ZFSNVList.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		70D85FDD1C316E8F00929DAE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -417,10 +509,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		70D85FE81C316E8F00929DAE /* PBXTargetDependency */ = {
+		7018765020E7B62400BA39B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 70D85FE11C316E8F00929DAE /* ZFSWrapper */;
-			targetProxy = 70D85FE71C316E8F00929DAE /* PBXContainerItemProxy */;
+			target = 7018763C20E7B44800BA39B8 /* ZFSWrapperStatic */;
+			targetProxy = 7018764F20E7B62400BA39B8 /* PBXContainerItemProxy */;
+		};
+		7018765520E7B79800BA39B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7018763C20E7B44800BA39B8 /* ZFSWrapperStatic */;
+			targetProxy = 7018765420E7B79800BA39B8 /* PBXContainerItemProxy */;
 		};
 		70EABDD71FF9B69000BA39B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -485,10 +582,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libnvpair/.libs/",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Debug;
 		};
@@ -530,9 +633,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libnvpair/.libs/",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Release;
 		};
@@ -568,6 +677,64 @@
 			};
 			name = Release;
 		};
+		7018763F20E7B44800BA39B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(ZFS_DIR)/include",
+					"$(ZFS_DIR)/lib/libspl/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libnvpair/.libs/",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		7018764020E7B44800BA39B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8THUW5GT6P;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(ZFS_DIR)/include",
+					"$(ZFS_DIR)/lib/libspl/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(ZFS_DIR)/lib/libzfs/.libs/",
+					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
+					"$(ZFS_DIR)/lib/libnvpair/.libs/",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		70D85FEC1C316E8F00929DAE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -599,7 +766,6 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Debug;
 		};
@@ -634,7 +800,6 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				ZFS_DIR = "~/Documents/zfs/zfs";
 			};
 			name = Release;
 		};
@@ -733,6 +898,15 @@
 			buildConfigurations = (
 				7006C4A31C26CA1500929DAE /* Debug */,
 				7006C4A41C26CA1500929DAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7018763E20E7B44800BA39B8 /* Build configuration list for PBXNativeTarget "ZFSWrapperStatic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7018763F20E7B44800BA39B8 /* Debug */,
+				7018764020E7B44800BA39B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
