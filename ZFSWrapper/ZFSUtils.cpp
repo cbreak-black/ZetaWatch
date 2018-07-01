@@ -13,6 +13,7 @@
 #include "ZFSUtils.hpp"
 
 #include <stdexcept>
+#include <future>
 
 #include <libzfs.h>
 #include <libzfs_core.h>
@@ -102,6 +103,50 @@ namespace zfs
 		return !zfs_unmount(m_handle, nullptr, 0);
 	}
 
+	struct Pipe
+	{
+		int fd[2];
+		int oldStdIn;
+
+		Pipe()
+		{
+			auto r = pipe(fd);
+			if (r != 0)
+				throw std::runtime_error("Could not create password pipe");
+			oldStdIn = dup(0);
+			dup2(fd[0], 0);
+		}
+
+		~Pipe()
+		{
+			dup2(oldStdIn, 0);
+			close(oldStdIn);
+			close(fd[0]);
+			close(fd[1]);
+		}
+	};
+
+	bool ZFileSystem::loadKey(std::string const & key)
+	{
+		// Hackery needed because libzfs wants to read the password from the
+		// standard input instead of accepting it as argument.
+		Pipe p;
+		auto future = std::async([&p, &key](){
+			write(p.fd[1], key.data(), key.size());
+			write(p.fd[1], "\n", 1);
+		});
+		char prompt[] = "prompt";
+		auto res = zfs_crypto_load_key(m_handle, B_FALSE, prompt);
+		future.get();
+		return res == 0;
+	}
+
+	bool ZFileSystem::unloadKey()
+	{
+		auto res = zfs_crypto_unload_key(m_handle);
+		return res == 0;
+	}
+
 	ZFileSystem::Type ZFileSystem::type() const
 	{
 		static_assert(filesystem == ZFS_TYPE_FILESYSTEM &&
@@ -182,12 +227,28 @@ namespace zfs
 		std::vector<ZFileSystem> children;
 		ZFileSystemCallback cb([&](ZFileSystem fs)
 		{
-			auto handle = fs.m_handle;
 			children.push_back(std::move(fs));
-			zfs_iter_filesystems(handle, ZFileSystemCallback::handle_s, &cb);
+			zfs_iter_filesystems(children.back().m_handle, ZFileSystemCallback::handle_s, &cb);
 		});
 		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
 		return children;
+	}
+
+	void ZFileSystem::childFilesystems(std::function<void(ZFileSystem)> callback) const
+	{
+		ZFileSystemCallback cb(std::move(callback));
+		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+	}
+
+	void ZFileSystem::allFileSystems(std::function<void(ZFileSystem)> callback) const
+	{
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			ZFileSystem fsc(zfs_handle_dup(fs.m_handle));
+			callback(std::move(fs));
+			zfs_iter_filesystems(fsc.m_handle, ZFileSystemCallback::handle_s, &cb);
+		});
+		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
 	}
 
 	ZPool::ZPool(zpool_handle_t * handle) :
@@ -256,6 +317,12 @@ namespace zfs
 		return fileSystems;
 	}
 
+	void ZPool::allFileSystems(std::function<void(ZFileSystem)> callback) const
+	{
+		callback(rootFileSystem());
+		rootFileSystem().allFileSystems(callback);
+	}
+
 	zpool_handle_t * ZPool::handle() const
 	{
 		return m_handle;
@@ -272,6 +339,14 @@ namespace zfs
 			default:
 				return false;
 		}
+	}
+
+	ZFileSystem LibZFSHandle::filesystem(std::string const & name) const
+	{
+		auto fs = zfs_open(handle(), name.c_str(), ZFS_TYPE_FILESYSTEM);
+		if (fs == nullptr)
+			throw std::runtime_error("Filesystem " + name + " does not exist");
+		return ZFileSystem(fs);
 	}
 
 	namespace
@@ -309,7 +384,7 @@ namespace zfs
 		return zpools;
 	}
 
-	void LibZFSHandle::poolIter(std::function<void(ZPool)> callback) const
+	void LibZFSHandle::pools(std::function<void(ZPool)> callback) const
 	{
 		ZPoolCallback cb(callback);
 		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);
@@ -328,6 +403,41 @@ namespace zfs
 			pools.push_back({pair.name(), l.lookup<uint64_t>("pool_guid")});
 		}
 		return pools;
+	}
+
+	static bool import_with_args(libzfs_handle_t * handle, importargs_t * args)
+	{
+		thread_init();
+		auto list = NVList(zpool_search_import(handle, args), zfs::NVList::TakeOwnership());
+		thread_fini();
+		bool success = true;
+		for (auto pair : list)
+		{
+			auto l = pair.convertTo<NVList>();
+			auto r = zpool_import(handle, l.toList(), nullptr, nullptr);
+			success = (r == 0) && success;
+		}
+		return success;
+	}
+
+	bool LibZFSHandle::importAllPools() const
+	{
+		importargs_t args = {};
+		return import_with_args(handle(), &args);
+	}
+
+	bool LibZFSHandle::import(std::string const & name) const
+	{
+		importargs_t args = {};
+		args.poolname = const_cast<char*>(name.c_str());
+		return import_with_args(handle(), &args);
+	}
+
+	bool LibZFSHandle::import(uint64_t guid) const
+	{
+		importargs_t args = {};
+		args.guid = guid;
+		return import_with_args(handle(), &args);
 	}
 
 	std::string vdevType(NVList const & vdev)

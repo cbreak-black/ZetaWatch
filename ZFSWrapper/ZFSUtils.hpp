@@ -42,6 +42,12 @@ namespace zfs
 		LibZFSHandle & operator=(LibZFSHandle && other) noexcept;
 
 	public:
+		/*
+		 Returns a filesystem loaded by name.
+		 */
+		ZFileSystem filesystem(std::string const & name) const;
+
+	public:
 		/*!
 		 Returns a vector of all pools.
 		 */
@@ -50,7 +56,7 @@ namespace zfs
 		/*!
 		 Iterates over all pools.
 		 */
-		void poolIter(std::function<void(ZPool)> callback) const;
+		void pools(std::function<void(ZPool)> callback) const;
 
 	public: // requires root permission
 		struct Importable
@@ -63,6 +69,21 @@ namespace zfs
 		 Finds importable pools.
 		 */
 		std::vector<Importable> importablePools() const;
+
+		/*!
+		 Imports all pools.
+		 */
+		bool importAllPools() const;
+
+		/*!
+		 Imports a pool by name
+		 */
+		bool import(std::string const & name) const;
+
+		/*!
+		 Imports a pool by guid
+		 */
+		bool import(uint64_t guid) const;
 
 	public:
 		libzfs_handle_t * handle() const;
@@ -115,9 +136,17 @@ namespace zfs
 		//! \returns all direct and indirect child filesystems
 		std::vector<ZFileSystem> allFileSystems() const;
 
+		//! Iterates over all direct child filesystems
+		void childFilesystems(std::function<void(ZFileSystem)> callback) const;
+
+		//! Iterates over all child filesystems recursively
+		void allFileSystems(std::function<void(ZFileSystem)> callback) const;
+
 	public: // requires root permission
 		bool mount();
 		bool unmount();
+		bool loadKey(std::string const & key);
+		bool unloadKey();
 
 	private:
 		zfs_handle_t * m_handle;
@@ -149,6 +178,9 @@ namespace zfs
 
 		//! \returns all child filesystems, recursively
 		std::vector<ZFileSystem> allFileSystems() const;
+
+		//! Iterates over all child filesystems recursively
+		void allFileSystems(std::function<void(ZFileSystem)> callback) const;
 
 	public:
 		zpool_handle_t * handle() const;
