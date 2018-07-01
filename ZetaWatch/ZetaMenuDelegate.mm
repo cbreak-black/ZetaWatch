@@ -77,9 +77,15 @@ std::string genName(zfs::NVList const & vdev)
 {
 	auto type = zfs::vdevType(vdev);
 	if (type == "file" || type == "disk")
+	{
+		if (zfs::vdevIsLog(vdev))
+			return "log: " + zfs::vdevPath(vdev);
 		return zfs::vdevPath(vdev);
+	}
 	else
+	{
 		return type;
+	}
 }
 
 struct MetricPrefix
@@ -207,6 +213,15 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 														action:nullptr keyEquivalent:@""];
 				[item setIndentationLevel:1];
 			}
+		}
+		// Caches
+		auto caches = pool.caches();
+		for (auto && cache: caches)
+		{
+			auto stat = zfs::vdevStat(cache);
+			NSString * devLine = [NSString stringWithFormat:@"cache: %s (%@)",
+								  genName(cache).c_str(), formatErrorStat(stat)];
+			[vdevMenu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
 		}
 		// Filesystems
 		[vdevMenu addItem:[NSMenuItem separatorItem]];

@@ -328,6 +328,12 @@ namespace zfs
 		return vdevChildren(vdevtree);
 	}
 
+	std::vector<zfs::NVList> ZPool::caches() const
+	{
+		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+		return vdevCaches(vdevtree);
+	}
+
 	ZFileSystem ZPool::rootFileSystem() const
 	{
 		auto lib = zpool_get_handle(m_handle);
@@ -474,6 +480,13 @@ namespace zfs
 		return vdev.lookup<std::string>(ZPOOL_CONFIG_TYPE);
 	}
 
+	bool vdevIsLog(NVList const & vdev)
+	{
+		uint64_t isLog = 0;
+		vdev.lookup(ZPOOL_CONFIG_IS_LOG, isLog);
+		return isLog;
+	}
+
 	std::string vdevPath(NVList const & vdev)
 	{
 		auto path = vdev.lookup<std::string>(ZPOOL_CONFIG_PATH);
@@ -498,6 +511,13 @@ namespace zfs
 		std::vector<zfs::NVList> children;
 		vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_CHILDREN, children);
 		return children;
+	}
+
+	std::vector<NVList> vdevCaches(NVList const & vdev)
+	{
+		std::vector<zfs::NVList> caches;
+		vdev.lookup<std::vector<zfs::NVList>>(ZPOOL_CONFIG_L2CACHE, caches);
+		return caches;
 	}
 
 	VDevStat vdevStat(NVList const & vdev)

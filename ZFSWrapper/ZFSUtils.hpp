@@ -171,6 +171,7 @@ namespace zfs
 		uint64_t status() const; //!< zpool_status_t
 		NVList config() const;
 		std::vector<zfs::NVList> vdevs() const;
+		std::vector<zfs::NVList> caches() const;
 
 	public:
 		//! \returns the root filesystem
@@ -200,6 +201,11 @@ namespace zfs
 	std::string vdevType(NVList const & vdev);
 
 	/*!
+	 \returns whether this vdev is a log vdev
+	 */
+	bool vdevIsLog(NVList const & vdev);
+
+	/*!
 	 \returns A string describing the path of the vdev
 	 */
 	std::string vdevPath(NVList const & vdev);
@@ -218,6 +224,11 @@ namespace zfs
 	 \returns A vector containing the children of this vdev
 	 */
 	std::vector<NVList> vdevChildren(NVList const & vdev);
+
+	/*!
+	 \returns A vector containing the cache devices of this vdev
+	 */
+	std::vector<NVList> vdevCaches(NVList const & vdev);
 
 	/*!
 	 A stripped down replacement for libzfs' vdev_stat struct. It will be extended as needed when
