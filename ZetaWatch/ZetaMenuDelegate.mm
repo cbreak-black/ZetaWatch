@@ -333,19 +333,6 @@ static NSString * getPassword()
 	 }];
 }
 
-- (IBAction)mountAllFilesystemsWithKey:(id)sender
-{
-	[_authorization autoinstall];
-	auto pass = getPassword();
-	if (!pass)
-		return;
-	[_authorization mountFilesystems:@{@"key": pass} withReply:^(NSError * error)
-	 {
-		 if (error)
-			 [self errorFromHelper:error];
-	 }];
-}
-
 - (IBAction)mountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};

@@ -48,7 +48,7 @@
 		70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */; };
 		70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDCC1FF9ACB300BA39B8 /* main.m */; };
-		70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */; };
+		70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm */; };
 		70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */; };
@@ -136,7 +136,7 @@
 		70EABDCC1FF9ACB300BA39B8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		70EABDD11FF9AE2800BA39B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		70EABDD21FF9B21C00BA39B8 /* ZetaAuthorizationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaAuthorizationHelper.h; sourceTree = "<group>"; };
-		70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaAuthorizationHelper.m; sourceTree = "<group>"; };
+		70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaAuthorizationHelper.mm; sourceTree = "<group>"; };
 		70EABDD51FF9B40F00BA39B8 /* Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Launchd.plist; sourceTree = "<group>"; };
 		70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = CommonAuthorization.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -291,7 +291,7 @@
 			children = (
 				70EABDC51FF9AAB800BA39B8 /* ZetaAuthorizationHelperProtocol.h */,
 				70EABDD21FF9B21C00BA39B8 /* ZetaAuthorizationHelper.h */,
-				70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m */,
+				70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm */,
 				70EABDCC1FF9ACB300BA39B8 /* main.m */,
 				70EABDD11FF9AE2800BA39B8 /* Info.plist */,
 				70EABDD51FF9B40F00BA39B8 /* Launchd.plist */,
@@ -512,7 +512,7 @@
 			files = (
 				70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */,
 				70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */,
-				70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.m in Sources */,
+				70EABDD41FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,7 +836,6 @@
 				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -875,7 +874,6 @@
 				DEVELOPMENT_TEAM = 8THUW5GT6P;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,

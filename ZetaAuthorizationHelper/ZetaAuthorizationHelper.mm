@@ -11,7 +11,12 @@
 
 #import "CommonAuthorization.h"
 
+#include "ZFSUtils.hpp"
+
 @interface ZetaAuthorizationHelper () <NSXPCListenerDelegate, ZetaAuthorizationHelperProtocol>
+{
+	zfs::LibZFSHandle _zfs;
+}
 
 @property (atomic, strong, readwrite) NSXPCListener * listener;
 
@@ -84,7 +89,8 @@
 	// Create an authorization ref from that the external form data contained within.
 	if (error == nil)
 	{
-		OSStatus err = AuthorizationCreateFromExternalForm([authData bytes], &authRef);
+		auto extForm = static_cast<const AuthorizationExternalForm *>([authData bytes]);
+		OSStatus err = AuthorizationCreateFromExternalForm(extForm, &authRef);
 
 		// Authorize the right associated with the command.
 		if (err == errAuthorizationSuccess)
@@ -165,7 +171,22 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		[self runCommand:@"zpool" withArguments:@[@"import", @"-a"] withReply:reply];
+		try
+		{
+			bool success = _zfs.importAllPools();
+			if (success)
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
 	}
 	else
 	{
@@ -179,28 +200,39 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
-		[arguments addObject:@"mount"];
-		NSString * key = [mountData objectForKey:@"key"];
-		NSString * fs = [mountData objectForKey:@"filesystem"];
-		if (key)
-			[arguments addObjectsFromArray:@[@"-l", @"-o", @"keylocation=prompt"]];
-		if (fs)
-			[arguments addObject:fs];
-		else
-			[arguments addObject:@"-a"];
-		if (key)
+		NSString * fsName = [mountData objectForKey:@"filesystem"];
+		try
 		{
-			// Hacky send-password-once-no-matter-how-often-it-is-needed
-			NSTask * task = [self runCommand:@"zfs" withArguments:arguments withReply:reply];
-			NSPipe * pipe = task.standardInput;
-			NSFileHandle * o = pipe.fileHandleForWriting;
-			[o writeData:[key dataUsingEncoding:NSUTF8StringEncoding]];
-			[o closeFile];
+			bool success = true;
+			if (fsName)
+			{
+				auto fs = _zfs.filesystem([fsName UTF8String]);
+				if (!fs.mounted())
+					success = fs.mount() && success;
+			}
+			else
+			{
+				_zfs.pools([&success](zfs::ZPool pool)
+				{
+					pool.allFileSystems([&success](zfs::ZFileSystem fs)
+					{
+						if (!fs.mounted())
+							success = fs.mount() && success;
+					});
+				});
+			}
+			if (success)
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Mount Error"}]);
+			}
 		}
-		else
+		catch (std::exception const & e)
 		{
-			[self runCommand:@"zfs" withArguments:arguments withReply:reply];
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -215,14 +247,40 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
-		[arguments addObject:@"unmount"];
-		NSString * fs = [mountData objectForKey:@"filesystem"];
-		if (fs)
-			[arguments addObject:fs];
-		else
-			[arguments addObject:@"-a"];
-		[self runCommand:@"zfs" withArguments:arguments withReply:reply];
+		NSString * fsName = [mountData objectForKey:@"filesystem"];
+		try
+		{
+			bool success = true;
+			if (fsName)
+			{
+				auto fs = _zfs.filesystem([fsName UTF8String]);
+				if (fs.mounted())
+					success = fs.unmount() && success;
+			}
+			else
+			{
+				_zfs.pools([&success](zfs::ZPool pool)
+				{
+					pool.allFileSystems([&success](zfs::ZFileSystem fs)
+					{
+						if (fs.mounted())
+							success = fs.unmount() && success;
+					});
+				});
+			}
+			if (success)
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unount Error"}]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
 	}
 	else
 	{
@@ -235,27 +293,29 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:8];
-		[arguments addObject:@"load-key"];
-		[arguments addObjectsFromArray:@[@"-L", @"prompt"]];
-		NSString * fs = [mountData objectForKey:@"filesystem"];
-		if (fs)
-			[arguments addObject:fs];
-		else
-			[arguments addObject:@"-a"];
+		NSString * fsName = [mountData objectForKey:@"filesystem"];
 		NSString * key = [mountData objectForKey:@"key"];
-		if (key)
+		if (!fsName || !key)
 		{
-			// Hacky send-password-once-no-matter-how-often-it-is-needed
-			NSTask * task = [self runCommand:@"zfs" withArguments:arguments withReply:reply];
-			NSPipe * pipe = task.standardInput;
-			NSFileHandle * o = pipe.fileHandleForWriting;
-			[o writeData:[key dataUsingEncoding:NSUTF8StringEncoding]];
-			[o closeFile];
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
 		}
-		else
+		try
 		{
-			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing key"}]);
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			auto r = fs.loadKey([key UTF8String]);
+			if (r)
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Password"}]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
