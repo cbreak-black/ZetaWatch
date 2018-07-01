@@ -108,21 +108,44 @@ namespace zfs
 		int fd[2];
 		int oldStdIn;
 
-		Pipe()
+		Pipe() : fd{-1, -1}, oldStdIn(-1)
 		{
 			auto r = pipe(fd);
-			if (r != 0)
+			if (r == -1)
+			{
 				throw std::runtime_error("Could not create password pipe");
+			}
 			oldStdIn = dup(0);
-			dup2(fd[0], 0);
+			if (oldStdIn == -1)
+			{
+				restore();
+				throw std::runtime_error("FD dup Error");
+			}
+			auto res = dup2(fd[0], 0);
+			if (res == -1)
+			{
+				restore();
+				throw std::runtime_error("FD dup2 Error");
+			}
 		}
 
 		~Pipe()
 		{
-			dup2(oldStdIn, 0);
-			close(oldStdIn);
-			close(fd[0]);
-			close(fd[1]);
+			restore();
+		}
+
+		void restore()
+		{
+			// Ignore errors
+			if (oldStdIn != -1)
+			{
+				dup2(oldStdIn, 0);
+				close(oldStdIn);
+			}
+			if (fd[0] != -1)
+				close(fd[0]);
+			if (fd[1] != -1)
+				close(fd[1]);
 		}
 	};
 
@@ -132,13 +155,19 @@ namespace zfs
 		// standard input instead of accepting it as argument.
 		Pipe p;
 		auto future = std::async([&p, &key](){
-			write(p.fd[1], key.data(), key.size());
-			write(p.fd[1], "\n", 1);
+			size_t r = 0;
+			r = write(p.fd[1], key.data(), key.size());
+			if (r == -1)
+				return false;
+			r = write(p.fd[1], "\n", 1);
+			if (r == -1)
+				return false;
+			return true;
 		});
 		char prompt[] = "prompt";
 		auto res = zfs_crypto_load_key(m_handle, B_FALSE, prompt);
-		future.get();
-		return res == 0;
+		bool writeRes = future.get();
+		return res == 0 && writeRes;
 	}
 
 	bool ZFileSystem::unloadKey()
