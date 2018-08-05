@@ -23,7 +23,7 @@
 
 @interface ZetaMenuDelegate ()
 {
-	NSMutableArray * _poolMenus;
+	NSMutableArray * _dynamicMenus;
 	ZetaPoolWatcher * _watcher;
 	ZetaAuthorization * _authorization;
 }
@@ -36,7 +36,7 @@
 {
 	if (self = [super init])
 	{
-		_poolMenus = [[NSMutableArray alloc] init];
+		_dynamicMenus = [[NSMutableArray alloc] init];
 		_watcher = [[ZetaPoolWatcher alloc] init];
 		_watcher.delegate = self;
 		_authorization = [[ZetaAuthorization alloc] init];
@@ -51,8 +51,9 @@
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
-	[self clearPoolMenu:menu];
+	[self clearDynamicMenu:menu];
 	[self createPoolMenu:menu];
+	[self createActionMenu:menu];
 }
 
 #pragma mark Formating
@@ -255,18 +256,52 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		NSMenu * vdevMenu = createVdevMenu(pool, self);
 		[poolItem setSubmenu:vdevMenu];
 		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
-		[_poolMenus addObject:poolItem];
+		[_dynamicMenus addObject:poolItem];
 		++poolIdx;
 	}
 }
 
-- (void)clearPoolMenu:(NSMenu*)menu
+- (void)createActionMenu:(NSMenu*)menu
 {
-	for (NSMenuItem * poolMenu in _poolMenus)
+	NSInteger actionMenuIdx = [menu indexOfItemWithTag:ActionAnchorMenuTag];
+	if (actionMenuIdx < 0)
+		return;
+	// Unlock
+	NSUInteger encryptionRootCount = 0;
+	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:@"Load Keys" action:NULL keyEquivalent:@""];
+	NSMenu * unlockMenu = [[NSMenu alloc] init];
+	[unlockItem setSubmenu:unlockMenu];
+	for (auto && pool: [_watcher pools])
 	{
-		[menu removeItem:poolMenu];
+		for (auto & fs : pool.allFileSystems())
+		{
+			auto [encRoot, isRoot] = fs.encryptionRoot();
+			auto keyStatus = fs.keyStatus();
+			if (isRoot && keyStatus == zfs::ZFileSystem::unavailable)
+			{
+				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+				NSMenuItem * item = [unlockMenu addItemWithTitle:fsName
+														  action:@selector(loadKey:) keyEquivalent:@""];
+				item.representedObject = fsName;
+				item.target = self;
+				encryptionRootCount++;
+			}
+		}
 	}
-	[_poolMenus removeAllObjects];
+	if (encryptionRootCount > 0)
+	{
+		[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
+		[_dynamicMenus addObject:unlockItem];
+	}
+}
+
+- (void)clearDynamicMenu:(NSMenu*)menu
+{
+	for (NSMenuItem * m in _dynamicMenus)
+	{
+		[menu removeItem:m];
+	}
+	[_dynamicMenus removeAllObjects];
 }
 
 - (void)errorDetectedInPool:(std::string const &)pool

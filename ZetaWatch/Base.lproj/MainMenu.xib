@@ -21,10 +21,13 @@
         <customObject id="8rf-zp-5r9" userLabel="MenuDelegate" customClass="ZetaMenuDelegate"/>
         <menu title="Zeta" id="Xld-Up-BZ8">
             <items>
-                <menuItem title="ZFS Pools" tag="100" enabled="NO" id="SFT-8i-4hp">
+                <menuItem title="ZFS Pools" tag="100" hidden="YES" enabled="NO" id="SFT-8i-4hp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="V2G-dn-yYW"/>
+                <menuItem title="Actions" tag="101" hidden="YES" enabled="NO" id="Wnr-ig-9x9">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
                 <menuItem title="Import all Pools" id="IPA-0t-xwp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

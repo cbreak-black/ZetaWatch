@@ -16,7 +16,8 @@
 
 enum ZetaMenuTags
 {
-	ZPoolAnchorMenuTag = 100
+	ZPoolAnchorMenuTag = 100,
+	ActionAnchorMenuTag = 101
 };
 
 @interface ZetaMenuDelegate : NSObject <NSMenuDelegate,ZetaPoolWatcherDelegate>
