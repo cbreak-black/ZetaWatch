@@ -84,31 +84,29 @@
 	if ((authData == nil) || ([authData length] != sizeof(AuthorizationExternalForm)))
 	{
 		error = [NSError errorWithDomain:NSOSStatusErrorDomain code:paramErr userInfo:nil];
+		return error;
 	}
 
 	// Create an authorization ref from that the external form data contained within.
-	if (error == nil)
+	auto extForm = static_cast<const AuthorizationExternalForm *>([authData bytes]);
+	OSStatus err = AuthorizationCreateFromExternalForm(extForm, &authRef);
+
+	// Authorize the right associated with the command.
+	if (err == errAuthorizationSuccess)
 	{
-		auto extForm = static_cast<const AuthorizationExternalForm *>([authData bytes]);
-		OSStatus err = AuthorizationCreateFromExternalForm(extForm, &authRef);
+		AuthorizationItem oneRight = { NULL, 0, NULL, 0 };
+		AuthorizationRights rights   = { 1, &oneRight };
 
-		// Authorize the right associated with the command.
-		if (err == errAuthorizationSuccess)
-		{
-			AuthorizationItem oneRight = { NULL, 0, NULL, 0 };
-			AuthorizationRights rights   = { 1, &oneRight };
+		oneRight.name = [[CommonAuthorization authorizationRightForCommand:command] UTF8String];
+		assert(oneRight.name != NULL);
 
-			oneRight.name = [[CommonAuthorization authorizationRightForCommand:command] UTF8String];
-			assert(oneRight.name != NULL);
-
-			err = AuthorizationCopyRights(authRef, &rights, NULL,
-				kAuthorizationFlagExtendRights | kAuthorizationFlagInteractionAllowed,
-				NULL);
-		}
-		if (err != errAuthorizationSuccess)
-		{
-			error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-		}
+		err = AuthorizationCopyRights(authRef, &rights, NULL,
+			kAuthorizationFlagExtendRights | kAuthorizationFlagInteractionAllowed,
+			NULL);
+	}
+	if (err != errAuthorizationSuccess)
+	{
+		error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
 	}
 
 	if (authRef != NULL)
