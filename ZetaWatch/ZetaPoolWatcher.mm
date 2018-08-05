@@ -149,12 +149,9 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 		for (auto && pool: _pools)
 		{
 			auto vdevs = pool.vdevs();
-			for (auto && vdev: vdevs)
-			{
-				auto scan = scanStat(vdev);
-				if (scan.state == zfs::ScanStat::scanning)
-					++scrubsInProgress;
-			}
+			auto scan = pool.scanStat();
+			if (scan.state == zfs::ScanStat::scanning)
+				++scrubsInProgress;
 		}
 	}
 	catch (std::exception const & e)

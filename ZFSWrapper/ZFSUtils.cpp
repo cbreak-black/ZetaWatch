@@ -334,6 +334,20 @@ namespace zfs
 		return vdevCaches(vdevtree);
 	}
 
+	VDevStat ZPool::vdevStat() const
+	{
+		VDevStat vdevStat(NVList const & vdev);
+		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+		return vdevStat(vdevtree);
+	}
+
+	ScanStat ZPool::scanStat() const
+	{
+		ScanStat scanStat(NVList const & vdev);
+		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+		return scanStat(vdevtree);
+	}
+
 	ZFileSystem ZPool::rootFileSystem() const
 	{
 		auto lib = zpool_get_handle(m_handle);

@@ -153,6 +153,36 @@ namespace zfs
 	};
 
 	/*!
+	 A stripped down replacement for libzfs' vdev_stat struct. It will be extended as needed when
+	 more information is required.
+	 */
+	struct VDevStat
+	{
+		uint64_t state;
+		uint64_t aux;
+		uint64_t alloc;
+		uint64_t space;
+		uint64_t deflatedSpace;
+		uint64_t errorRead;
+		uint64_t errorWrite;
+		uint64_t errorChecksum;
+	};
+
+	/*!
+	 A stripped down replacement for libzfs' scan_stat struct. It will be extended as needed when
+	 more information is required.
+	 */
+	struct ScanStat
+	{
+		enum Func { funcNone, scrub, resilver };
+		enum State { stateNone, scanning, finished, canceled };
+		Func func;
+		State state;
+		uint64_t toExamine;
+		uint64_t examined;
+	};
+
+	/*!
 	 \brief Represents a ZPool
 	 */
 	class ZPool
@@ -170,8 +200,27 @@ namespace zfs
 		char const * name() const;
 		uint64_t status() const; //!< zpool_status_t
 		NVList config() const;
+
+	public:
+		/*!
+		 \returns A vector containing the children of this pool
+		 */
 		std::vector<zfs::NVList> vdevs() const;
+
+		/*!
+		 \returns A vector containing the cache devices of this pool
+		 */
 		std::vector<zfs::NVList> caches() const;
+
+		/*!
+		 \returns A struct describing the status of the pool
+		 */
+		VDevStat vdevStat() const;
+
+		/*!
+		 \returns A struct describing the scan status of the pool
+		 */
+		ScanStat scanStat() const;
 
 	public:
 		//! \returns the root filesystem
@@ -231,39 +280,9 @@ namespace zfs
 	std::vector<NVList> vdevCaches(NVList const & vdev);
 
 	/*!
-	 A stripped down replacement for libzfs' vdev_stat struct. It will be extended as needed when
-	 more information is required.
-	 */
-	struct VDevStat
-	{
-		uint64_t state;
-		uint64_t aux;
-		uint64_t alloc;
-		uint64_t space;
-		uint64_t deflatedSpace;
-		uint64_t errorRead;
-		uint64_t errorWrite;
-		uint64_t errorChecksum;
-	};
-
-	/*!
 	 \returns A struct describing the status of the given vdev
 	 */
 	VDevStat vdevStat(NVList const & vdev);
-
-	/*!
-	 A stripped down replacement for libzfs' scan_stat struct. It will be extended as needed when
-	 more information is required.
-	 */
-	struct ScanStat
-	{
-		enum Func { funcNone, scrub, resilver };
-		enum State { stateNone, scanning, finished, canceled };
-		Func func;
-		State state;
-		uint64_t toExamine;
-		uint64_t examined;
-	};
 
 	/*!
 	 \returns A struct describing the scan status of the given vdev

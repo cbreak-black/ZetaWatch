@@ -183,6 +183,15 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	try
 	{
 		auto vdevs = pool.vdevs();
+		auto scrub = pool.scanStat();
+		if (scrub.state == zfs::ScanStat::scanning)
+		{
+			NSString * scanLine = [NSString stringWithFormat:@"Scrub in Progress: %0.2f %% (%s out of %s)",
+								   100.0*scrub.examined/scrub.toExamine,
+								   formatBytes(scrub.examined).c_str(),
+								   formatBytes(scrub.toExamine).c_str()];
+			[vdevMenu addItemWithTitle:scanLine action:nullptr keyEquivalent:@""];
+		}
 		for (auto && vdev: vdevs)
 		{
 			// VDev
@@ -191,17 +200,6 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 				genName(vdev).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
-			auto scrub = zfs::scanStat(vdev);
-			if (scrub.state == zfs::ScanStat::scanning)
-			{
-				NSString * scanLine = [NSString stringWithFormat:@"Scrub in Progress: %0.2f %% (%s out of %s)",
-									   100.0*scrub.examined/scrub.toExamine,
-									   formatBytes(scrub.examined).c_str(),
-									   formatBytes(scrub.toExamine).c_str()];
-				NSMenuItem * item = [vdevMenu addItemWithTitle:scanLine
-														action:nullptr keyEquivalent:@""];
-				[item setIndentationLevel:1];
-			}
 			// Children
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
