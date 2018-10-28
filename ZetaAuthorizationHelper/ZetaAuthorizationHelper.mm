@@ -171,7 +171,16 @@
 	{
 		try
 		{
-			bool success = _zfs.importAllPools();
+			auto pools = _zfs.importAllPools();
+			bool success = true;
+			for (auto const & pool : pools)
+			{
+				pool.allFileSystems([](zfs::ZFileSystem fs)
+				{
+					if (!fs.mounted())
+						fs.mount(); // ignore mount errors
+				});
+			}
 			if (success)
 			{
 				reply(nullptr);
@@ -304,6 +313,15 @@
 			auto r = fs.loadKey([key UTF8String]);
 			if (r)
 			{
+				// Filesystem itself
+				if (!fs.mounted())
+					fs.mount(); // ignore mount errors
+				// All contained filesystems recursively
+				fs.allFileSystems([](zfs::ZFileSystem fs)
+				{
+					if (!fs.mounted())
+						fs.mount(); // ignore mount errors
+				});
 				reply(nullptr);
 			}
 			else

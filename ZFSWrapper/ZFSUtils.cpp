@@ -280,6 +280,13 @@ namespace zfs
 		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
 	}
 
+	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :
+		m_handle(zpool_open(zfsHandle, name.c_str()))
+	{
+		if (m_handle == nullptr)
+			throw std::runtime_error("Unable to open pool");
+	}
+
 	ZPool::ZPool(zpool_handle_t * handle) :
 		m_handle(handle)
 	{
@@ -454,39 +461,52 @@ namespace zfs
 		return pools;
 	}
 
-	static bool import_with_args(libzfs_handle_t * handle, importargs_t * args)
+	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle, importargs_t * args)
 	{
 		thread_init();
 		auto list = NVList(zpool_search_import(handle, args), zfs::NVList::TakeOwnership());
 		thread_fini();
-		bool success = true;
+		std::vector<ZPool> pools;
 		for (auto pair : list)
 		{
 			auto l = pair.convertTo<NVList>();
 			auto r = zpool_import(handle, l.toList(), nullptr, nullptr);
-			success = (r == 0) && success;
+			if (r == 0)
+			{
+				pools.push_back(ZPool(handle, pair.name()));
+			}
+			else
+			{
+				throw std::runtime_error("Error opening pool " + pair.name());
+			}
 		}
-		return success;
+		return pools;
 	}
 
-	bool LibZFSHandle::importAllPools() const
+	std::vector<ZPool> LibZFSHandle::importAllPools() const
 	{
 		importargs_t args = {};
 		return import_with_args(handle(), &args);
 	}
 
-	bool LibZFSHandle::import(std::string const & name) const
+	ZPool LibZFSHandle::import(std::string const & name) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		return import_with_args(handle(), &args);
+		auto pools = import_with_args(handle(), &args);
+		if (pools.size() != 1)
+			throw std::runtime_error("Invalid number of pools imported");
+		return std::move(pools.front());
 	}
 
-	bool LibZFSHandle::import(uint64_t guid) const
+	ZPool LibZFSHandle::import(uint64_t guid) const
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		return import_with_args(handle(), &args);
+		auto pools = import_with_args(handle(), &args);
+		if (pools.size() != 1)
+			throw std::runtime_error("Invalid number of pools imported");
+		return std::move(pools.front());
 	}
 
 	std::string vdevType(NVList const & vdev)

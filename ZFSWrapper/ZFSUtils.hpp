@@ -73,17 +73,17 @@ namespace zfs
 		/*!
 		 Imports all pools.
 		 */
-		bool importAllPools() const;
+		std::vector<ZPool> importAllPools() const;
 
 		/*!
 		 Imports a pool by name
 		 */
-		bool import(std::string const & name) const;
+		ZPool import(std::string const & name) const;
 
 		/*!
 		 Imports a pool by guid
 		 */
-		bool import(uint64_t guid) const;
+		ZPool import(uint64_t guid) const;
 
 	public:
 		libzfs_handle_t * handle() const;
@@ -190,6 +190,11 @@ namespace zfs
 	public:
 		// Takes ownership
 		explicit ZPool(zpool_handle_t * handle);
+
+		// Opens a new pool handle
+		explicit ZPool(libzfs_handle_t * zfsHandle, std::string const & name);
+
+		// Closes pool handle
 		~ZPool();
 
 	public:
