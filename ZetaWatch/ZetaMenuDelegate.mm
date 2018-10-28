@@ -363,7 +363,6 @@ static NSString * getPassword()
 
 - (IBAction)importAllPools:(id)sender
 {
-	[_authorization autoinstall];
 	[_authorization importPools:@{} withReply:^(NSError * error)
 	 {
 		 if (error)
@@ -373,7 +372,6 @@ static NSString * getPassword()
 
 - (IBAction)mountAllFilesystems:(id)sender
 {
-	[_authorization autoinstall];
 	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
 	 {
 		 if (error)
@@ -384,7 +382,6 @@ static NSString * getPassword()
 - (IBAction)mountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
-	[_authorization autoinstall];
 	[_authorization mountFilesystems:opts withReply:^(NSError * error)
 	 {
 		 if (error)
@@ -395,7 +392,6 @@ static NSString * getPassword()
 - (IBAction)unmountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
-	[_authorization autoinstall];
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
 		 if (error)
@@ -405,7 +401,6 @@ static NSString * getPassword()
 
 - (IBAction)loadKey:(id)sender
 {
-	[_authorization autoinstall];
 	NSString * fs = [sender representedObject];
 	auto pass = getPassword();
 	if (!pass)

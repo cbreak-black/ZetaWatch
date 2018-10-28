@@ -19,9 +19,6 @@
 //! Call this after the program finished starting
 -(void)connectToAuthorization;
 
-//! Internal function to install the helper tool if needed
--(void)autoinstall;
-
 //! Internal function to force install the helper tool
 -(void)install;
 
@@ -39,5 +36,8 @@
 
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply;
+
+- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task;
+- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task failures:(uint32_t)failCount;
 
 @end
