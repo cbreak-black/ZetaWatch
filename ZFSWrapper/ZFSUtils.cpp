@@ -95,11 +95,30 @@ namespace zfs
 
 	bool ZFileSystem::mount()
 	{
+		if (zfs_prop_get_int(m_handle, ZFS_PROP_CANMOUNT) == ZFS_CANMOUNT_OFF)
+			return false; // can't be mounted, failure
+		if (mounted())
+			return true; // already mounted, success
 		return !zfs_mount(m_handle, nullptr, 0);
+	}
+
+	bool ZFileSystem::automount()
+	{
+		if (zfs_prop_get_int(m_handle, ZFS_PROP_CANMOUNT) != ZFS_CANMOUNT_ON)
+			return true; // no need to do anything, success
+		std::string mountpoint(ZFS_MAXPROPLEN+1, '\0');
+		zfs_prop_get(m_handle, ZFS_PROP_MOUNTPOINT, mountpoint.data(), mountpoint.size(),
+					 nullptr, nullptr, 0, B_FALSE);
+		mountpoint.resize(mountpoint.find('\0'));
+		if (mountpoint == ZFS_MOUNTPOINT_LEGACY || mountpoint == ZFS_MOUNTPOINT_NONE)
+			return true; // no need to do anything, success
+		return mount();
 	}
 
 	bool ZFileSystem::unmount()
 	{
+		if (!mounted())
+			return true; // already unmounted, success
 		return !zfs_unmount(m_handle, nullptr, 0);
 	}
 

@@ -175,10 +175,9 @@
 			bool success = true;
 			for (auto const & pool : pools)
 			{
-				pool.allFileSystems([](zfs::ZFileSystem fs)
+				pool.allFileSystems([&success](zfs::ZFileSystem fs)
 				{
-					if (!fs.mounted())
-						fs.mount(); // ignore mount errors
+					success = fs.automount() && success;
 				});
 			}
 			if (success)
@@ -214,8 +213,7 @@
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
-				if (!fs.mounted())
-					success = fs.mount() && success;
+				success = fs.mount() && success;
 			}
 			else
 			{
@@ -223,8 +221,7 @@
 				{
 					pool.allFileSystems([&success](zfs::ZFileSystem fs)
 					{
-						if (!fs.mounted())
-							success = fs.mount() && success;
+						success = fs.mount() && success;
 					});
 				});
 			}
@@ -261,8 +258,7 @@
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
-				if (fs.mounted())
-					success = fs.unmount() && success;
+				success = fs.unmount() && success;
 			}
 			else
 			{
@@ -270,8 +266,7 @@
 				{
 					pool.allFileSystems([&success](zfs::ZFileSystem fs)
 					{
-						if (fs.mounted())
-							success = fs.unmount() && success;
+						success = fs.unmount() && success;
 					});
 				});
 			}
@@ -310,17 +305,15 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			auto r = fs.loadKey([key UTF8String]);
-			if (r)
+			auto success = fs.loadKey([key UTF8String]);
+			if (success)
 			{
-				// Filesystem itself
-				if (!fs.mounted())
-					fs.mount(); // ignore mount errors
+				// Encryption Root Filesystem itself
+				success = fs.automount() && success;
 				// All contained filesystems recursively
-				fs.allFileSystems([](zfs::ZFileSystem fs)
+				fs.allFileSystems([&success](zfs::ZFileSystem fs)
 				{
-					if (!fs.mounted())
-						fs.mount(); // ignore mount errors
+					success = fs.automount() && success;
 				});
 				reply(nullptr);
 			}

@@ -143,7 +143,8 @@ namespace zfs
 		void allFileSystems(std::function<void(ZFileSystem)> callback) const;
 
 	public: // requires root permission
-		bool mount();
+		bool mount(); //!< Mount the filesystem if possible
+		bool automount(); //!< Only try to mount the filesystem if it can be automounted
 		bool unmount();
 		bool loadKey(std::string const & key);
 		bool unloadKey();
