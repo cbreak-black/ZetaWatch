@@ -44,10 +44,16 @@ namespace zfs
 				return "newer on-disk version";
 			case ZPOOL_STATUS_HOSTID_MISMATCH:
 				return "last accessed by another system";
+			case ZPOOL_STATUS_HOSTID_ACTIVE:
+				return "currently active on another system";
+			case ZPOOL_STATUS_HOSTID_REQUIRED:
+				return "multihost=on and hostid=0";
 			case ZPOOL_STATUS_IO_FAILURE_WAIT:
 				return "failed I/O, failmode 'wait'";
 			case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
 				return "failed I/O, failmode 'continue'";
+			case ZPOOL_STATUS_IO_FAILURE_MMP:
+				return "failed MMP, failmode not 'panic'";
 			case ZPOOL_STATUS_BAD_LOG:
 				return "cannot read log chain(s)";
 			case ZPOOL_STATUS_ERRATA:
