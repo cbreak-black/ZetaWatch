@@ -56,7 +56,7 @@ namespace zfs
 		/*!
 		 Iterates over all pools.
 		 */
-		void pools(std::function<void(ZPool)> callback) const;
+		void iterPools(std::function<void(ZPool)> callback) const;
 
 	public: // requires root permission
 		struct Importable
@@ -137,10 +137,10 @@ namespace zfs
 		std::vector<ZFileSystem> allFileSystems() const;
 
 		//! Iterates over all direct child filesystems
-		void childFilesystems(std::function<void(ZFileSystem)> callback) const;
+		void iterChildFilesystems(std::function<void(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively
-		void allFileSystems(std::function<void(ZFileSystem)> callback) const;
+		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
 
 	public: // requires root permission
 		bool mount(); //!< Mount the filesystem if possible
@@ -236,7 +236,7 @@ namespace zfs
 		std::vector<ZFileSystem> allFileSystems() const;
 
 		//! Iterates over all child filesystems recursively
-		void allFileSystems(std::function<void(ZFileSystem)> callback) const;
+		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
 
 	public:
 		zpool_handle_t * handle() const;

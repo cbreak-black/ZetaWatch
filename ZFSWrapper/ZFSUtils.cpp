@@ -282,13 +282,13 @@ namespace zfs
 		return children;
 	}
 
-	void ZFileSystem::childFilesystems(std::function<void(ZFileSystem)> callback) const
+	void ZFileSystem::iterChildFilesystems(std::function<void(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
 		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
 	}
 
-	void ZFileSystem::allFileSystems(std::function<void(ZFileSystem)> callback) const
+	void ZFileSystem::iterAllFileSystems(std::function<void(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb([&](ZFileSystem fs)
 		{
@@ -392,10 +392,10 @@ namespace zfs
 		return fileSystems;
 	}
 
-	void ZPool::allFileSystems(std::function<void(ZFileSystem)> callback) const
+	void ZPool::iterAllFileSystems(std::function<void(ZFileSystem)> callback) const
 	{
 		callback(rootFileSystem());
-		rootFileSystem().allFileSystems(callback);
+		rootFileSystem().iterAllFileSystems(callback);
 	}
 
 	zpool_handle_t * ZPool::handle() const
@@ -459,7 +459,7 @@ namespace zfs
 		return zpools;
 	}
 
-	void LibZFSHandle::pools(std::function<void(ZPool)> callback) const
+	void LibZFSHandle::iterPools(std::function<void(ZPool)> callback) const
 	{
 		ZPoolCallback cb(callback);
 		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);

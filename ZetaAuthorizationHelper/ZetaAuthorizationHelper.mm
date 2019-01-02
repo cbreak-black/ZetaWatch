@@ -175,7 +175,7 @@
 			bool success = true;
 			for (auto const & pool : pools)
 			{
-				pool.allFileSystems([&success](zfs::ZFileSystem fs)
+				pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
 				{
 					success = fs.automount() && success;
 				});
@@ -217,9 +217,9 @@
 			}
 			else
 			{
-				_zfs.pools([&success](zfs::ZPool pool)
+				_zfs.iterPools([&success](zfs::ZPool pool)
 				{
-					pool.allFileSystems([&success](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
 					{
 						success = fs.mount() && success;
 					});
@@ -262,9 +262,9 @@
 			}
 			else
 			{
-				_zfs.pools([&success](zfs::ZPool pool)
+				_zfs.iterPools([&success](zfs::ZPool pool)
 				{
-					pool.allFileSystems([&success](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
 					{
 						success = fs.unmount() && success;
 					});
@@ -311,7 +311,7 @@
 				// Encryption Root Filesystem itself
 				success = fs.automount() && success;
 				// All contained filesystems recursively
-				fs.allFileSystems([&success](zfs::ZFileSystem fs)
+				fs.iterAllFileSystems([&success](zfs::ZFileSystem fs)
 				{
 					success = fs.automount() && success;
 				});
