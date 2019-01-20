@@ -33,6 +33,11 @@ namespace zfs
 	char const * emoji_pool_status_t(uint64_t stat);
 
 	/*!
+	 Returns an emoji for the pool status as NSString.
+	 */
+	NSString * emojistring_pool_status_t(uint64_t stat);
+
+	/*!
 	 Returns a string with english human-facing description of the vdev status.
 	 */
 	char const * describe_vdev_state_t(uint64_t stat, uint64_t aux);

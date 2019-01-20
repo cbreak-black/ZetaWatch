@@ -108,9 +108,15 @@ namespace zfs
 				return u8"⚠️";
 			case ZPOOL_STATUS_HOSTID_MISMATCH:
 				return u8"⚠️";
+			case ZPOOL_STATUS_HOSTID_ACTIVE:
+				return u8"⚠️";
+			case ZPOOL_STATUS_HOSTID_REQUIRED:
+				return u8"⚠️";
 			case ZPOOL_STATUS_IO_FAILURE_WAIT:
 				return u8"❌";
 			case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
+				return u8"❌";
+			case ZPOOL_STATUS_IO_FAILURE_MMP:
 				return u8"❌";
 			case ZPOOL_STATUS_BAD_LOG:
 				return u8"⚠️";
@@ -125,19 +131,24 @@ namespace zfs
 			case ZPOOL_STATUS_FAULTED_DEV_NR:
 				return u8"❌";
 			case ZPOOL_STATUS_VERSION_OLDER:
-				return u8"✅💛";
+				return u8"✅➖";
 			case ZPOOL_STATUS_FEAT_DISABLED:
-				return u8"✅💚";
+				return u8"✅➖";
 			case ZPOOL_STATUS_RESILVERING:
 				return u8"♻️";
 			case ZPOOL_STATUS_OFFLINE_DEV:
-				return u8"📵";
+				return u8"🚫";
 			case ZPOOL_STATUS_REMOVED_DEV:
-				return u8"📵";
+				return u8"🚫";
 			case ZPOOL_STATUS_OK:
 				return u8"✅";
 		}
 		return u8"⁉️";
+	}
+
+	NSString * emojistring_pool_status_t(uint64_t stat)
+	{
+		return [NSString stringWithUTF8String:emoji_pool_status_t(stat)];
 	}
 
 	NSString * localized_describe_zpool_status_t(uint64_t stat)
