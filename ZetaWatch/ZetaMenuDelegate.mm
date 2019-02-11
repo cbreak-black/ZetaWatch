@@ -158,23 +158,23 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 
 NSString * formatStatus(zfs::ZFileSystem const & fs)
 {
-	char const * mountStatus = fs.mounted() ? u8"📌" : u8"🕳";
-	char const * encStatus = "";
+	NSString * mountStatus = fs.mounted() ?
+		NSLocalizedString(@"📌", @"mounted status") :
+		NSLocalizedString(@"🕳", @"unmounted status");
+	NSString * encStatus = nil;
 	switch (fs.keyStatus())
 	{
 		case zfs::ZFileSystem::none:
-			encStatus = u8"";
+			encStatus = @"";
 			break;
 		case zfs::ZFileSystem::unavailable:
-			encStatus = u8", 🔒";
+			encStatus = NSLocalizedString(@", 🔒", @"locked status");
 			break;
 		case zfs::ZFileSystem::available:
-			encStatus = u8", 🔑";
+			encStatus = NSLocalizedString(@"🔑", @"unlocked status");
 			break;
 	}
-	NSString * fsLine = [NSString stringWithFormat:@"%s (%@%@)", fs.name(),
-						 [NSString stringWithUTF8String:mountStatus],
-						 [NSString stringWithUTF8String:encStatus]];
+	NSString * fsLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@%@)", @"File System Menu Entry"), fs.name(), mountStatus, encStatus];
 	return fsLine;
 }
 
@@ -188,7 +188,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		auto scrub = pool.scanStat();
 		if (scrub.state == zfs::ScanStat::scanning)
 		{
-			NSString * scanLine = [NSString stringWithFormat:@"Scrub in Progress: %0.2f %% (%s out of %s)",
+			NSString * scanLine = [NSString stringWithFormat:NSLocalizedString(@"Scrub in Progress: %0.2f %% (%s out of %s)", @"Scrub Menu Entry"),
 								   100.0*scrub.examined/scrub.toExamine,
 								   formatBytes(scrub.examined).c_str(),
 								   formatBytes(scrub.toExamine).c_str()];
@@ -198,7 +198,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		{
 			// VDev
 			auto stat = zfs::vdevStat(vdev);
-			NSString * vdevLine = [NSString stringWithFormat:@"%s (%@)",
+			NSString * vdevLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"VDev Menu Entry"),
 				genName(vdev).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:vdevLine
 								action:nullptr keyEquivalent:@""];
@@ -207,7 +207,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 			for (auto && device: devices)
 			{
 				auto stat = zfs::vdevStat(device);
-				NSString * devLine = [NSString stringWithFormat:@"%s (%@)",
+				NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
 					genName(device).c_str(), formatErrorStat(stat)];
 				NSMenuItem * item = [vdevMenu addItemWithTitle:devLine
 														action:nullptr keyEquivalent:@""];
@@ -219,7 +219,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		for (auto && cache: caches)
 		{
 			auto stat = zfs::vdevStat(cache);
-			NSString * devLine = [NSString stringWithFormat:@"cache: %s (%@)",
+			NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"cache: %s (%@)", @"Cache Menu Entry"),
 								  genName(cache).c_str(), formatErrorStat(stat)];
 			[vdevMenu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
 		}
@@ -236,7 +236,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	}
 	catch (std::exception const & e)
 	{
-		[vdevMenu addItemWithTitle:NSLocalizedString(@"Error reading pool configuration", @"")
+		[vdevMenu addItemWithTitle:NSLocalizedString(@"Error reading pool configuration", @"Pool Config Error Message")
 							action:nullptr keyEquivalent:@""];
 	}
 	return vdevMenu;
@@ -251,7 +251,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	NSUInteger poolIdx = 0;
 	for (auto && pool: [_watcher pools])
 	{
-		NSString * poolLine = [NSString stringWithFormat:@"%s (%@)",
+		NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
 			pool.name(), zfs::emojistring_pool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
 		NSMenu * vdevMenu = createVdevMenu(pool, self);
@@ -269,7 +269,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		return;
 	// Unlock
 	NSUInteger encryptionRootCount = 0;
-	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:@"Load Keys" action:NULL keyEquivalent:@""];
+	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
 	for (auto && pool: [_watcher pools])
@@ -308,8 +308,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 - (void)errorDetectedInPool:(std::string const &)pool
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"ZFS Pool Error", @"");
-	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s.", @"");
+	notification.title = NSLocalizedString(@"ZFS Pool Error", @"ZFS Pool Error Title");
+	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s.", @"ZFS Pool Error Format");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, pool.c_str()];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
@@ -318,8 +318,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 - (void)errorDetected:(std::string const &)error
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"ZFS Error", @"");
-	NSString * errorFormat = NSLocalizedString(@"ZFS encountered an error: %s.", @"");
+	notification.title = NSLocalizedString(@"ZFS Error", @"ZFS Error Title");
+	NSString * errorFormat = NSLocalizedString(@"ZFS encountered an error: %s.", @"ZFS Error Format");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, error.c_str()];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
@@ -328,8 +328,8 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 - (void)errorFromHelper:(NSError*)error
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"Helper Error", @"");
-	NSString * errorFormat = NSLocalizedString(@"Helper encountered an error: %@.", @"");
+	notification.title = NSLocalizedString(@"Helper Error", @"Helper Error notification Title");
+	NSString * errorFormat = NSLocalizedString(@"Helper encountered an error: %@.", @"Helper Error notification Format");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, [error localizedDescription]];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];

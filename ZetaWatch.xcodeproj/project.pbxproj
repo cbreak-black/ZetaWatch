@@ -38,6 +38,7 @@
 		7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
+		70C930D822122CBD00BA39B8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70C930D622122CBD00BA39B8 /* Localizable.strings */; };
 		70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		70D85FF01C316F3100929DAE /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
@@ -115,6 +116,7 @@
 		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
 		709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaPoolWatcher.h; sourceTree = "<group>"; };
+		70C930D722122CBD00BA39B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
 		70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSUtils.hpp; sourceTree = "<group>"; };
 		70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs_core.1.dylib; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */,
 				70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
+				70C930D622122CBD00BA39B8 /* Localizable.strings */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
 				7006C4811C26CA1500929DAE /* Supporting Files */,
@@ -458,6 +461,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */,
+				70C930D822122CBD00BA39B8 /* Localizable.strings in Resources */,
 				7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */,
 				7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */,
 			);
@@ -543,6 +547,14 @@
 				7006C4871C26CA1500929DAE /* Base */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		70C930D622122CBD00BA39B8 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				70C930D722122CBD00BA39B8 /* Base */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
