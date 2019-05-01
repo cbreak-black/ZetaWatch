@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <iomanip>
 #include <sstream>
+#include <chrono>
 
 @interface ZetaMenuDelegate ()
 {
@@ -106,7 +107,8 @@ MetricPrefix metricPrefixes[] = {
 
 size_t prefixCount = std::extent<decltype(metricPrefixes)>::value;
 
-std::string formatPrefixedValue(uint64_t size)
+template<typename T>
+std::string formatPrefixedValue(T size)
 {
 	for (size_t p = 0; p < prefixCount; ++p)
 	{
@@ -121,9 +123,35 @@ std::string formatPrefixedValue(uint64_t size)
 	return std::to_string(size) + " ";
 }
 
-std::string formatBytes(uint64_t bytes)
+template<typename T>
+std::string formatBytes(T bytes)
 {
 	return formatPrefixedValue(bytes) + "B";
+}
+
+std::chrono::seconds getElapsed(zfs::ScanStat const & scanStat)
+{
+	auto elapsed = time(0) - scanStat.passStartTime;
+	elapsed -= scanStat.passPausedSeconds;
+	elapsed = (elapsed > 0) ? elapsed : 1;
+	return std::chrono::seconds(elapsed);
+}
+
+std::string formatRate(uint64_t bytes, std::chrono::seconds const & time)
+{
+	return formatBytes(bytes / time.count()) + "/s";
+}
+
+std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::seconds const & time)
+{
+	auto bytesRemaining = scanStat.total - scanStat.issued;
+	auto secondsRemaining = bytesRemaining * time.count() / scanStat.passIssued;
+	std::stringstream ss;
+	ss << (secondsRemaining / (60*60*24)) << " days "
+		<< ((secondsRemaining / (60*60)) % 24) << ":"
+		<< ((secondsRemaining / 60) % 60) << ":"
+		<< (secondsRemaining % 60);
+	return ss.str();
 }
 
 #pragma mark ZFS Inspection
@@ -188,11 +216,26 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		auto scrub = pool.scanStat();
 		if (scrub.state == zfs::ScanStat::scanning)
 		{
-			NSString * scanLine = [NSString stringWithFormat:NSLocalizedString(@"Scrub in Progress: %0.2f %% (%s out of %s)", @"Scrub Menu Entry"),
-								   100.0*scrub.examined/scrub.toExamine,
-								   formatBytes(scrub.examined).c_str(),
-								   formatBytes(scrub.toExamine).c_str()];
-			[vdevMenu addItemWithTitle:scanLine action:nullptr keyEquivalent:@""];
+			auto elapsed = getElapsed(scrub);
+			NSString * scanLine0 = [NSString stringWithFormat:NSLocalizedString(
+				@"Scrub in Progress:", @"Scrub Menu Entry 0")];
+			NSString * scanLine1 = [NSString stringWithFormat:NSLocalizedString(
+				@"%s scanned at %s, %s issued at %s", @"Scrub Menu Entry 1"),
+									formatBytes(scrub.scanned).c_str(),
+									formatRate(scrub.passScanned, elapsed).c_str(),
+									formatBytes(scrub.issued).c_str(),
+									formatRate(scrub.passIssued, elapsed).c_str()];
+			NSString * scanLine2 = [NSString stringWithFormat:NSLocalizedString(
+				@"%s total, %0.2f %% done, %s remaining, %i errors", @"Scrub Menu Entry 2"),
+									formatBytes(scrub.total).c_str(),
+									100.0*scrub.issued/scrub.total,
+									formatTimeRemaining(scrub, elapsed).c_str(),
+									scrub.errors];
+			[vdevMenu addItemWithTitle:scanLine0 action:nullptr keyEquivalent:@""];
+			auto m1 = [vdevMenu addItemWithTitle:scanLine1 action:nullptr keyEquivalent:@""];
+			auto m2 = [vdevMenu addItemWithTitle:scanLine2 action:nullptr keyEquivalent:@""];
+			m1.indentationLevel = 1;
+			m2.indentationLevel = 1;
 		}
 		for (auto && vdev: vdevs)
 		{
