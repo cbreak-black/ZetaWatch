@@ -147,10 +147,11 @@ std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::sec
 	auto bytesRemaining = scanStat.total - scanStat.issued;
 	auto secondsRemaining = bytesRemaining * time.count() / scanStat.passIssued;
 	std::stringstream ss;
+	ss << std::setfill('0');
 	ss << (secondsRemaining / (60*60*24)) << " days "
-		<< ((secondsRemaining / (60*60)) % 24) << ":"
-		<< ((secondsRemaining / 60) % 60) << ":"
-		<< (secondsRemaining % 60);
+		<< std::setw(2) << ((secondsRemaining / (60*60)) % 24) << ":"
+		<< std::setw(2) << ((secondsRemaining / 60) % 60) << ":"
+		<< std::setw(2) << (secondsRemaining % 60);
 	return ss.str();
 }
 
