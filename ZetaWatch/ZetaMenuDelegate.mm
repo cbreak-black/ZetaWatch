@@ -169,21 +169,27 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
 		NSMenuItem * item;
 		auto [encRoot, isRoot] = fs.encryptionRoot();
-		if (isRoot)
+		if (isRoot && fs.keyStatus() != zfs::ZFileSystem::available)
 		{
 			item = [fsMenu addItemWithTitle:@"Load Key"
 									 action:@selector(loadKey:) keyEquivalent:@""];
 			item.representedObject = fsName;
 			item.target = delegate;
 		}
-		item = [fsMenu addItemWithTitle:@"Mount"
-								 action:@selector(mountFilesystem:) keyEquivalent:@""];
-		item.representedObject = fsName;
-		item.target = delegate;
-		item = [fsMenu addItemWithTitle:@"Unmount"
-								 action:@selector(unmountFilesystem:) keyEquivalent:@""];
-		item.representedObject = fsName;
-		item.target = delegate;
+		if (!fs.mounted())
+		{
+			item = [fsMenu addItemWithTitle:@"Mount"
+									 action:@selector(mountFilesystem:) keyEquivalent:@""];
+			item.representedObject = fsName;
+			item.target = delegate;
+		}
+		else
+		{
+			item = [fsMenu addItemWithTitle:@"Unmount"
+									 action:@selector(unmountFilesystem:) keyEquivalent:@""];
+			item.representedObject = fsName;
+			item.target = delegate;
+		}
 	}
 	return fsMenu;
 }
