@@ -16,6 +16,8 @@
 
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
+- (void)exportPools:(NSDictionary *)exportData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
 - (void)mountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 - (void)unmountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;

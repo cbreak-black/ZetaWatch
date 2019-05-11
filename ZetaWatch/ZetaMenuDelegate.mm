@@ -277,6 +277,12 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 			item.representedObject = [NSString stringWithUTF8String:fs.name()];
 			item.submenu = createFSMenu(fs, delegate);
 		}
+		// Actions
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		NSMenuItem * item = [vdevMenu addItemWithTitle:@"Export"
+												action:@selector(exportPool:) keyEquivalent:@""];
+		item.representedObject = [NSString stringWithUTF8String:pool.name()];
+		item.target = delegate;
 	}
 	catch (std::exception const & e)
 	{
@@ -409,6 +415,16 @@ static NSString * getPassword()
 - (IBAction)importAllPools:(id)sender
 {
 	[_authorization importPools:@{} withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
+}
+
+- (IBAction)exportPool:(id)sender
+{
+	NSDictionary * opts = @{@"pool": [sender representedObject]};
+	[_authorization exportPools:opts withReply:^(NSError * error)
 	 {
 		 if (error)
 			 [self errorFromHelper:error];

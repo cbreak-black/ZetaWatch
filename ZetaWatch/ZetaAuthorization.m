@@ -212,6 +212,18 @@ static const uint32_t maxRetries = 4;
 	 }];
 }
 
+- (void)exportPools:(NSDictionary *)exportData
+		  withReply:(void(^)(NSError * error))reply
+{
+	[self executeWhenConnected:^(NSError * error, id proxy)
+	 {
+		 if (error)
+			 reply(error);
+		 else
+			 [proxy exportPools:exportData authorization:self.authorization withReply:reply];
+	 }];
+}
+
 - (void)mountFilesystems:(NSDictionary *)mountData
 			   withReply:(void(^)(NSError * error))reply
 {

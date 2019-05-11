@@ -200,6 +200,29 @@
 	}
 }
 
+- (void)exportPools:(NSDictionary *)exportData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * poolName = [exportData objectForKey:@"pool"];
+		try
+		{
+			auto pool = _zfs.pool(std::string(poolName.UTF8String));
+			pool.exportPool();
+			reply(nullptr);
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
 - (void)mountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData
 			   withReply:(void (^)(NSError *))reply
 {

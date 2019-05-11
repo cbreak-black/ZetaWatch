@@ -14,6 +14,7 @@
 
 #include <stdexcept>
 #include <future>
+#include <sstream>
 
 #include <libzfs.h>
 #include <libzfs_core.h>
@@ -303,7 +304,7 @@ namespace zfs
 		m_handle(zpool_open(zfsHandle, name.c_str()))
 	{
 		if (m_handle == nullptr)
-			throw std::runtime_error("Unable to open pool");
+			throw std::runtime_error("Unable to open pool " + name);
 	}
 
 	ZPool::ZPool(zpool_handle_t * handle) :
@@ -398,6 +399,20 @@ namespace zfs
 		rootFileSystem().iterAllFileSystems(callback);
 	}
 
+	void ZPool::exportPool(bool force)
+	{
+		std::stringstream ss;
+		ss << "ZetaWatch export " << (force ? "-f" : "") << name();
+		boolean_t forceBT = force ? B_TRUE : B_FALSE;
+		int res = 0;
+		res = zpool_disable_datasets(m_handle, forceBT);
+		if (res != 0)
+			throw std::runtime_error("Unable to " + ss.str() + " (dissable_datasets)");
+		res = zpool_export(m_handle, forceBT, ss.str().c_str());
+		if (res != 0)
+			throw std::runtime_error("Unable to " + ss.str() + " (export)");
+	}
+
 	zpool_handle_t * ZPool::handle() const
 	{
 		return m_handle;
@@ -463,6 +478,11 @@ namespace zfs
 	{
 		ZPoolCallback cb(callback);
 		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);
+	}
+
+	ZPool LibZFSHandle::pool(std::string const & name) const
+	{
+		return ZPool(m_handle, name);
 	}
 
 	std::vector<LibZFSHandle::Importable> LibZFSHandle::importablePools() const

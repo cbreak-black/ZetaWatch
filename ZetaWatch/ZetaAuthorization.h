@@ -25,6 +25,9 @@
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply;
 
+- (void)exportPools:(NSDictionary *)exportData
+		  withReply:(void(^)(NSError * error))reply;
+
 - (void)mountFilesystems:(NSDictionary *)mountData
 			   withReply:(void(^)(NSError * error))reply;
 

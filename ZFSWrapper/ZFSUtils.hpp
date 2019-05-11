@@ -58,6 +58,11 @@ namespace zfs
 		 */
 		void iterPools(std::function<void(ZPool)> callback) const;
 
+		/*!
+		 Returns the pool with the given name.
+		 */
+		ZPool pool(std::string const & name) const;
+
 	public: // requires root permission
 		struct Importable
 		{
@@ -244,6 +249,10 @@ namespace zfs
 
 		//! Iterates over all child filesystems recursively
 		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
+
+	public:
+		//! Unmounts all filesystems and exports the pool
+		void exportPool(bool force = false);
 
 	public:
 		zpool_handle_t * handle() const;

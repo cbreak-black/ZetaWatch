@@ -50,6 +50,15 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 											   @"prompt shown when user is required to authorize a zpool import"
 											   )
 		  };
+		NSDictionary * dictExport =
+		@{
+		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.export",
+		  kKeyAuthRightDefault: @kAuthorizationRuleAuthenticateAsAdmin,
+		  kKeyAuthRightDesc: NSLocalizedString(
+											   @"ZetaWatch is trying to export a pool.",
+											   @"prompt shown when user is required to authorize a zpool export"
+											   )
+		  };
 		NSDictionary * dictMount =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.mount",
@@ -90,6 +99,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		sCommandInfo =
 		@{
 		  NSStringFromSelector(@selector(importPools:authorization:withReply:)): dictImport,
+		  NSStringFromSelector(@selector(exportPools:authorization:withReply:)): dictExport,
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
 		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,
 		  NSStringFromSelector(@selector(loadKeyForFilesystem:authorization:withReply:)): dictKey,
