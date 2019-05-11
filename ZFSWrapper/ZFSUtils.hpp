@@ -254,6 +254,12 @@ namespace zfs
 		//! Unmounts all filesystems and exports the pool
 		void exportPool(bool force = false);
 
+		//! Starts a scrub
+		void scrub();
+
+		//! Stops a scrub
+		void scrubStop();
+
 	public:
 		zpool_handle_t * handle() const;
 

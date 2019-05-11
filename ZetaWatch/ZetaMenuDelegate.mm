@@ -145,7 +145,10 @@ std::string formatRate(uint64_t bytes, std::chrono::seconds const & time)
 std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::seconds const & time)
 {
 	auto bytesRemaining = scanStat.total - scanStat.issued;
-	auto secondsRemaining = bytesRemaining * time.count() / scanStat.passIssued;
+	auto issued = scanStat.passIssued;
+	if (issued == 0)
+		issued = 1;
+	auto secondsRemaining = bytesRemaining * time.count() / issued;
 	std::stringstream ss;
 	ss << std::setfill('0');
 	ss << (secondsRemaining / (60*60*24)) << " days "
@@ -278,11 +281,27 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 			item.submenu = createFSMenu(fs, delegate);
 		}
 		// Actions
+		NSString * poolName = [NSString stringWithUTF8String:pool.name()];
+		NSMenuItem * item = nullptr;
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		NSMenuItem * item = [vdevMenu addItemWithTitle:@"Export"
-												action:@selector(exportPool:) keyEquivalent:@""];
-		item.representedObject = [NSString stringWithUTF8String:pool.name()];
+		item = [vdevMenu addItemWithTitle:@"Export"
+								   action:@selector(exportPool:) keyEquivalent:@""];
+		item.representedObject = poolName;
 		item.target = delegate;
+		if (scrub.state == zfs::ScanStat::scanning)
+		{
+			item = [vdevMenu addItemWithTitle:@"Scrub Stop"
+									   action:@selector(scrubStopPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
+		else
+		{
+			item = [vdevMenu addItemWithTitle:@"Scrub"
+									   action:@selector(scrubPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
 	}
 	catch (std::exception const & e)
 	{
@@ -468,6 +487,26 @@ static NSString * getPassword()
 		return;
 	NSDictionary * opts = @{@"filesystem": fs, @"key": pass};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
+}
+
+- (IBAction)scrubPool:(id)sender
+{
+	NSDictionary * opts = @{@"pool": [sender representedObject]};
+	[_authorization scrubPool:opts withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
+}
+
+- (IBAction)scrubStopPool:(id)sender
+{
+	NSDictionary * opts = @{@"pool": [sender representedObject], @"stop": @YES};
+	[_authorization scrubPool:opts withReply:^(NSError * error)
 	 {
 		 if (error)
 			 [self errorFromHelper:error];

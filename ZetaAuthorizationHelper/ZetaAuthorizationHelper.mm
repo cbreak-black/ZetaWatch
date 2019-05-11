@@ -362,6 +362,30 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
+		NSString * poolName = [poolData objectForKey:@"pool"];
+		NSNumber * stop = [poolData objectForKey:@"stop"];
+		if (!poolName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			auto pool = _zfs.pool(std::string(poolName.UTF8String));
+			if (stop && [stop boolValue] == YES)
+			{
+				pool.scrubStop();
+			}
+			else
+			{
+				pool.scrub();
+			}
+			reply(nullptr);
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
 	}
 	else
 	{

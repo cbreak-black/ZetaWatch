@@ -413,6 +413,22 @@ namespace zfs
 			throw std::runtime_error("Unable to " + ss.str() + " (export)");
 	}
 
+	void ZPool::scrub()
+	{
+		int res = 0;
+		res = zpool_scan(m_handle, POOL_SCAN_SCRUB, POOL_SCRUB_NORMAL);
+		if (res != 0)
+			throw std::runtime_error("Unable to scrub " + std::string(name()) + " (scan)");
+	}
+
+	void ZPool::scrubStop()
+	{
+		int res = 0;
+		res = zpool_scan(m_handle, POOL_SCAN_NONE, POOL_SCRUB_NORMAL);
+		if (res != 0)
+			throw std::runtime_error("Unable to scrub -s " + std::string(name()) + " (scan)");
+	}
+
 	zpool_handle_t * ZPool::handle() const
 	{
 		return m_handle;
