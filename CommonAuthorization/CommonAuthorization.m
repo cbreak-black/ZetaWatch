@@ -53,7 +53,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		NSDictionary * dictExport =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.export",
-		  kKeyAuthRightDefault: @kAuthorizationRuleAuthenticateAsAdmin,
+		  kKeyAuthRightDefault: @kAuthorizationRuleClassAllow,
 		  kKeyAuthRightDesc: NSLocalizedString(
 											   @"ZetaWatch is trying to export a pool.",
 											   @"prompt shown when user is required to authorize a zpool export"
@@ -89,7 +89,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		NSDictionary * dictScrub =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.scrub",
-		  kKeyAuthRightDefault: @kAuthorizationRuleAuthenticateAsAdmin,
+		  kKeyAuthRightDefault: @kAuthorizationRuleClassAllow,
 		  kKeyAuthRightDesc: NSLocalizedString(
 											   @"ZetaWatch is trying to scrub a pool.",
 											   @"prompt shown when user is required to authorize a zpool scrub"
