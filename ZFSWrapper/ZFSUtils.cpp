@@ -641,9 +641,9 @@ namespace zfs
 		interfaceStat.state = static_cast<ScanStat::State>(scanStat.pss_state);
 		interfaceStat.total = scanStat.pss_to_examine;
 		interfaceStat.scanned = scanStat.pss_examined;
-		interfaceStat.issued = scanStat.pss_issued;
+//		interfaceStat.issued = scanStat.pss_issued;
 		interfaceStat.passScanned = scanStat.pss_pass_exam;
-		interfaceStat.passIssued = scanStat.pss_pass_issued;
+//		interfaceStat.passIssued = scanStat.pss_pass_issued;
 		interfaceStat.passStartTime = scanStat.pss_pass_start;
 		interfaceStat.passPausedSeconds = scanStat.pss_pass_scrub_spent_paused;
 		interfaceStat.errors = scanStat.pss_errors;
