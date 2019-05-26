@@ -101,7 +101,7 @@ License
 =======
 
 This program is copyrighted by me, because I wrote it.
-This program is licensed under the "3-clause BSD" License. See the BSD.LICENSE.md file for
+This program is licensed under the "3-clause BSD" License. See the LICENSE.md file for
 details.
 
 [EvenBetterAuthorizationSample]: https://developer.apple.com/library/content/samplecode/EvenBetterAuthorizationSample/Introduction/Intro.html
