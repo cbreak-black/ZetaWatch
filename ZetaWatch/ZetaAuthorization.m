@@ -33,7 +33,7 @@ static const uint32_t maxRetries = 4;
 - (void)awakeFromNib
 {
 	[self connectToAuthorization];
-	[self connectToHelperTool];
+	[self installIfNeeded];
 }
 
 -(void)connectToAuthorization
@@ -114,30 +114,18 @@ static const uint32_t maxRetries = 4;
 	}
 }
 
-- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task
-{
-	[self executeWhenConnected:task failures:0];
-}
-
-- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task failures:(uint32_t)failCount;
+- (void)installIfNeeded
 {
 	// Ensure that there's a helper tool connection in place.
 	[self connectToHelperTool];
 	id proxy = [self.helperToolConnection remoteObjectProxyWithErrorHandler:
-		^(NSError * proxyError)
+				^(NSError * proxyError)
 	{
-		if (failCount >= maxRetries)
-		{
-			task(proxyError, nil);
-		}
-		else
-		{
-			dispatch_async(dispatch_get_main_queue(), ^(){
-				// Install if there's a proxy error
-				[self install];
-				[self executeWhenConnected:task failures:failCount+1];
-			});
-		}
+		// Install on proxy error
+		dispatch_async(dispatch_get_main_queue(), ^(){
+			// Install if there's a proxy error
+			[self install];
+		});
 	}];
 
 	[proxy getVersionWithReply:^(NSError * error, NSString * helperVersion)
@@ -145,15 +133,8 @@ static const uint32_t maxRetries = 4;
 		 // Install if there's no valid helper version (because of error)
 		 if (error)
 		 {
-			 if (failCount >= maxRetries)
-			 {
-				 task(error, nil);
-				 return;
-			 }
 			 dispatch_async(dispatch_get_main_queue(), ^(){
-				 // Install if there's a proxy error
 				 [self install];
-				 [self executeWhenConnected:task failures:failCount+1];
 			 });
 			 return;
 		 }
@@ -161,38 +142,25 @@ static const uint32_t maxRetries = 4;
 		 // Install if the versions don't match exactly
 		 if (![localVersion isEqualToString:helperVersion])
 		 {
-			 if (failCount >= maxRetries)
-			 {
-				 task([NSError errorWithDomain:@"ZetaError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"AgentVersionMismatch"}], nil);
-				 return;
-			 }
 			 dispatch_async(dispatch_get_main_queue(), ^(){
-				 // Install if there's a proxy error
 				 [self install];
-				 [self executeWhenConnected:task failures:failCount+1];
 			 });
 			 return;
 		 }
-		 // Run the actual task
-		 id proxy = [self.helperToolConnection remoteObjectProxyWithErrorHandler:
-					   ^(NSError * proxyError)
-		   {
-			   if (proxyError)
-			   {
-				   if (failCount >= maxRetries)
-				   {
-					   task(error, nil);
-				   }
-				   else
-				   {
-					   dispatch_async(dispatch_get_main_queue(), ^(){
-						   [self executeWhenConnected:task failures:failCount+1];
-					   });
-				   }
-			   }
-		   }];
-		 task(nil, proxy);
 	 }];
+}
+
+- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task
+{
+	// Ensure that there's a helper tool connection in place.
+	[self connectToHelperTool];
+	id proxy = [self.helperToolConnection remoteObjectProxyWithErrorHandler:
+		^(NSError * proxyError)
+	{
+		task(proxyError, nil);
+	}];
+
+	task(nil, proxy);
 }
 
 - (void)getVersionWithReply:(void (^)(NSError * error, NSString *))reply

@@ -43,6 +43,5 @@
 		withReply:(void(^)(NSError * error))reply;
 
 - (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task;
-- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task failures:(uint32_t)failCount;
 
 @end
