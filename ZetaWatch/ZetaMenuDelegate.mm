@@ -11,6 +11,7 @@
 //
 
 #import "ZetaMenuDelegate.h"
+#import "ZetaImportMenuDelegate.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
 
@@ -26,7 +27,6 @@
 {
 	NSMutableArray * _dynamicMenus;
 	ZetaPoolWatcher * _watcher;
-	ZetaAuthorization * _authorization;
 }
 
 @end
@@ -40,14 +40,8 @@
 		_dynamicMenus = [[NSMutableArray alloc] init];
 		_watcher = [[ZetaPoolWatcher alloc] init];
 		_watcher.delegate = self;
-		_authorization = [[ZetaAuthorization alloc] init];
 	}
 	return self;
-}
-
-- (void)awakeFromNib
-{
-	[_authorization connectToAuthorization];
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
@@ -396,16 +390,6 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 	notification.title = NSLocalizedString(@"ZFS Error", @"ZFS Error Title");
 	NSString * errorFormat = NSLocalizedString(@"ZFS encountered an error: %s.", @"ZFS Error Format");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, error.c_str()];
-	notification.hasActionButton = NO;
-	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
-}
-
-- (void)errorFromHelper:(NSError*)error
-{
-	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"Helper Error", @"Helper Error notification Title");
-	NSString * errorFormat = NSLocalizedString(@"Helper encountered an error: %@.", @"Helper Error notification Format");
-	notification.informativeText = [NSString stringWithFormat:errorFormat, [error localizedDescription]];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }

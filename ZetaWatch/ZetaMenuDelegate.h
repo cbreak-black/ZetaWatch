@@ -13,6 +13,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "ZetaPoolWatcher.h"
+#import "ZetaBaseDelegate.h"
 
 enum ZetaMenuTags
 {
@@ -20,7 +21,7 @@ enum ZetaMenuTags
 	ActionAnchorMenuTag = 101
 };
 
-@interface ZetaMenuDelegate : NSObject <NSMenuDelegate,ZetaPoolWatcherDelegate>
+@interface ZetaMenuDelegate : ZetaBaseDelegate <NSMenuDelegate,ZetaPoolWatcherDelegate>
 
 - (IBAction)importAllPools:(id)sender;
 - (IBAction)mountAllFilesystems:(id)sender;

@@ -30,6 +30,12 @@ static const uint32_t maxRetries = 4;
 
 @implementation ZetaAuthorization
 
+- (void)awakeFromNib
+{
+	[self connectToAuthorization];
+	[self connectToHelperTool];
+}
+
 -(void)connectToAuthorization
 {
 	// Create our connection to the authorization system.
@@ -209,6 +215,17 @@ static const uint32_t maxRetries = 4;
 			 reply(error);
 		 else
 			 [proxy importPools:importData authorization:self.authorization withReply:reply];
+	 }];
+}
+
+- (void)importablePoolsWithReply:(void(^)(NSError * error, NSDictionary * importablePools))reply
+{
+	[self executeWhenConnected:^(NSError * error, id proxy)
+	 {
+		 if (error)
+			 reply(error, NULL);
+		 else
+			 [proxy importablePoolsWithAuthorization:self.authorization withReply:reply];
 	 }];
 }
 

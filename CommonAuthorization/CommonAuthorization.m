@@ -99,6 +99,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		sCommandInfo =
 		@{
 		  NSStringFromSelector(@selector(importPools:authorization:withReply:)): dictImport,
+		  NSStringFromSelector(@selector(importablePoolsWithAuthorization:withReply:)): dictImport,
 		  NSStringFromSelector(@selector(exportPools:authorization:withReply:)): dictExport,
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
 		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,

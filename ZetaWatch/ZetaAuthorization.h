@@ -25,6 +25,8 @@
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply;
 
+- (void)importablePoolsWithReply:(void(^)(NSError * error, NSDictionary * importablePools))reply;
+
 - (void)exportPools:(NSDictionary *)exportData
 		  withReply:(void(^)(NSError * error))reply;
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -18,7 +18,17 @@
                 <outlet property="zetaMenuDelegate" destination="8rf-zp-5r9" id="79g-6y-RnC"/>
             </connections>
         </customObject>
-        <customObject id="8rf-zp-5r9" userLabel="MenuDelegate" customClass="ZetaMenuDelegate"/>
+        <customObject id="8rf-zp-5r9" userLabel="MenuDelegate" customClass="ZetaMenuDelegate">
+            <connections>
+                <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
+            </connections>
+        </customObject>
+        <customObject id="geo-tu-CMM" customClass="ZetaImportMenuDelegate">
+            <connections>
+                <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
+            </connections>
+        </customObject>
+        <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
         <menu title="Zeta" id="Xld-Up-BZ8">
             <items>
                 <menuItem title="ZFS Pools" tag="100" hidden="YES" enabled="NO" id="SFT-8i-4hp">
@@ -28,10 +38,18 @@
                 <menuItem title="Actions" tag="101" hidden="YES" enabled="NO" id="Wnr-ig-9x9">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Import all Pools" id="IPA-0t-xwp">
+                <menuItem title="Import Pool" id="bAG-Ud-NX6">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Import Pool" id="fE9-G4-NH4" userLabel="Import Pool Menu">
+                        <connections>
+                            <outlet property="delegate" destination="geo-tu-CMM" id="rbu-7n-mSX"/>
+                        </connections>
+                    </menu>
+                </menuItem>
+                <menuItem title="Import all Pools" id="ex0-MP-SYc">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="importAllPools:" target="8rf-zp-5r9" id="5cX-xu-eKd"/>
+                        <action selector="importAllPools:" target="8rf-zp-5r9" id="cyT-XV-d7K"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Mount all Filesystems" id="Gk5-sm-R9o">

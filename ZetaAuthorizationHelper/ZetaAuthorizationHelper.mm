@@ -171,22 +171,43 @@
 	{
 		try
 		{
-			auto pools = _zfs.importAllPools();
-			bool success = true;
-			for (auto const & pool : pools)
+			NSNumber * pool = [importData objectForKey:@"poolGUID"];
+			if (pool)
 			{
-				pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+				auto importedPool = _zfs.import([pool unsignedLongLongValue]);
+				bool success = true;
+				importedPool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
 				{
 					success = fs.automount() && success;
 				});
-			}
-			if (success)
-			{
-				reply(nullptr);
+				if (success)
+				{
+					reply(nullptr);
+				}
+				else
+				{
+					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
+				}
 			}
 			else
 			{
-				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
+				auto pools = _zfs.importAllPools();
+				bool success = true;
+				for (auto const & pool : pools)
+				{
+					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+					{
+						success = fs.automount() && success;
+					});
+				}
+				if (success)
+				{
+					reply(nullptr);
+				}
+				else
+				{
+					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
+				}
 			}
 		}
 		catch (std::exception const & e)
@@ -197,6 +218,33 @@
 	else
 	{
 		reply(error);
+	}
+}
+
+- (void)importablePoolsWithAuthorization:(NSData *)authData withReply:(void (^)(NSError *, NSDictionary *))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		try
+		{
+			auto pools = _zfs.importablePools();
+			NSMutableDictionary * poolsDict = [[NSMutableDictionary alloc] initWithCapacity:pools.size()];
+			for (auto const & pool : pools)
+			{
+				[poolsDict setObject:[NSNumber numberWithUnsignedLongLong:pool.guid]
+							  forKey:[NSString stringWithUTF8String:pool.name.c_str()]];
+			}
+			reply(nullptr, poolsDict);
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}], nullptr);
+		}
+	}
+	else
+	{
+		reply(error, nullptr);
 	}
 }
 
