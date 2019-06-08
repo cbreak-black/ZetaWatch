@@ -273,12 +273,21 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		// Filesystems
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		auto childFileSystems = pool.allFileSystems();
-		for (auto & fs : childFileSystems)
+		if (childFileSystems.empty())
 		{
-			auto fsLine = formatStatus(fs);
-			NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
-			item.representedObject = [NSString stringWithUTF8String:fs.name()];
-			item.submenu = createFSMenu(fs, delegate);
+			// This seems to happen when a pool is UNAVAIL
+			NSMenuItem * item = [vdevMenu addItemWithTitle:@"No Filesystems!" action:nil keyEquivalent:@""];
+			[item setEnabled:NO];
+		}
+		else
+		{
+			for (auto & fs : childFileSystems)
+			{
+				auto fsLine = formatStatus(fs);
+				NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
+				item.representedObject = [NSString stringWithUTF8String:fs.name()];
+				item.submenu = createFSMenu(fs, delegate);
+			}
 		}
 		// Actions
 		NSString * poolName = [NSString stringWithUTF8String:pool.name()];

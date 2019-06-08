@@ -387,10 +387,18 @@ namespace zfs
 
 	std::vector<ZFileSystem> ZPool::allFileSystems() const
 	{
-		auto root = rootFileSystem();
-		std::vector<ZFileSystem> fileSystems = root.allFileSystems();
-		fileSystems.insert(fileSystems.begin(), std::move(root));
-		return fileSystems;
+		try
+		{
+			auto root = rootFileSystem();
+			std::vector<ZFileSystem> fileSystems = root.allFileSystems();
+			fileSystems.insert(fileSystems.begin(), std::move(root));
+			return fileSystems;
+		}
+		catch (std::runtime_error const & e)
+		{
+			// Ignore errors
+		}
+		return std::vector<ZFileSystem>{};
 	}
 
 	void ZPool::iterAllFileSystems(std::function<void(ZFileSystem)> callback) const
