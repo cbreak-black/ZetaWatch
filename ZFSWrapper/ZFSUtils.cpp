@@ -601,15 +601,6 @@ namespace zfs
 		return isLog;
 	}
 
-	std::string vdevPath(NVList const & vdev)
-	{
-		auto path = vdev.lookup<std::string>(ZPOOL_CONFIG_PATH);
-		auto found = path.find_last_of('/');
-		if (found != std::string::npos && found + 1 < path.size())
-			path = path.substr(found + 1);
-		return path;
-	}
-
 	uint64_t vdevGUID(NVList const & vdev)
 	{
 		return vdev.lookup<uint64_t>(ZPOOL_CONFIG_GUID);
@@ -645,7 +636,8 @@ namespace zfs
 		VDevStat interfaceStat = {
 			zfsStat.vs_state, zfsStat.vs_aux,
 			zfsStat.vs_alloc, zfsStat.vs_space, zfsStat.vs_dspace,
-			zfsStat.vs_read_errors, zfsStat.vs_write_errors, zfsStat.vs_checksum_errors
+			zfsStat.vs_read_errors, zfsStat.vs_write_errors, zfsStat.vs_checksum_errors,
+			zfsStat.vs_fragmentation
 		};
 		return interfaceStat;
 	}

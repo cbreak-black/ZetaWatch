@@ -172,6 +172,7 @@ namespace zfs
 		uint64_t errorRead;
 		uint64_t errorWrite;
 		uint64_t errorChecksum;
+		uint64_t fragmentation;
 	};
 
 	/*!
@@ -291,11 +292,6 @@ namespace zfs
 	 \returns whether this vdev is a log vdev
 	 */
 	bool vdevIsLog(NVList const & vdev);
-
-	/*!
-	 \returns A string describing the path of the vdev
-	 */
-	std::string vdevPath(NVList const & vdev);
 
 	/*!
 	 \returns The GUID of the given vdev / device config.

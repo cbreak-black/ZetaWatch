@@ -197,10 +197,30 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 
 NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device, NSMenu * menu)
 {
+	// Menu Item
 	auto stat = zfs::vdevStat(device);
-	NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s [%s] (%@)", @"Device Menu Entry"),
-		pool.vdevName(device).c_str(), pool.vdevDevice(device).c_str(), formatErrorStat(stat)];
+	NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
+		pool.vdevName(device).c_str(), formatErrorStat(stat)];
 	NSMenuItem * item = [menu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
+	// Submenu
+	NSMenu * subMenu = [[NSMenu alloc] init];
+	subMenu.autoenablesItems = NO;
+	[subMenu addItemWithTitle:formatErrorStat(stat) action:nil keyEquivalent:@""];
+	[subMenu addItemWithTitle:[NSString stringWithFormat:
+		NSLocalizedString(@"Space:\t%s used / %s total", @"VDev Space Menu Entry"),
+		formatBytes(stat.alloc).c_str(), formatBytes(stat.space).c_str()]
+					   action:nil keyEquivalent:@""];
+	[subMenu addItemWithTitle:[NSString stringWithFormat:
+		NSLocalizedString(@"Fragmentation:\t%llu%% ", @"VDev Fragmentation Menu Entry"),
+		stat.fragmentation]
+					   action:nil keyEquivalent:@""];
+	[subMenu addItemWithTitle:[NSString stringWithFormat:
+		NSLocalizedString(@"GUID:\t%llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device)]
+					   action:nil keyEquivalent:@""];
+	[subMenu addItemWithTitle:[NSString stringWithFormat:
+		NSLocalizedString(@"Device:\t%s", @"VDev Device Menu Entry"), pool.vdevDevice(device).c_str()]
+					   action:nil keyEquivalent:@""];
+	item.submenu = subMenu;
 	return item;
 }
 
@@ -234,6 +254,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 			auto m2 = [vdevMenu addItemWithTitle:scanLine2 action:nullptr keyEquivalent:@""];
 			m1.indentationLevel = 1;
 			m2.indentationLevel = 1;
+			[vdevMenu addItem:[NSMenuItem separatorItem]];
 		}
 		for (auto && vdev: vdevs)
 		{
