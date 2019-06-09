@@ -18,6 +18,8 @@
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
 
+#include "InvariantDisks/IDDiskArbitrationUtils.hpp"
+
 #include <type_traits>
 #include <iomanip>
 #include <sstream>
@@ -27,6 +29,7 @@
 {
 	NSMutableArray * _dynamicMenus;
 	ZetaPoolWatcher * _watcher;
+	DASessionRef _diskArbitrationSession;
 }
 
 @end
@@ -40,8 +43,14 @@
 		_dynamicMenus = [[NSMutableArray alloc] init];
 		_watcher = [[ZetaPoolWatcher alloc] init];
 		_watcher.delegate = self;
+		_diskArbitrationSession = DASessionCreate(nullptr);
 	}
 	return self;
+}
+
+- (void)dealloc
+{
+	CFRelease(_diskArbitrationSession);
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
@@ -195,36 +204,86 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 	return fsLine;
 }
 
-NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device, NSMenu * menu)
+template<typename T> T toFormatable(T t)
+{
+	return t;
+}
+
+char const * toFormatable(std::string const & str)
+{
+	return str.c_str();
+}
+
+// C++ Variadic Templates and Objective-C Vararg functions don't work well together
+NSString * formatNSString(NSString * format)
+{
+	return format;
+}
+
+template<typename T>
+NSString * formatNSString(NSString * format, T const & t)
+{
+	return [NSString stringWithFormat:format, toFormatable(t)];
+}
+
+template<typename T, typename U>
+NSString * formatNSString(NSString * format, T const & t, U const & u)
+{
+	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u)];
+}
+
+template<typename... T>
+NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuDelegate * delegate,
+						 NSString * format, T const & ... t)
+{
+	auto title = formatNSString(format, t...);
+	auto item = [menu addItemWithTitle:title action:@selector(copyRepresentedObject:) keyEquivalent:@""];
+	item.representedObject = title;
+	item.target = delegate;
+	return item;
+}
+
+std::string trim(std::string const & s)
+{
+	size_t first = s.find_first_not_of(' ');
+	size_t last = s.find_last_not_of(' ');
+	if (first != std::string::npos)
+		return s.substr(first, last - first + 1);
+	return s;
+}
+
+NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
+	NSMenu * menu, DASessionRef daSession, ZetaMenuDelegate * delegate)
 {
 	// Menu Item
 	auto stat = zfs::vdevStat(device);
-	NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
-		pool.vdevName(device).c_str(), formatErrorStat(stat)];
-	NSMenuItem * item = [menu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
+	auto item = addMenuItem(menu, delegate, NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
+							pool.vdevName(device), formatErrorStat(stat));
 	// Submenu
+	// ZFS Info
 	NSMenu * subMenu = [[NSMenu alloc] init];
-	subMenu.autoenablesItems = NO;
-	[subMenu addItemWithTitle:formatErrorStat(stat) action:nil keyEquivalent:@""];
-	[subMenu addItemWithTitle:[NSString stringWithFormat:
-		NSLocalizedString(@"Space:\t%s used / %s total", @"VDev Space Menu Entry"),
-		formatBytes(stat.alloc).c_str(), formatBytes(stat.space).c_str()]
-					   action:nil keyEquivalent:@""];
-	[subMenu addItemWithTitle:[NSString stringWithFormat:
-		NSLocalizedString(@"Fragmentation:\t%llu%% ", @"VDev Fragmentation Menu Entry"),
-		stat.fragmentation]
-					   action:nil keyEquivalent:@""];
-	[subMenu addItemWithTitle:[NSString stringWithFormat:
-		NSLocalizedString(@"GUID:\t%llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device)]
-					   action:nil keyEquivalent:@""];
-	[subMenu addItemWithTitle:[NSString stringWithFormat:
-		NSLocalizedString(@"Device:\t%s", @"VDev Device Menu Entry"), pool.vdevDevice(device).c_str()]
-					   action:nil keyEquivalent:@""];
+	addMenuItem(subMenu, delegate, formatErrorStat(stat));
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Space:\t%s used / %s total", @"VDev Space Menu Entry"), formatBytes(stat.alloc), formatBytes(stat.space));
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Fragmentation:\t%llu%% ", @"VDev Fragmentation Menu Entry"), stat.fragmentation);
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"VDev GUID:\t%llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device));
+	std::string type = zfs::vdevType(device);
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Device:\t%s (%s)", @"VDev Device Menu Entry"), pool.vdevDevice(device), type);
+	// Disk Info
+	if (type == "disk")
+	{
+		[subMenu addItem:[NSMenuItem separatorItem]];
+		DADiskRef daDisk = DADiskCreateFromBSDName(nullptr, daSession, pool.vdevDevice(device).c_str());
+		auto diskInfo = ID::getDiskInformation(daDisk);
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"UUID:\t%s", @"VDev MediaUUID Menu Entry"), diskInfo.mediaUUID);
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"Model:\t%s", @"VDev Model Menu Entry"), trim(diskInfo.deviceModel));
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"Serial:\t%s", @"VDev Serial Menu Entry"), trim(diskInfo.ioSerial));
+		CFRelease(daDisk);
+	}
 	item.submenu = subMenu;
 	return item;
 }
 
-NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
+NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DASessionRef daSession)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
 	[vdevMenu setAutoenablesItems:NO];
@@ -259,12 +318,12 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		for (auto && vdev: vdevs)
 		{
 			// VDev
-			addVdev(pool, vdev, vdevMenu);
+			addVdev(pool, vdev, vdevMenu, daSession, delegate);
 			// Children
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
 			{
-				auto item = addVdev(pool, device, vdevMenu);
+				auto item = addVdev(pool, device, vdevMenu, daSession, delegate);
 				[item setIndentationLevel:1];
 			}
 		}
@@ -275,7 +334,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 			[vdevMenu addItemWithTitle:@"cache" action:nullptr keyEquivalent:@""];
 			for (auto && cache: caches)
 			{
-				auto item = addVdev(pool, cache, vdevMenu);
+				auto item = addVdev(pool, cache, vdevMenu, daSession, delegate);
 				[item setIndentationLevel:1];
 			}
 		}
@@ -341,7 +400,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
 			pool.name(), zfs::emojistring_pool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
-		NSMenu * vdevMenu = createVdevMenu(pool, self);
+		NSMenu * vdevMenu = createVdevMenu(pool, self, _diskArbitrationSession);
 		[poolItem setSubmenu:vdevMenu];
 		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
 		[_dynamicMenus addObject:poolItem];
@@ -519,6 +578,13 @@ static NSString * getPassword()
 		 if (error)
 			 [self errorFromHelper:error];
 	 }];
+}
+
+- (IBAction)copyRepresentedObject:(id)sender
+{
+	auto pb = [NSPasteboard generalPasteboard];
+	[pb clearContents];
+	[pb writeObjects:@[[sender representedObject]]];
 }
 
 @end

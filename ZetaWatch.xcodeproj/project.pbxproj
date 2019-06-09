@@ -37,6 +37,8 @@
 		7018765C20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
+		70703F3722AD7633002C760A /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70703F3622AD7633002C760A /* DiskArbitration.framework */; };
+		70703F3922AD7A17002C760A /* IDDiskArbitrationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
 		70AE5AB222A3DBAA002C760A /* ZetaImportMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB122A3DBAA002C760A /* ZetaImportMenuDelegate.mm */; };
 		70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.m */; };
@@ -116,8 +118,11 @@
 		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
 		7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZFSWrapperStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
+		70703F3622AD7633002C760A /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IDDiskArbitrationUtils.cpp; sourceTree = "<group>"; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
 		709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaPoolWatcher.h; sourceTree = "<group>"; };
+		70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IDDiskArbitrationUtils.hpp; path = InvariantDisks/IDDiskArbitrationUtils.hpp; sourceTree = "<group>"; };
 		70AE5AB122A3DBAA002C760A /* ZetaImportMenuDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaImportMenuDelegate.mm; sourceTree = "<group>"; };
 		70AE5AB322A3DBBF002C760A /* ZetaImportMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaImportMenuDelegate.h; sourceTree = "<group>"; };
 		70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaBaseDelegate.m; sourceTree = "<group>"; };
@@ -155,6 +160,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70703F3722AD7633002C760A /* DiskArbitration.framework in Frameworks */,
 				7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
 				7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */,
 				7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */,
@@ -238,6 +244,8 @@
 				709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */,
 				70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */,
 				70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */,
+				70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */,
+				70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				70C930D622122CBD00BA39B8 /* Localizable.strings */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
@@ -287,6 +295,7 @@
 		70DB77B11FFAD8E300BA39B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				70703F3622AD7633002C760A /* DiskArbitration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -501,6 +510,7 @@
 				70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */,
 				70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */,
 				70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.m in Sources */,
+				70703F3922AD7A17002C760A /* IDDiskArbitrationUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
