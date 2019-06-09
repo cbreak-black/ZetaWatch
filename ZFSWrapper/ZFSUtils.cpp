@@ -375,6 +375,23 @@ namespace zfs
 		return scanStat(vdevtree);
 	}
 
+	std::string ZPool::vdevName(zfs::NVList const & vdev) const
+	{
+		std::string name = zpool_vdev_name(
+			zpool_get_handle(m_handle), m_handle, vdev.toList(), 0);
+		if (zfs::vdevIsLog(vdev))
+			return "log: " + name;
+		return name;
+	}
+
+	std::string ZPool::vdevDevice(zfs::NVList const & vdev) const
+	{
+		std::string name = zpool_vdev_name(
+			zpool_get_handle(m_handle), m_handle, vdev.toList(),
+			VDEV_NAME_PATH | VDEV_NAME_FOLLOW_LINKS | VDEV_NAME_TYPE_ID);
+		return name;
+	}
+
 	ZFileSystem ZPool::rootFileSystem() const
 	{
 		auto lib = zpool_get_handle(m_handle);

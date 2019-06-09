@@ -240,6 +240,16 @@ namespace zfs
 		 */
 		ScanStat scanStat() const;
 
+		/*!
+		 \returns The normal name of the given vdev
+		 */
+		std::string vdevName(zfs::NVList const & vdev) const;
+
+		/*!
+		 \returns The path to the underlying device
+		 */
+		std::string vdevDevice(zfs::NVList const & vdev) const;
+
 	public:
 		//! \returns the root filesystem
 		ZFileSystem rootFileSystem() const;

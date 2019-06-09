@@ -69,21 +69,6 @@ NSString * formatErrorStat(zfs::VDevStat stat)
 	return [NSString stringWithFormat:@"%@, %@", status, errors];
 }
 
-std::string genName(zfs::NVList const & vdev)
-{
-	auto type = zfs::vdevType(vdev);
-	if (type == "file" || type == "disk")
-	{
-		if (zfs::vdevIsLog(vdev))
-			return "log: " + zfs::vdevPath(vdev);
-		return zfs::vdevPath(vdev);
-	}
-	else
-	{
-		return type;
-	}
-}
-
 struct MetricPrefix
 {
 	uint64_t factor;
@@ -210,6 +195,15 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 	return fsLine;
 }
 
+NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device, NSMenu * menu)
+{
+	auto stat = zfs::vdevStat(device);
+	NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s [%s] (%@)", @"Device Menu Entry"),
+		pool.vdevName(device).c_str(), pool.vdevDevice(device).c_str(), formatErrorStat(stat)];
+	NSMenuItem * item = [menu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
+	return item;
+}
+
 NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
@@ -244,31 +238,25 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate)
 		for (auto && vdev: vdevs)
 		{
 			// VDev
-			auto stat = zfs::vdevStat(vdev);
-			NSString * vdevLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"VDev Menu Entry"),
-				genName(vdev).c_str(), formatErrorStat(stat)];
-			[vdevMenu addItemWithTitle:vdevLine
-								action:nullptr keyEquivalent:@""];
+			addVdev(pool, vdev, vdevMenu);
 			// Children
 			auto devices = zfs::vdevChildren(vdev);
 			for (auto && device: devices)
 			{
-				auto stat = zfs::vdevStat(device);
-				NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
-					genName(device).c_str(), formatErrorStat(stat)];
-				NSMenuItem * item = [vdevMenu addItemWithTitle:devLine
-														action:nullptr keyEquivalent:@""];
+				auto item = addVdev(pool, device, vdevMenu);
 				[item setIndentationLevel:1];
 			}
 		}
 		// Caches
 		auto caches = pool.caches();
-		for (auto && cache: caches)
+		if (caches.size() > 0)
 		{
-			auto stat = zfs::vdevStat(cache);
-			NSString * devLine = [NSString stringWithFormat:NSLocalizedString(@"cache: %s (%@)", @"Cache Menu Entry"),
-								  genName(cache).c_str(), formatErrorStat(stat)];
-			[vdevMenu addItemWithTitle:devLine action:nullptr keyEquivalent:@""];
+			[vdevMenu addItemWithTitle:@"cache" action:nullptr keyEquivalent:@""];
+			for (auto && cache: caches)
+			{
+				auto item = addVdev(pool, cache, vdevMenu);
+				[item setIndentationLevel:1];
+			}
 		}
 		// Filesystems
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
