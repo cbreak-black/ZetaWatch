@@ -197,6 +197,8 @@ namespace ID
 		DiskInformation info;
 		// DiskArbitration
 		CFDictionaryRef descDict = DADiskCopyDescription(disk);
+		if (!descDict)
+			return info;
 		info.volumeKind = stringFromDictionary<CFStringRef>(descDict, kDADiskDescriptionVolumeKindKey);
 		info.volumeUUID = stringFromDictionary<CFUUIDRef>(descDict, kDADiskDescriptionVolumeUUIDKey);
 		info.volumeName = stringFromDictionary<CFStringRef>(descDict, kDADiskDescriptionVolumeNameKey);

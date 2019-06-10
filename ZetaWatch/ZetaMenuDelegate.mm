@@ -268,11 +268,12 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 	addMenuItem(subMenu, delegate, NSLocalizedString(@"VDev GUID:\t%llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device));
 	std::string type = zfs::vdevType(device);
 	addMenuItem(subMenu, delegate, NSLocalizedString(@"Device:\t%s (%s)", @"VDev Device Menu Entry"), pool.vdevDevice(device), type);
-	// Disk Info
-	if (type == "disk")
+	// Disk Info, only if state is at least 5 or higher, (FAULTED, DEGRADED, HEALTHY)
+	if (type == "disk" && stat.state >= 5)
 	{
 		[subMenu addItem:[NSMenuItem separatorItem]];
-		DADiskRef daDisk = DADiskCreateFromBSDName(nullptr, daSession, pool.vdevDevice(device).c_str());
+		auto devicePath = pool.vdevDevice(device);
+		DADiskRef daDisk = DADiskCreateFromBSDName(nullptr, daSession, devicePath.c_str());
 		auto diskInfo = ID::getDiskInformation(daDisk);
 		addMenuItem(subMenu, delegate, NSLocalizedString(@"UUID:\t%s", @"VDev MediaUUID Menu Entry"), diskInfo.mediaUUID);
 		addMenuItem(subMenu, delegate, NSLocalizedString(@"Model:\t%s", @"VDev Model Menu Entry"), trim(diskInfo.deviceModel));
