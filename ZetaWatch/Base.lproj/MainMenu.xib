@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -12,20 +13,32 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="Voe-Tx-rLC" customClass="ZetaWatchDelegate">
+        <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
+                <outlet property="passwordPopover" destination="5Lh-hG-dv8" id="4LS-vI-vnS"/>
+                <outlet property="zetaKeyLoaderDelegate" destination="R7D-cp-kuE" id="KCZ-sp-kdc"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
                 <outlet property="zetaMenuDelegate" destination="8rf-zp-5r9" id="79g-6y-RnC"/>
             </connections>
         </customObject>
-        <customObject id="8rf-zp-5r9" userLabel="MenuDelegate" customClass="ZetaMenuDelegate">
+        <customObject id="8rf-zp-5r9" userLabel="ZetaMenuDelegate" customClass="ZetaMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
+                <outlet property="zetaWatchDelegate" destination="Voe-Tx-rLC" id="iql-cr-MgO"/>
             </connections>
         </customObject>
-        <customObject id="geo-tu-CMM" customClass="ZetaImportMenuDelegate">
+        <customObject id="geo-tu-CMM" userLabel="ZetaImportMenuDelegate" customClass="ZetaImportMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
+            </connections>
+        </customObject>
+        <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoaderDelegate" customClass="ZetaKeyLoaderDelegate">
+            <connections>
+                <outlet property="_authorization" destination="GUh-uV-dxo" id="j1a-fu-F0a"/>
+                <outlet property="errorField" destination="egb-Mb-iyZ" id="rH5-Uc-CmO"/>
+                <outlet property="passwordField" destination="JpZ-yq-Swt" id="wki-ew-pno"/>
+                <outlet property="popover" destination="5Lh-hG-dv8" id="bFc-sJ-D7x"/>
+                <outlet property="queryField" destination="vtC-BP-wc5" id="cQa-7q-bCw"/>
             </connections>
         </customObject>
         <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
@@ -699,5 +712,82 @@
                 </menuItem>
             </items>
         </menu>
+        <customView id="40L-u9-aeI" userLabel="PasswordDialog">
+            <rect key="frame" x="0.0" y="0.0" width="554" height="104"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <secureTextField verticalHuggingPriority="750" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="JpZ-yq-Swt">
+                    <rect key="frame" x="92" y="45" width="442" height="22"/>
+                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="nB2-dg-ZrZ">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <allowedInputSourceLocales>
+                            <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                        </allowedInputSourceLocales>
+                        <connections>
+                            <action selector="loadKey:" target="R7D-cp-kuE" id="Wfm-Ep-xcX"/>
+                        </connections>
+                    </secureTextFieldCell>
+                </secureTextField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vtC-BP-wc5">
+                    <rect key="frame" x="90" y="75" width="446" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="17" id="J3h-Ms-Ygd"/>
+                    </constraints>
+                    <textFieldCell key="cell" refusesFirstResponder="YES" title="Enter the password for %@" id="zNZ-X6-NWc">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LRH-QE-iBn">
+                    <rect key="frame" x="20" y="20" width="64" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="64" id="TDZ-YV-zW0"/>
+                        <constraint firstAttribute="width" constant="64" id="x8p-su-1N7"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="qon-SO-Jhf"/>
+                </imageView>
+                <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="egb-Mb-iyZ">
+                    <rect key="frame" x="90" y="20" width="446" height="17"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Error" id="Mwk-R6-lED">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="vtC-BP-wc5" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" id="1gu-dR-bQA"/>
+                <constraint firstAttribute="trailing" secondItem="egb-Mb-iyZ" secondAttribute="trailing" constant="20" symbolic="YES" id="87D-jM-D4I"/>
+                <constraint firstItem="LRH-QE-iBn" firstAttribute="leading" secondItem="40L-u9-aeI" secondAttribute="leading" constant="20" symbolic="YES" id="8Ld-Ru-1X8"/>
+                <constraint firstItem="vtC-BP-wc5" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" priority="750" constant="20" symbolic="YES" id="AfF-td-1Z6"/>
+                <constraint firstAttribute="bottom" secondItem="LRH-QE-iBn" secondAttribute="bottom" constant="20" symbolic="YES" id="GJz-ex-VEU"/>
+                <constraint firstItem="egb-Mb-iyZ" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" id="TDI-zg-nfp"/>
+                <constraint firstItem="JpZ-yq-Swt" firstAttribute="top" secondItem="vtC-BP-wc5" secondAttribute="bottom" constant="8" id="abq-QG-ftd"/>
+                <constraint firstAttribute="bottom" secondItem="egb-Mb-iyZ" secondAttribute="bottom" constant="20" symbolic="YES" id="emi-Ch-eys"/>
+                <constraint firstItem="egb-Mb-iyZ" firstAttribute="top" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="l8W-4p-UJX"/>
+                <constraint firstItem="JpZ-yq-Swt" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="lDB-KI-2Ff"/>
+                <constraint firstItem="LRH-QE-iBn" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" constant="20" symbolic="YES" id="u0N-kd-ick"/>
+                <constraint firstAttribute="trailing" secondItem="JpZ-yq-Swt" secondAttribute="trailing" constant="20" id="xXA-Ui-KUB"/>
+                <constraint firstAttribute="trailing" secondItem="vtC-BP-wc5" secondAttribute="trailing" constant="20" symbolic="YES" id="ziC-dL-Eus"/>
+            </constraints>
+            <point key="canvasLocation" x="144" y="406"/>
+        </customView>
+        <viewController id="3wl-p9-tQW" userLabel="Popover View Controller">
+            <connections>
+                <outlet property="view" destination="40L-u9-aeI" id="SJp-sP-WqY"/>
+            </connections>
+        </viewController>
+        <popover behavior="t" id="5Lh-hG-dv8">
+            <connections>
+                <outlet property="contentViewController" destination="3wl-p9-tQW" id="3c9-rd-q9f"/>
+                <outlet property="delegate" destination="R7D-cp-kuE" id="4kg-JY-FmY"/>
+            </connections>
+        </popover>
     </objects>
+    <resources>
+        <image name="NSApplicationIcon" width="128" height="128"/>
+    </resources>
 </document>

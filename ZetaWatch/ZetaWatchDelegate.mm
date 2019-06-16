@@ -13,6 +13,7 @@
 #import "ZetaWatchDelegate.h"
 
 #import "ZetaMenuDelegate.h"
+#import "ZetaKeyLoaderDelegate.h"
 
 @interface ZetaWatchDelegate ()
 {
@@ -22,6 +23,8 @@
 @property (weak) IBOutlet NSWindow * window;
 @property (weak) IBOutlet NSMenu * zetaMenu;
 @property (weak) IBOutlet ZetaMenuDelegate * zetaMenuDelegate;
+@property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoaderDelegate;
+@property (weak) IBOutlet NSPopover * passwordPopover;
 
 @end
 
@@ -39,6 +42,13 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+}
+
+- (void)showPopoverLoadKeyForFilesystem:(NSString*)fs
+{
+	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+	[_zetaKeyLoaderDelegate setRepresentedFileSystem:fs];
+	[_passwordPopover showRelativeToRect:NSMakeRect(0, 0, 0, 0) ofView:[_statusItem button] preferredEdge:NSRectEdgeMinY];
 }
 
 @end

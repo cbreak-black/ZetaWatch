@@ -474,31 +474,6 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 
 #pragma mark ZFS Maintenance
 
-static NSString * getPassword()
-{
-	auto param = @{
-		(__bridge NSString*)kCFUserNotificationAlertHeaderKey: @"Mount Filesystem with Key",
-		(__bridge NSString*)kCFUserNotificationAlertMessageKey: @"Enter the password for mounting encrypted filesystems",
-		(__bridge NSString*)kCFUserNotificationDefaultButtonTitleKey: @"Mount",
-		(__bridge NSString*)kCFUserNotificationTextFieldTitlesKey: @"Password",
-	};
-	SInt32 error = 0;
-	auto notification = CFUserNotificationCreate(kCFAllocatorDefault, 30,
-		kCFUserNotificationPlainAlertLevel | CFUserNotificationSecureTextField(0),
-							 &error, (__bridge CFDictionaryRef)param);
-	CFOptionFlags response = 0;
-	auto ret = CFUserNotificationReceiveResponse(notification, 0, &response);
-	if (ret != 0)
-	{
-		CFRelease(notification);
-		return nil;
-	}
-	auto pass = CFUserNotificationGetResponseValue(notification, kCFUserNotificationTextFieldValuesKey, 0);
-	CFRetain(pass);
-	CFRelease(notification);
-	return (__bridge_transfer NSString*)pass;
-}
-
 - (IBAction)importAllPools:(id)sender
 {
 	[_authorization importPools:@{} withReply:^(NSError * error)
@@ -550,15 +525,7 @@ static NSString * getPassword()
 - (IBAction)loadKey:(id)sender
 {
 	NSString * fs = [sender representedObject];
-	auto pass = getPassword();
-	if (!pass)
-		return;
-	NSDictionary * opts = @{@"filesystem": fs, @"key": pass};
-	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
-	 {
-		 if (error)
-			 [self errorFromHelper:error];
-	 }];
+	[_zetaWatchDelegate showPopoverLoadKeyForFilesystem:fs];
 }
 
 - (IBAction)scrubPool:(id)sender
