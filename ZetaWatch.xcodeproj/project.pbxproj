@@ -643,7 +643,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				ZFS_DIR = "~/Documents/zfs/zfs";
+				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Debug;
 		};
@@ -699,7 +699,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				ZFS_DIR = "~/Documents/zfs/zfs";
+				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Release;
 		};
