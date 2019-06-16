@@ -30,6 +30,7 @@
         <customObject id="geo-tu-CMM" userLabel="ZetaImportMenuDelegate" customClass="ZetaImportMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
+                <outlet property="importMenu" destination="fE9-G4-NH4" id="jfo-ja-1Zj"/>
             </connections>
         </customObject>
         <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoaderDelegate" customClass="ZetaKeyLoaderDelegate">

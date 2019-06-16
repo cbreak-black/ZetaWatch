@@ -18,26 +18,47 @@
 	[menu addItemWithTitle:@"Searching for importable Pools..." action:NULL keyEquivalent:@""];
 	[_authorization importablePoolsWithReply:^(NSError * error, NSDictionary * importablePools)
 	 {
-		 if ([importablePools count] > 0)
+		 if (error)
 		 {
-			 NSMenuItem * item = [menu itemAtIndex:0];
-			 [item setTitle:[NSString stringWithFormat:
-							 @"%lu importable Pools found", [importablePools count]]];
-			 for (NSString * name in importablePools)
-			 {
-				 NSMenuItem * item = [menu addItemWithTitle:name action:@selector(importPool:) keyEquivalent:@""];
-				 [item setTitle:[NSString stringWithFormat:@"%@ (%llu)", name, [importablePools[name] unsignedLongLongValue]]];
-				 [item setAction:@selector(importPool:)];
-				 [item setTarget:self];
-				 [item setRepresentedObject:importablePools[name]];
-			 }
+			 [self performSelectorOnMainThread:@selector(importablePoolsError:)
+									withObject:error waitUntilDone:NO];
 		 }
 		 else
 		 {
-			 NSMenuItem * item = [menu itemAtIndex:0];
-			 [item setTitle:@"No importable Pools found"];
+			 [self performSelectorOnMainThread:@selector(importablePoolsDiscovered:)
+									withObject:importablePools waitUntilDone:NO];
 		 }
+
 	 }];
+}
+
+- (void)importablePoolsDiscovered:(NSDictionary*)importablePools
+{
+	if ([importablePools count] > 0)
+	{
+		NSMenuItem * item = [_importMenu itemAtIndex:0];
+		[item setTitle:[NSString stringWithFormat:
+						@"%lu importable Pools found", [importablePools count]]];
+		for (NSString * name in importablePools)
+		{
+			NSMenuItem * item = [_importMenu addItemWithTitle:name action:@selector(importPool:) keyEquivalent:@""];
+			[item setTitle:[NSString stringWithFormat:@"%@ (%llu)", name, [importablePools[name] unsignedLongLongValue]]];
+			[item setAction:@selector(importPool:)];
+			[item setTarget:self];
+			[item setRepresentedObject:importablePools[name]];
+		}
+	}
+	else
+	{
+		NSMenuItem * item = [_importMenu itemAtIndex:0];
+		[item setTitle:@"No importable Pools found"];
+	}
+}
+
+- (void)importablePoolsError:(NSError*)error
+{
+	NSMenuItem * item = [_importMenu itemAtIndex:0];
+	[item setTitle:[error localizedDescription]];
 }
 
 - (IBAction)importPool:(id)sender

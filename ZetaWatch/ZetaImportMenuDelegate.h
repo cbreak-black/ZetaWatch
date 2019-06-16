@@ -16,6 +16,8 @@
 
 @interface ZetaImportMenuDelegate : ZetaBaseDelegate <NSMenuDelegate>
 
+@property (weak) IBOutlet NSMenu * importMenu;
+
 @end
 
 #endif /* ZetaImportMenuDelegate_h */
