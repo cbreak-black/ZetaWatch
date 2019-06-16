@@ -172,7 +172,7 @@
 		try
 		{
 			NSNumber * pool = [importData objectForKey:@"poolGUID"];
-			if (pool)
+			if (pool != nil)
 			{
 				auto importedPool = _zfs.import([pool unsignedLongLongValue]);
 				bool success = true;

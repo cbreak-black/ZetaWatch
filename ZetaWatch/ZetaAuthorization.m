@@ -16,8 +16,6 @@
 
 #include <dispatch/dispatch.h>
 
-static const uint32_t maxRetries = 4;
-
 @interface ZetaAuthorization ()
 {
 	AuthorizationRef _authRef;
