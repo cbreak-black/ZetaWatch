@@ -213,7 +213,6 @@ namespace zfs
 
 	inline void truncateString(std::string & str)
 	{
-		static_assert(std::is_same<std::string::size_type, std::size_t>{}, "xxx");
 		str.resize(std::strlen(str.data()));
 	}
 
@@ -394,6 +393,11 @@ namespace zfs
 			throw std::runtime_error("Unable to open pool " + name);
 	}
 
+	ZPool::ZPool() :
+		m_handle(nullptr)
+	{
+	}
+
 	ZPool::ZPool(zpool_handle_t * handle) :
 		m_handle(handle)
 	{
@@ -477,6 +481,32 @@ namespace zfs
 			zpool_get_handle(m_handle), m_handle, vdev.toList(),
 			VDEV_NAME_PATH | VDEV_NAME_FOLLOW_LINKS | VDEV_NAME_TYPE_ID);
 		return name;
+	}
+
+	bool getProperty(zpool_handle_t * handle, zpool_prop_t prop, ZPool::Property & p)
+	{
+		auto name = zpool_prop_to_name(prop);
+		if (!name)
+			return false;
+		p.name.assign(name);
+		p.value.resize(64);
+		zprop_source_t source = {};
+		int ec = zpool_get_prop(handle, prop,
+							  p.value.data(), p.value.size(), &source, false);
+		truncateString(p.value);
+		return ec == 0;
+	}
+
+	std::vector<ZPool::Property> ZPool::properties() const
+	{
+		std::vector<ZPool::Property> properties;
+		ZPool::Property prop;
+		for (size_t i = 0; i < ZPOOL_NUM_PROPS; ++i)
+		{
+			if (getProperty(m_handle, static_cast<zpool_prop_t>(i), prop))
+				properties.push_back(prop);
+		}
+		return properties;
 	}
 
 	ZFileSystem ZPool::rootFileSystem() const

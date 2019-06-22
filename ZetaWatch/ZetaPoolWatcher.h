@@ -26,9 +26,8 @@
 @interface ZetaPoolWatcher : NSObject
 
 - (id)init;
-- (void)refreshPools;
 
-- (std::vector<zfs::ZPool> const &)pools;
+- (std::vector<zfs::ZPool>)pools;
 
 - (void)keepAwake;
 - (void)stopKeepingAwake;

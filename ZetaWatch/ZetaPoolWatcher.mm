@@ -55,7 +55,6 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 			target:self selector:@selector(timedUpdate:) userInfo:nil repeats:YES];
 		_autoUpdateTimer.tolerance = 8;
 		[[NSRunLoop currentRunLoop] addTimer:_autoUpdateTimer forMode:NSDefaultRunLoopMode];
-		[self refreshPools];
 	}
 	return self;
 }
@@ -71,9 +70,9 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	try
 	{
-		[self refreshPools];
-		[self checkForNewErrors];
-		auto scrubCounter = [self countScrubsInProgress];
+		auto p = [self pools];
+		[self checkForNewErrors:p];
+		auto scrubCounter = [self countScrubsInProgress:p];
 		if (scrubCounter > 0)
 			[self keepAwake];
 		else
@@ -82,18 +81,6 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	catch (std::exception const & e)
 	{
 		NSLog(@"Update Error: %s", e.what());
-	}
-}
-
-- (void)refreshPools
-{
-	try
-	{
-		_pools = _zfsHandle.pools();
-	}
-	catch (std::exception const & e)
-	{
-		[[self delegate] errorDetected:e.what()];
 	}
 }
 
@@ -107,11 +94,11 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	return error;
 }
 
-- (bool)checkForNewErrors
+- (bool)checkForNewErrors:(std::vector<zfs::ZPool> const &)pools
 {
 	try
 	{
-		for (auto && pool: _pools)
+		for (auto && pool: pools)
 		{
 			auto vdevs = pool.vdevs();
 			for (auto && vdev: vdevs)
@@ -141,12 +128,12 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	return false;
 }
 
-- (uint64_t)countScrubsInProgress
+- (uint64_t)countScrubsInProgress:(std::vector<zfs::ZPool> const &)pools
 {
 	uint64_t scrubsInProgress = 0;
 	try
 	{
-		for (auto && pool: _pools)
+		for (auto && pool: pools)
 		{
 			auto vdevs = pool.vdevs();
 			auto scan = pool.scanStat();
@@ -161,11 +148,18 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	return scrubsInProgress;
 }
 
-- (std::vector<zfs::ZPool> const &)pools
+- (std::vector<zfs::ZPool>)pools
 {
-	[self refreshPools];
-	[self checkForNewErrors];
-	return _pools;
+	std::vector<zfs::ZPool> pools;
+	try
+	{
+		pools = _zfsHandle.pools();
+	}
+	catch (std::exception const & e)
+	{
+		[[self delegate] errorDetected:e.what()];
+	}
+	return pools;
 }
 
 - (void)keepAwake

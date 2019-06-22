@@ -128,7 +128,11 @@ namespace zfs
 
 	public:
 		ZFileSystem();
+
+		//! \brief Takes ownership
 		explicit ZFileSystem(zfs_handle_t * handle);
+
+		//! \brief Closes the file system handle
 		~ZFileSystem();
 
 	public:
@@ -218,6 +222,15 @@ namespace zfs
 	class ZPool
 	{
 	public:
+		struct Property
+		{
+			std::string name;
+			std::string value;
+		};
+
+	public:
+		ZPool();
+
 		// Takes ownership
 		explicit ZPool(zpool_handle_t * handle);
 
@@ -266,6 +279,11 @@ namespace zfs
 		 \returns The path to the underlying device
 		 */
 		std::string vdevDevice(zfs::NVList const & vdev) const;
+
+		/*!
+		 \returns All properties of this pool
+		 */
+		std::vector<Property> properties() const;
 
 	public:
 		//! \returns the root filesystem

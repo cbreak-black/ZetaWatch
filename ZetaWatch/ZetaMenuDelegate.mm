@@ -15,6 +15,7 @@
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
 #import "ZetaFileSystemPropertyMenuDelegate.h"
+#import "ZetaPoolPropertyMenuDelegate.h"
 
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
@@ -156,7 +157,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMenuDelegate * delegate)
 	addMenuItem(fsMenu, delegate,
 				NSLocalizedString(@"Mount Point:        \t %s", @"FS Mountpoint Menu Entry"),
 				fs.mountpoint());
-	// All Properties (this could be somewhat expensive)
+	// All Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
 	ZetaFileSystemPropertyMenuDelegate * pd = [[ZetaFileSystemPropertyMenuDelegate alloc] initWithFileSystem:std::move(fs)];
@@ -233,7 +234,7 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 	return item;
 }
 
-NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DASessionRef daSession)
+NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessionRef daSession)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
 	[vdevMenu setAutoenablesItems:NO];
@@ -329,6 +330,16 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 			item.representedObject = poolName;
 			item.target = delegate;
 		}
+		// All Properties
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
+		ZetaPoolPropertyMenuDelegate * pd = [[ZetaPoolPropertyMenuDelegate alloc] initWithPool:std::move(pool)];
+		allProps.delegate = pd;
+		NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
+		allPropsItem.submenu = allProps;
+		allPropsItem.representedObject = pd;
+		[vdevMenu addItem:allPropsItem];
+
 	}
 	catch (std::exception const & e)
 	{
@@ -350,7 +361,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 		NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
 			pool.name(), zfs::emojistring_pool_status_t(pool.status())];
 		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
-		NSMenu * vdevMenu = createVdevMenu(pool, self, _diskArbitrationSession);
+		NSMenu * vdevMenu = createVdevMenu(std::move(pool), self, _diskArbitrationSession);
 		[poolItem setSubmenu:vdevMenu];
 		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
 		[_dynamicMenus addObject:poolItem];
