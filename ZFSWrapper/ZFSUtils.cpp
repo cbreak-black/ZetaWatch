@@ -213,37 +213,80 @@ namespace zfs
 		str.resize(std::strlen(str.data()));
 	}
 
-	ZFileSystem::Property getProperty(zfs_handle_t * handle, zfs_prop_t prop, bool literal = false)
+	std::uint64_t getPropNumeric(zfs_handle_t * handle, zfs_prop_t prop)
 	{
-		ZFileSystem::Property p;
+		std::uint64_t v = {};
+		int ec = zfs_prop_get_numeric(handle, prop, &v, nullptr, nullptr, 0);
+		if (ec != 0)
+			return 0; // Maybe report error in some form?
+		return v;
+	}
+
+	std::string getPropString(zfs_handle_t * handle, zfs_prop_t prop)
+	{
+		std::string s;
+		s.resize(128);
+		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, false);
+		if (ec != 0)
+			s.clear(); // Maybe report error in some form?
+		else
+			truncateString(s);
+		return s;
+	}
+
+	std::uint64_t ZFileSystem::used() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_USED);
+	}
+
+	std::uint64_t ZFileSystem::available() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_AVAILABLE);
+	}
+
+	std::uint64_t ZFileSystem::referenced() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_REFERENCED);
+	}
+
+	std::uint64_t ZFileSystem::logicalused() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_LOGICALUSED);
+	}
+
+	float ZFileSystem::compressRatio() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_COMPRESSRATIO) / 100.0;
+	}
+
+	std::string ZFileSystem::mountpoint() const
+	{
+		return getPropString(m_handle, ZFS_PROP_MOUNTPOINT);
+	}
+
+	bool getProperty(zfs_handle_t * handle, zfs_prop_t prop, ZFileSystem::Property & p)
+	{
 		p.name.assign(zfs_prop_to_name(prop));
 		p.value.resize(64);
 		p.source.resize(128);
 		zprop_source_t source = {};
-		zfs_prop_get(handle, prop,
+		int ec = zfs_prop_get(handle, prop,
 					 p.value.data(), p.value.size(), &source,
-					 p.source.data(), p.source.size(), literal);
+					 p.source.data(), p.source.size(), false);
 		truncateString(p.value);
 		truncateString(p.source);
-		return p;
+		return ec == 0;
 	}
 
 	std::vector<ZFileSystem::Property> ZFileSystem::properties() const
 	{
 		std::vector<ZFileSystem::Property> properties;
-//		for (size_t i = 0; i < ZFS_NUM_PROPS; ++i)
-//			properties.push_back(getProperty(m_handle, static_cast<zfs_prop_t>(i)));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_TYPE));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_AVAILABLE));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_USED));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDSNAP));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDDS));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDCHILD));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDREFRESERV));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_LOGICALUSED));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_REFERENCED));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_COMPRESSRATIO));
-		properties.push_back(getProperty(m_handle, ZFS_PROP_MOUNTPOINT));
+		ZFileSystem::Property prop;
+		for (size_t i = 0; i < ZFS_NUM_PROPS; ++i)
+		{
+			if (getProperty(m_handle, static_cast<zfs_prop_t>(i), prop))
+				properties.push_back(prop);
+		}
 		return properties;
 	}
 
@@ -269,9 +312,9 @@ namespace zfs
 
 	ZFileSystem::KeyStatus ZFileSystem::keyStatus() const
 	{
-		static_assert(none == (int)ZFS_KEYSTATUS_NONE &&
-					  unavailable == (int)ZFS_KEYSTATUS_UNAVAILABLE &&
-					  available == (int)ZFS_KEYSTATUS_AVAILABLE,
+		static_assert(KeyStatus::none == (KeyStatus)ZFS_KEYSTATUS_NONE &&
+					  KeyStatus::unavailable == (KeyStatus)ZFS_KEYSTATUS_UNAVAILABLE &&
+					  KeyStatus::available == (KeyStatus)ZFS_KEYSTATUS_AVAILABLE,
 					  "ZFileSystem::KeyStatus == zfs_keystatus");
 		return static_cast<KeyStatus>(zfs_prop_get_int(m_handle, ZFS_PROP_KEYSTATUS));
 	}

@@ -211,7 +211,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
 		NSMenuItem * item;
 		auto [encRoot, isRoot] = fs.encryptionRoot();
-		if (isRoot && fs.keyStatus() != zfs::ZFileSystem::available)
+		if (isRoot && fs.keyStatus() != zfs::ZFileSystem::KeyStatus::available)
 		{
 			item = [fsMenu addItemWithTitle:@"Load Key"
 									 action:@selector(loadKey:) keyEquivalent:@""];
@@ -233,21 +233,46 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 			item.target = delegate;
 		}
 	}
+	// Selected Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Available:\t %s", @"FS Available Menu Entry"),
+				formatBytes(fs.available()));
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Used:\t %s", @"FS Used Menu Entry"),
+				formatBytes(fs.used()));
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Referenced:\t %s", @"FS Referenced Menu Entry"),
+				formatBytes(fs.referenced()));
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Logical Used:\t %s", @"FS Logically Used Menu Entry"),
+				formatBytes(fs.logicalused()));
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Compress Ratio:\t %1.2fx", @"FS Compress Menu Entry"),
+				fs.compressRatio());
+	addMenuItem(fsMenu, delegate,
+				NSLocalizedString(@"Mount Point:\t %s", @"FS Mountpoint Menu Entry"),
+				fs.mountpoint());
+	// All Properties (this could be somewhat expensive)
+	[fsMenu addItem:[NSMenuItem separatorItem]];
+	NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
 	auto props = fs.properties();
 	for (auto const & p : props)
 	{
 		if (p.source.size() > 0)
 		{
-			addMenuItem(fsMenu, delegate, NSLocalizedString(@"%-48s\t%s (from %s)", @"KeyValueSource"),
+			addMenuItem(allProps, delegate, NSLocalizedString(@"%-48s\t%s (from %s)", @"KeyValueSource"),
 						p.name, p.value, p.source);
 		}
 		else
 		{
-			addMenuItem(fsMenu, delegate, NSLocalizedString(@"%-48s\t%s", @"KeyValue"),
+			addMenuItem(allProps, delegate, NSLocalizedString(@"%-48s\t%s", @"KeyValue"),
 						p.name, p.value);
 		}
 	}
+	NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
+	allPropsItem.submenu = allProps;
+	[fsMenu addItem:allPropsItem];
 	return fsMenu;
 }
 
@@ -259,13 +284,13 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 	NSString * encStatus = nil;
 	switch (fs.keyStatus())
 	{
-		case zfs::ZFileSystem::none:
+		case zfs::ZFileSystem::KeyStatus::none:
 			encStatus = @"";
 			break;
-		case zfs::ZFileSystem::unavailable:
+		case zfs::ZFileSystem::KeyStatus::unavailable:
 			encStatus = NSLocalizedString(@", 🔒", @"locked status");
 			break;
-		case zfs::ZFileSystem::available:
+		case zfs::ZFileSystem::KeyStatus::available:
 			encStatus = NSLocalizedString(@"🔑", @"unlocked status");
 			break;
 	}
@@ -284,11 +309,11 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 	// ZFS Info
 	NSMenu * subMenu = [[NSMenu alloc] init];
 	addMenuItem(subMenu, delegate, formatErrorStat(stat));
-	addMenuItem(subMenu, delegate, NSLocalizedString(@"Space:\t%s used / %s total", @"VDev Space Menu Entry"), formatBytes(stat.alloc), formatBytes(stat.space));
-	addMenuItem(subMenu, delegate, NSLocalizedString(@"Fragmentation:\t%llu%% ", @"VDev Fragmentation Menu Entry"), stat.fragmentation);
-	addMenuItem(subMenu, delegate, NSLocalizedString(@"VDev GUID:\t%llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device));
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Space:\t %s used / %s total", @"VDev Space Menu Entry"), formatBytes(stat.alloc), formatBytes(stat.space));
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Fragmentation:\t %llu%% ", @"VDev Fragmentation Menu Entry"), stat.fragmentation);
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"VDev GUID:\t %llu", @"VDev GUID Menu Entry"), zfs::vdevGUID(device));
 	std::string type = zfs::vdevType(device);
-	addMenuItem(subMenu, delegate, NSLocalizedString(@"Device:\t%s (%s)", @"VDev Device Menu Entry"), pool.vdevDevice(device), type);
+	addMenuItem(subMenu, delegate, NSLocalizedString(@"Device:\t %s (%s)", @"VDev Device Menu Entry"), pool.vdevDevice(device), type);
 	// Disk Info, only if state is at least 5 or higher, (FAULTED, DEGRADED, HEALTHY)
 	if (type == "disk" && stat.state >= 5)
 	{
@@ -296,9 +321,9 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 		auto devicePath = pool.vdevDevice(device);
 		DADiskRef daDisk = DADiskCreateFromBSDName(nullptr, daSession, devicePath.c_str());
 		auto diskInfo = ID::getDiskInformation(daDisk);
-		addMenuItem(subMenu, delegate, NSLocalizedString(@"UUID:\t%s", @"VDev MediaUUID Menu Entry"), diskInfo.mediaUUID);
-		addMenuItem(subMenu, delegate, NSLocalizedString(@"Model:\t%s", @"VDev Model Menu Entry"), trim(diskInfo.deviceModel));
-		addMenuItem(subMenu, delegate, NSLocalizedString(@"Serial:\t%s", @"VDev Serial Menu Entry"), trim(diskInfo.ioSerial));
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"UUID:\t %s", @"VDev MediaUUID Menu Entry"), diskInfo.mediaUUID);
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"Model:\t %s", @"VDev Model Menu Entry"), trim(diskInfo.deviceModel));
+		addMenuItem(subMenu, delegate, NSLocalizedString(@"Serial:\t %s", @"VDev Serial Menu Entry"), trim(diskInfo.ioSerial));
 		CFRelease(daDisk);
 	}
 	item.submenu = subMenu;
@@ -446,7 +471,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 		{
 			auto [encRoot, isRoot] = fs.encryptionRoot();
 			auto keyStatus = fs.keyStatus();
-			if (isRoot && keyStatus == zfs::ZFileSystem::unavailable)
+			if (isRoot && keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
 			{
 				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
 				NSMenuItem * item = [unlockMenu addItemWithTitle:fsName

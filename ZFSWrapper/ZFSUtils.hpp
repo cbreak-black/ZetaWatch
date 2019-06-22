@@ -119,7 +119,7 @@ namespace zfs
 			bookmark	= (1 << 4)
 		};
 
-		enum KeyStatus
+		enum class KeyStatus
 		{
 			none = 0,
 			unavailable = 1,
@@ -138,6 +138,12 @@ namespace zfs
 		char const * name() const;
 		bool mounted() const;
 		Type type() const;
+		std::uint64_t used() const;
+		std::uint64_t available() const;
+		std::uint64_t referenced() const;
+		std::uint64_t logicalused() const;
+		float compressRatio() const;
+		std::string mountpoint() const;
 		std::vector<Property> properties() const;
 		bool isEncryptionRoot() const;
 		std::pair<std::string, bool> encryptionRoot() const;
