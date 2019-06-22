@@ -207,6 +207,46 @@ namespace zfs
 		return static_cast<Type>(zfs_get_type(m_handle));
 	}
 
+	inline void truncateString(std::string & str)
+	{
+		static_assert(std::is_same<std::string::size_type, std::size_t>{}, "xxx");
+		str.resize(std::strlen(str.data()));
+	}
+
+	ZFileSystem::Property getProperty(zfs_handle_t * handle, zfs_prop_t prop, bool literal = false)
+	{
+		ZFileSystem::Property p;
+		p.name.assign(zfs_prop_to_name(prop));
+		p.value.resize(64);
+		p.source.resize(128);
+		zprop_source_t source = {};
+		zfs_prop_get(handle, prop,
+					 p.value.data(), p.value.size(), &source,
+					 p.source.data(), p.source.size(), literal);
+		truncateString(p.value);
+		truncateString(p.source);
+		return p;
+	}
+
+	std::vector<ZFileSystem::Property> ZFileSystem::properties() const
+	{
+		std::vector<ZFileSystem::Property> properties;
+//		for (size_t i = 0; i < ZFS_NUM_PROPS; ++i)
+//			properties.push_back(getProperty(m_handle, static_cast<zfs_prop_t>(i)));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_TYPE));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_AVAILABLE));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_USED));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDSNAP));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDDS));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDCHILD));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_USEDREFRESERV));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_LOGICALUSED));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_REFERENCED));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_COMPRESSRATIO));
+		properties.push_back(getProperty(m_handle, ZFS_PROP_MOUNTPOINT));
+		return properties;
+	}
+
 	bool ZFileSystem::isEncryptionRoot() const
 	{
 		boolean_t root = B_FALSE;
@@ -224,7 +264,7 @@ namespace zfs
 		std::string rootName(256+1, '\0');
 		zfs_crypto_get_encryption_root(m_handle, &root, &rootName[0]);
 		rootName.resize(std::strlen(rootName.data()));
-		return {rootName, root == B_TRUE};
+		return std::pair<std::string, bool>{rootName, root == B_TRUE};
 	}
 
 	ZFileSystem::KeyStatus ZFileSystem::keyStatus() const

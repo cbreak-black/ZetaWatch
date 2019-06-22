@@ -146,6 +146,60 @@ std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::sec
 	return ss.str();
 }
 
+template<typename T> T toFormatable(T t)
+{
+	return t;
+}
+
+char const * toFormatable(std::string const & str)
+{
+	return str.c_str();
+}
+
+// C++ Variadic Templates and Objective-C Vararg functions don't work well together
+NSString * formatNSString(NSString * format)
+{
+	return format;
+}
+
+template<typename T>
+NSString * formatNSString(NSString * format, T const & t)
+{
+	return [NSString stringWithFormat:format, toFormatable(t)];
+}
+
+template<typename T, typename U>
+NSString * formatNSString(NSString * format, T const & t, U const & u)
+{
+	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u)];
+}
+
+template<typename T, typename U, typename V>
+NSString * formatNSString(NSString * format, T const & t, U const & u, V const & v)
+{
+	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u), toFormatable(v)];
+}
+
+template<typename... T>
+NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuDelegate * delegate,
+						 NSString * format, T const & ... t)
+{
+	auto title = formatNSString(format, t...);
+	auto item = [menu addItemWithTitle:title action:@selector(copyRepresentedObject:) keyEquivalent:@""];
+	item.representedObject = title;
+	item.target = delegate;
+	return item;
+}
+
+std::string trim(std::string const & s)
+{
+	size_t first = s.find_first_not_of(' ');
+	size_t last = s.find_last_not_of(' ');
+	if (first != std::string::npos)
+		return s.substr(first, last - first + 1);
+	return s;
+}
+
 #pragma mark ZFS Inspection
 
 NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
@@ -179,6 +233,21 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 			item.target = delegate;
 		}
 	}
+	[fsMenu addItem:[NSMenuItem separatorItem]];
+	auto props = fs.properties();
+	for (auto const & p : props)
+	{
+		if (p.source.size() > 0)
+		{
+			addMenuItem(fsMenu, delegate, NSLocalizedString(@"%-48s\t%s (from %s)", @"KeyValueSource"),
+						p.name, p.value, p.source);
+		}
+		else
+		{
+			addMenuItem(fsMenu, delegate, NSLocalizedString(@"%-48s\t%s", @"KeyValue"),
+						p.name, p.value);
+		}
+	}
 	return fsMenu;
 }
 
@@ -202,54 +271,6 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 	}
 	NSString * fsLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@%@)", @"File System Menu Entry"), fs.name(), mountStatus, encStatus];
 	return fsLine;
-}
-
-template<typename T> T toFormatable(T t)
-{
-	return t;
-}
-
-char const * toFormatable(std::string const & str)
-{
-	return str.c_str();
-}
-
-// C++ Variadic Templates and Objective-C Vararg functions don't work well together
-NSString * formatNSString(NSString * format)
-{
-	return format;
-}
-
-template<typename T>
-NSString * formatNSString(NSString * format, T const & t)
-{
-	return [NSString stringWithFormat:format, toFormatable(t)];
-}
-
-template<typename T, typename U>
-NSString * formatNSString(NSString * format, T const & t, U const & u)
-{
-	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u)];
-}
-
-template<typename... T>
-NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuDelegate * delegate,
-						 NSString * format, T const & ... t)
-{
-	auto title = formatNSString(format, t...);
-	auto item = [menu addItemWithTitle:title action:@selector(copyRepresentedObject:) keyEquivalent:@""];
-	item.representedObject = title;
-	item.target = delegate;
-	return item;
-}
-
-std::string trim(std::string const & s)
-{
-	size_t first = s.find_first_not_of(' ');
-	size_t last = s.find_last_not_of(' ');
-	if (first != std::string::npos)
-		return s.substr(first, last - first + 1);
-	return s;
 }
 
 NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,

@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <functional>
+#include <string>
 
 // libzfs.h forward declarations
 typedef struct zfs_handle zfs_handle_t;
@@ -102,6 +103,13 @@ namespace zfs
 	class ZFileSystem
 	{
 	public:
+		struct Property
+		{
+			std::string name;
+			std::string value;
+			std::string source;
+		};
+
 		enum Type
 		{
 			filesystem	= (1 << 0),
@@ -130,6 +138,7 @@ namespace zfs
 		char const * name() const;
 		bool mounted() const;
 		Type type() const;
+		std::vector<Property> properties() const;
 		bool isEncryptionRoot() const;
 		std::pair<std::string, bool> encryptionRoot() const;
 		KeyStatus keyStatus() const;
