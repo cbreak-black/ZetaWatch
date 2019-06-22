@@ -14,6 +14,7 @@
 #import "ZetaImportMenuDelegate.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
+#import "ZetaFileSystemPropertyMenuDelegate.h"
 
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
@@ -78,45 +79,6 @@ NSString * formatErrorStat(zfs::VDevStat stat)
 	return [NSString stringWithFormat:@"%@, %@", status, errors];
 }
 
-struct MetricPrefix
-{
-	uint64_t factor;
-	char const * prefix;
-};
-
-MetricPrefix metricPrefixes[] = {
-	{ 1000000000000000000, "E" },
-	{    1000000000000000, "P" },
-	{       1000000000000, "T" },
-	{	       1000000000, "G" },
-	{             1000000, "M" },
-	{                1000, "k" },
-};
-
-size_t prefixCount = std::extent<decltype(metricPrefixes)>::value;
-
-template<typename T>
-std::string formatPrefixedValue(T size)
-{
-	for (size_t p = 0; p < prefixCount; ++p)
-	{
-		if (size > metricPrefixes[p].factor)
-		{
-			double scaledSize = size / double(metricPrefixes[p].factor);
-			std::stringstream ss;
-			ss << std::setprecision(2) << std::fixed << scaledSize << " " << metricPrefixes[p].prefix;
-			return ss.str();
-		}
-	}
-	return std::to_string(size) + " ";
-}
-
-template<typename T>
-std::string formatBytes(T bytes)
-{
-	return formatPrefixedValue(bytes) + "B";
-}
-
 std::chrono::seconds getElapsed(zfs::ScanStat const & scanStat)
 {
 	auto elapsed = time(0) - scanStat.passStartTime;
@@ -125,12 +87,7 @@ std::chrono::seconds getElapsed(zfs::ScanStat const & scanStat)
 	return std::chrono::seconds(elapsed);
 }
 
-std::string formatRate(uint64_t bytes, std::chrono::seconds const & time)
-{
-	return formatBytes(bytes / time.count()) + "/s";
-}
-
-std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::seconds const & time)
+inline std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::seconds const & time)
 {
 	auto bytesRemaining = scanStat.total - scanStat.issued;
 	auto issued = scanStat.passIssued;
@@ -140,69 +97,15 @@ std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chrono::sec
 	std::stringstream ss;
 	ss << std::setfill('0');
 	ss << (secondsRemaining / (60*60*24)) << " days "
-		<< std::setw(2) << ((secondsRemaining / (60*60)) % 24) << ":"
-		<< std::setw(2) << ((secondsRemaining / 60) % 60) << ":"
-		<< std::setw(2) << (secondsRemaining % 60);
+	<< std::setw(2) << ((secondsRemaining / (60*60)) % 24) << ":"
+	<< std::setw(2) << ((secondsRemaining / 60) % 60) << ":"
+	<< std::setw(2) << (secondsRemaining % 60);
 	return ss.str();
-}
-
-template<typename T> T toFormatable(T t)
-{
-	return t;
-}
-
-char const * toFormatable(std::string const & str)
-{
-	return str.c_str();
-}
-
-// C++ Variadic Templates and Objective-C Vararg functions don't work well together
-NSString * formatNSString(NSString * format)
-{
-	return format;
-}
-
-template<typename T>
-NSString * formatNSString(NSString * format, T const & t)
-{
-	return [NSString stringWithFormat:format, toFormatable(t)];
-}
-
-template<typename T, typename U>
-NSString * formatNSString(NSString * format, T const & t, U const & u)
-{
-	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u)];
-}
-
-template<typename T, typename U, typename V>
-NSString * formatNSString(NSString * format, T const & t, U const & u, V const & v)
-{
-	return [NSString stringWithFormat:format, toFormatable(t), toFormatable(u), toFormatable(v)];
-}
-
-template<typename... T>
-NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuDelegate * delegate,
-						 NSString * format, T const & ... t)
-{
-	auto title = formatNSString(format, t...);
-	auto item = [menu addItemWithTitle:title action:@selector(copyRepresentedObject:) keyEquivalent:@""];
-	item.representedObject = title;
-	item.target = delegate;
-	return item;
-}
-
-std::string trim(std::string const & s)
-{
-	size_t first = s.find_first_not_of(' ');
-	size_t last = s.find_last_not_of(' ');
-	if (first != std::string::npos)
-		return s.substr(first, last - first + 1);
-	return s;
 }
 
 #pragma mark ZFS Inspection
 
-NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
+NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMenuDelegate * delegate)
 {
 	NSMenu * fsMenu = [[NSMenu alloc] init];
 	[fsMenu setAutoenablesItems:NO];
@@ -256,22 +159,11 @@ NSMenu * createFSMenu(zfs::ZFileSystem const & fs, ZetaMenuDelegate * delegate)
 	// All Properties (this could be somewhat expensive)
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
-	auto props = fs.properties();
-	for (auto const & p : props)
-	{
-		if (p.source.size() > 0)
-		{
-			addMenuItem(allProps, delegate, NSLocalizedString(@"%-48s\t%s (from %s)", @"KeyValueSource"),
-						p.name, p.value, p.source);
-		}
-		else
-		{
-			addMenuItem(allProps, delegate, NSLocalizedString(@"%-48s\t%s", @"KeyValue"),
-						p.name, p.value);
-		}
-	}
+	ZetaFileSystemPropertyMenuDelegate * pd = [[ZetaFileSystemPropertyMenuDelegate alloc] initWithFileSystem:std::move(fs)];
+	allProps.delegate = pd;
 	NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
 	allPropsItem.submenu = allProps;
+	allPropsItem.representedObject = pd;
 	[fsMenu addItem:allPropsItem];
 	return fsMenu;
 }
@@ -412,7 +304,7 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 				auto fsLine = formatStatus(fs);
 				NSMenuItem * item = [vdevMenu addItemWithTitle:fsLine action:nullptr keyEquivalent:@""];
 				item.representedObject = [NSString stringWithUTF8String:fs.name()];
-				item.submenu = createFSMenu(fs, delegate);
+				item.submenu = createFSMenu(std::move(fs), delegate);
 			}
 		}
 		// Actions
@@ -603,13 +495,6 @@ NSMenu * createVdevMenu(zfs::ZPool const & pool, ZetaMenuDelegate * delegate, DA
 		 if (error)
 			 [self errorFromHelper:error];
 	 }];
-}
-
-- (IBAction)copyRepresentedObject:(id)sender
-{
-	auto pb = [NSPasteboard generalPasteboard];
-	[pb clearContents];
-	[pb writeObjects:@[[sender representedObject]]];
 }
 
 @end

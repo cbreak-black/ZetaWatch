@@ -12,7 +12,7 @@
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
 		7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */; };
-		70168B6622B64E48002C760A /* ZetaKeyLoaderDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.m */; };
+		70168B6622B64E48002C760A /* ZetaKeyLoaderDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.mm */; };
 		7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		7018764220E7B45B00BA39B8 /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
 		7018764320E7B45E00BA39B8 /* ZFSNVList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */; };
@@ -42,7 +42,7 @@
 		70703F3922AD7A17002C760A /* IDDiskArbitrationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
 		70AE5AB222A3DBAA002C760A /* ZetaImportMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB122A3DBAA002C760A /* ZetaImportMenuDelegate.mm */; };
-		70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.m */; };
+		70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.mm */; };
 		70C930D822122CBD00BA39B8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70C930D622122CBD00BA39B8 /* Localizable.strings */; };
 		70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
@@ -51,6 +51,8 @@
 		70D85FF21C316FCB00929DAE /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
 		70D85FF31C316FCB00929DAE /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
 		70D85FF41C316FCB00929DAE /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
+		70EA5F5022BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70EA5F4F22BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.mm */; };
+		70EA5F5322BEC7B1002C760A /* ZetaFormatHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70EA5F5222BEC7B1002C760A /* ZetaFormatHelpers.cpp */; };
 		70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */; };
 		70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDCD1FF9ACB300BA39B8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDCC1FF9ACB300BA39B8 /* main.m */; };
@@ -118,7 +120,7 @@
 		7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaMenuDelegate.mm; sourceTree = "<group>"; };
 		7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMenuDelegate.h; sourceTree = "<group>"; };
 		70168B6422B64E48002C760A /* ZetaKeyLoaderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaKeyLoaderDelegate.h; sourceTree = "<group>"; };
-		70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaKeyLoaderDelegate.m; sourceTree = "<group>"; };
+		70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaKeyLoaderDelegate.mm; sourceTree = "<group>"; };
 		7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZFSWrapperStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
 		70703F3622AD7633002C760A /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
@@ -128,7 +130,7 @@
 		70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IDDiskArbitrationUtils.hpp; path = InvariantDisks/IDDiskArbitrationUtils.hpp; sourceTree = "<group>"; };
 		70AE5AB122A3DBAA002C760A /* ZetaImportMenuDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaImportMenuDelegate.mm; sourceTree = "<group>"; };
 		70AE5AB322A3DBBF002C760A /* ZetaImportMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaImportMenuDelegate.h; sourceTree = "<group>"; };
-		70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaBaseDelegate.m; sourceTree = "<group>"; };
+		70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaBaseDelegate.mm; sourceTree = "<group>"; };
 		70AE5AB622A3F7E4002C760A /* ZetaBaseDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaBaseDelegate.h; sourceTree = "<group>"; };
 		70C930D722122CBD00BA39B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
@@ -143,6 +145,10 @@
 		70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZFSWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70D85FE41C316E8F00929DAE /* ZFSWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZFSWrapper.h; sourceTree = "<group>"; };
 		70D85FE61C316E8F00929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70EA5F4E22BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaFileSystemPropertyMenuDelegate.h; sourceTree = "<group>"; };
+		70EA5F4F22BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaFileSystemPropertyMenuDelegate.mm; sourceTree = "<group>"; };
+		70EA5F5122BEC6BC002C760A /* ZetaFormatHelpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ZetaFormatHelpers.hpp; sourceTree = "<group>"; };
+		70EA5F5222BEC7B1002C760A /* ZetaFormatHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ZetaFormatHelpers.cpp; sourceTree = "<group>"; };
 		70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaAuthorization.h; sourceTree = "<group>"; };
 		70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZetaAuthorization.m; sourceTree = "<group>"; };
 		70EABDC21FF9A8D100BA39B8 /* CommonAuthorization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonAuthorization.h; sourceTree = "<group>"; };
@@ -238,17 +244,21 @@
 				7006C47E1C26CA1500929DAE /* ZetaWatchDelegate.h */,
 				7006C47F1C26CA1500929DAE /* ZetaWatchDelegate.mm */,
 				70AE5AB622A3F7E4002C760A /* ZetaBaseDelegate.h */,
-				70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.m */,
+				70AE5AB422A3F7D3002C760A /* ZetaBaseDelegate.mm */,
 				7006C4AD1C26D3FA00929DAE /* ZetaMenuDelegate.h */,
 				7006C4AB1C26D3E700929DAE /* ZetaMenuDelegate.mm */,
+				70EA5F4E22BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.h */,
+				70EA5F4F22BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.mm */,
 				70AE5AB322A3DBBF002C760A /* ZetaImportMenuDelegate.h */,
 				70AE5AB122A3DBAA002C760A /* ZetaImportMenuDelegate.mm */,
 				70168B6422B64E48002C760A /* ZetaKeyLoaderDelegate.h */,
-				70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.m */,
+				70168B6522B64E48002C760A /* ZetaKeyLoaderDelegate.mm */,
 				709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */,
 				709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */,
 				70EABDBE1FF9992A00BA39B8 /* ZetaAuthorization.h */,
 				70EABDBF1FF9992A00BA39B8 /* ZetaAuthorization.m */,
+				70EA5F5122BEC6BC002C760A /* ZetaFormatHelpers.hpp */,
+				70EA5F5222BEC7B1002C760A /* ZetaFormatHelpers.cpp */,
 				70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */,
 				70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */,
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
@@ -507,15 +517,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70EA5F5322BEC7B1002C760A /* ZetaFormatHelpers.cpp in Sources */,
 				709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */,
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.mm in Sources */,
 				7006C4AC1C26D3E700929DAE /* ZetaMenuDelegate.mm in Sources */,
 				70AE5AB222A3DBAA002C760A /* ZetaImportMenuDelegate.mm in Sources */,
 				70EABDC41FF9A8D100BA39B8 /* CommonAuthorization.m in Sources */,
-				70168B6622B64E48002C760A /* ZetaKeyLoaderDelegate.m in Sources */,
+				70168B6622B64E48002C760A /* ZetaKeyLoaderDelegate.mm in Sources */,
 				70EABDC01FF9992A00BA39B8 /* ZetaAuthorization.m in Sources */,
-				70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.m in Sources */,
+				70EA5F5022BEC358002C760A /* ZetaFileSystemPropertyMenuDelegate.mm in Sources */,
+				70AE5AB522A3F7D3002C760A /* ZetaBaseDelegate.mm in Sources */,
 				70703F3922AD7A17002C760A /* IDDiskArbitrationUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

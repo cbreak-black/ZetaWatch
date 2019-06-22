@@ -28,6 +28,5 @@ enum ZetaMenuTags
 
 - (IBAction)importAllPools:(id)sender;
 - (IBAction)mountAllFilesystems:(id)sender;
-- (IBAction)copyRepresentedObject:(id)sender;
 
 @end

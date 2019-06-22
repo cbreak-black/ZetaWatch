@@ -61,6 +61,10 @@ namespace zfs
 		return m_handle;
 	}
 
+	ZFileSystem::ZFileSystem() : m_handle(nullptr)
+	{
+	}
+
 	ZFileSystem::ZFileSystem(zfs_handle_t * handle) : m_handle(handle)
 	{
 	}

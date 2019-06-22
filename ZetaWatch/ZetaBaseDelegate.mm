@@ -1,5 +1,5 @@
 //
-//  ZetaBaseDelegate.m
+//  ZetaBaseDelegate.mm
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
@@ -18,6 +18,13 @@
 	notification.informativeText = [NSString stringWithFormat:errorFormat, [error localizedDescription]];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+}
+
+- (IBAction)copyRepresentedObject:(id)sender
+{
+	NSPasteboard * pb = [NSPasteboard generalPasteboard];
+	[pb clearContents];
+	[pb writeObjects:@[[sender representedObject]]];
 }
 
 @end

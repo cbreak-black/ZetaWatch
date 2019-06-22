@@ -127,6 +127,7 @@ namespace zfs
 		};
 
 	public:
+		ZFileSystem();
 		explicit ZFileSystem(zfs_handle_t * handle);
 		~ZFileSystem();
 
