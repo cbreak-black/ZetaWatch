@@ -36,10 +36,11 @@
         <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoaderDelegate" customClass="ZetaKeyLoaderDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="j1a-fu-F0a"/>
-                <outlet property="errorField" destination="egb-Mb-iyZ" id="rH5-Uc-CmO"/>
                 <outlet property="passwordField" destination="JpZ-yq-Swt" id="wki-ew-pno"/>
                 <outlet property="popover" destination="5Lh-hG-dv8" id="bFc-sJ-D7x"/>
+                <outlet property="progressIndicator" destination="IW2-QV-nuy" id="1wo-S0-51q"/>
                 <outlet property="queryField" destination="vtC-BP-wc5" id="cQa-7q-bCw"/>
+                <outlet property="statusField" destination="egb-Mb-iyZ" id="FbE-63-Kfl"/>
             </connections>
         </customObject>
         <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
@@ -751,13 +752,16 @@
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="qon-SO-Jhf"/>
                 </imageView>
                 <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="egb-Mb-iyZ">
-                    <rect key="frame" x="90" y="20" width="446" height="17"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="Error" id="Mwk-R6-lED">
+                    <rect key="frame" x="114" y="20" width="422" height="17"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Status" id="Mwk-R6-lED">
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="IW2-QV-nuy">
+                    <rect key="frame" x="92" y="20" width="16" height="17"/>
+                </progressIndicator>
             </subviews>
             <constraints>
                 <constraint firstItem="vtC-BP-wc5" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" id="1gu-dR-bQA"/>
@@ -765,12 +769,15 @@
                 <constraint firstItem="LRH-QE-iBn" firstAttribute="leading" secondItem="40L-u9-aeI" secondAttribute="leading" constant="20" symbolic="YES" id="8Ld-Ru-1X8"/>
                 <constraint firstItem="vtC-BP-wc5" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" priority="750" constant="20" symbolic="YES" id="AfF-td-1Z6"/>
                 <constraint firstAttribute="bottom" secondItem="LRH-QE-iBn" secondAttribute="bottom" constant="20" symbolic="YES" id="GJz-ex-VEU"/>
-                <constraint firstItem="egb-Mb-iyZ" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" id="TDI-zg-nfp"/>
+                <constraint firstItem="IW2-QV-nuy" firstAttribute="top" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="Mef-as-LYH"/>
+                <constraint firstItem="egb-Mb-iyZ" firstAttribute="leading" secondItem="IW2-QV-nuy" secondAttribute="trailing" constant="8" symbolic="YES" id="Nl8-ra-JyC"/>
                 <constraint firstItem="JpZ-yq-Swt" firstAttribute="top" secondItem="vtC-BP-wc5" secondAttribute="bottom" constant="8" id="abq-QG-ftd"/>
                 <constraint firstAttribute="bottom" secondItem="egb-Mb-iyZ" secondAttribute="bottom" constant="20" symbolic="YES" id="emi-Ch-eys"/>
+                <constraint firstItem="IW2-QV-nuy" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="ixF-n5-DK8"/>
                 <constraint firstItem="egb-Mb-iyZ" firstAttribute="top" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="l8W-4p-UJX"/>
                 <constraint firstItem="JpZ-yq-Swt" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="lDB-KI-2Ff"/>
                 <constraint firstItem="LRH-QE-iBn" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" constant="20" symbolic="YES" id="u0N-kd-ick"/>
+                <constraint firstAttribute="bottom" secondItem="IW2-QV-nuy" secondAttribute="bottom" constant="20" symbolic="YES" id="xVj-2I-nq5"/>
                 <constraint firstAttribute="trailing" secondItem="JpZ-yq-Swt" secondAttribute="trailing" constant="20" id="xXA-Ui-KUB"/>
                 <constraint firstAttribute="trailing" secondItem="vtC-BP-wc5" secondAttribute="trailing" constant="20" symbolic="YES" id="ziC-dL-Eus"/>
             </constraints>

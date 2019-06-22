@@ -16,9 +16,9 @@
 
 - (IBAction)loadKey:(id)sender
 {
-	// The password is copied all over the place by the view, the dictionary
-	// and the IPC, so trying to clear it is probably a waste of time.
+	[self showActionInProgress:NSLocalizedString(@"Loading Key...", @"LoadingKeyStatus")];
 	NSString * pass = [_passwordField stringValue];
+	[self clearPassword];
 	NSDictionary * opts = @{@"filesystem": _representedFileSystem, @"key": pass};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
@@ -28,15 +28,48 @@
 
 - (void)handleLoadKeyReply:(NSError*)error
 {
+	[self completeAction];
 	if (error)
 	{
-		[self.errorField setStringValue:[error localizedDescription]];
-		[self.errorField setHidden:NO];
+		[self showError:[error localizedDescription]];
 	}
 	else
 	{
-		[self.popover performClose:self];
+		[_popover performClose:self];
 	}
+}
+
+- (void)showActionInProgress:(NSString*)action
+{
+	[_statusField setStringValue:action];
+	[_statusField setTextColor:[NSColor textColor]];
+	[_statusField setHidden:NO];
+	[_progressIndicator startAnimation:self];
+}
+
+- (void)completeAction
+{
+	[_progressIndicator stopAnimation:self];
+	[self hideStatus];
+}
+
+- (void)showError:(NSString*)error
+{
+	[_statusField setStringValue:error];
+	[_statusField setTextColor:[NSColor systemRedColor]];
+	[_statusField setHidden:NO];
+}
+
+- (void)hideStatus
+{
+	[_statusField setHidden:YES];
+}
+
+- (void)clearPassword
+{
+	// The password is copied all over the place by the view, the dictionary
+	// and the IPC, so trying to clear it is probably a waste of time.
+	[_passwordField setStringValue:@""];
 }
 
 - (BOOL)popoverShouldDetach:(NSPopover *)popover
@@ -61,9 +94,9 @@
 
 - (void)popoverDidClose:(NSNotification *)notification
 {
-	[_passwordField setStringValue:@""];
+	[self clearPassword];
 	[_passwordField abortEditing];
-	[_errorField setHidden:YES];
+	[self hideStatus];
 }
 
 @end

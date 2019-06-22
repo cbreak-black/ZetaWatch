@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) IBOutlet NSPopover * popover;
 @property (weak) IBOutlet NSSecureTextField * passwordField;
 @property (weak) IBOutlet NSTextField * queryField;
-@property (weak) IBOutlet NSTextField * errorField;
+@property (weak) IBOutlet NSTextField * statusField;
+@property (weak) IBOutlet NSProgressIndicator * progressIndicator;
 @property (nonatomic) NSString * representedFileSystem;
 
 - (IBAction)loadKey:(id)sender;
