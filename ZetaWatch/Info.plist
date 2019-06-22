@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>18</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -41,7 +41,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>net.the-color-black.ZetaAuthorizationHelper</key>
-		<string>anchor apple generic and identifier "net.the-color-black.ZetaAuthorizationHelper" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "8THUW5GT6P")</string>
+		<string>anchor apple generic and identifier &quot;net.the-color-black.ZetaAuthorizationHelper&quot; and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = &quot;8THUW5GT6P&quot;)</string>
 	</dict>
 </dict>
 </plist>
