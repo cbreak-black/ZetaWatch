@@ -30,12 +30,12 @@
 	{
 		if (p.source.size() > 0)
 		{
-			addMenuItem(menu, self, NSLocalizedString(@"%-48s \t %s \t (from %s)", @"KeyValueSource"),
+			addMenuItem(menu, self, NSLocalizedString(@"%-64s \t %-32s \t (from %s)", @"KeyValueSource"),
 						p.name, p.value, p.source);
 		}
 		else
 		{
-			addMenuItem(menu, self, NSLocalizedString(@"%-48s \t %s", @"KeyValue"),
+			addMenuItem(menu, self, NSLocalizedString(@"%-64s \t %s", @"KeyValue"),
 						p.name, p.value);
 		}
 	}

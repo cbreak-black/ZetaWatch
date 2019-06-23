@@ -267,7 +267,19 @@ namespace zfs
 		return getPropString(m_handle, ZFS_PROP_MOUNTPOINT);
 	}
 
-	bool getProperty(zfs_handle_t * handle, zfs_prop_t prop, ZFileSystem::Property & p)
+	using PropList = std::unique_ptr<zprop_list_t, void(*)(zprop_list_t*)>;
+
+	static PropList zfsProplist(zfs_handle_t * handle)
+	{
+		PropList pl(nullptr, &zprop_free_list);
+		zprop_list_t * plRaw = nullptr;
+		int ec = zfs_expand_proplist(handle, &plRaw, true, false);
+		if (ec == 0)
+			pl.reset(plRaw);
+		return pl;
+	}
+
+	static bool getProperty(zfs_handle_t * handle, zfs_prop_t prop, ZFileSystem::Property & p)
 	{
 		p.name.assign(zfs_prop_to_name(prop));
 		p.value.resize(64);
@@ -284,11 +296,15 @@ namespace zfs
 	std::vector<ZFileSystem::Property> ZFileSystem::properties() const
 	{
 		std::vector<ZFileSystem::Property> properties;
+		auto pl = zfsProplist(m_handle);
 		ZFileSystem::Property prop;
-		for (size_t i = 0; i < ZFS_NUM_PROPS; ++i)
+		for (auto p = pl.get(); p != nullptr; p = p->pl_next)
 		{
-			if (getProperty(m_handle, static_cast<zfs_prop_t>(i), prop))
-				properties.push_back(prop);
+			if (p->pl_prop != ZPROP_INVAL)
+			{
+				if (getProperty(m_handle, static_cast<zfs_prop_t>(p->pl_prop), prop))
+					properties.push_back(prop);
+			}
 		}
 		return properties;
 	}
@@ -483,7 +499,17 @@ namespace zfs
 		return name;
 	}
 
-	bool getProperty(zpool_handle_t * handle, zpool_prop_t prop, ZPool::Property & p)
+	static PropList zpoolProplist(zpool_handle_t * handle)
+	{
+		PropList pl(nullptr, &zprop_free_list);
+		zprop_list_t * plRaw = nullptr;
+		int ec = zpool_expand_proplist(handle, &plRaw);
+		if (ec == 0)
+			pl.reset(plRaw);
+		return pl;
+	}
+
+	static bool getProperty(zpool_handle_t * handle, zpool_prop_t prop, ZPool::Property & p)
 	{
 		auto name = zpool_prop_to_name(prop);
 		if (!name)
@@ -497,14 +523,32 @@ namespace zfs
 		return ec == 0;
 	}
 
+	static bool getProperty(zpool_handle_t * handle, char const * feature, ZPool::Property & p)
+	{
+		p.name.assign(feature);
+		p.value.resize(64);
+		int ec = zpool_prop_get_feature(handle, feature, p.value.data(), p.value.size());
+		truncateString(p.value);
+		return ec == 0;
+	}
+
 	std::vector<ZPool::Property> ZPool::properties() const
 	{
 		std::vector<ZPool::Property> properties;
+		PropList pl = zpoolProplist(m_handle);
 		ZPool::Property prop;
-		for (size_t i = 0; i < ZPOOL_NUM_PROPS; ++i)
+		for (auto p = pl.get(); p != nullptr; p = p->pl_next)
 		{
-			if (getProperty(m_handle, static_cast<zpool_prop_t>(i), prop))
-				properties.push_back(prop);
+			if (p->pl_prop != ZPROP_INVAL)
+			{
+				if (getProperty(m_handle, static_cast<zpool_prop_t>(p->pl_prop), prop))
+					properties.push_back(prop);
+			}
+			else
+			{
+				if (getProperty(m_handle, p->pl_user_prop, prop))
+					properties.push_back(prop);
+			}
 		}
 		return properties;
 	}

@@ -28,7 +28,7 @@
 	auto props = _pool.properties();
 	for (auto const & p : props)
 	{
-		addMenuItem(menu, self, NSLocalizedString(@"%-48s \t %s", @"KeyValue"),
+		addMenuItem(menu, self, NSLocalizedString(@"%-64s \t %s", @"KeyValue"),
 						p.name, p.value);
 	}
 }
