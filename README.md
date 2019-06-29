@@ -4,24 +4,21 @@ ZetaWatch
 ![ZetaWatch displaying pool status and filesystems][ZFSImage]
 
 ZetaWatch is a small OS X program that displays the zfs status in the menu bar, similar to
-what iStat Menus does for other information. It is far from finished, and due to the
+what iStat Menus does for other information. It is fairly well tested, but due to the
 current state of libzfs and libzfs_core, changes will be required until the API
-stabilizes.
+stabilizes. ZetaWatch is usually compiled for the latest available [ZFS release for Mac
+OS](https://openzfsonosx.org/), and might not be compatible with other releases.
 
-I started working on it over three years ago. Originally, all it did was show the status
-of the pools, without any way to interact with ZFS. It visualizes pool layout, pool status
-and sends a Mac OS notification if pool corruption is detected.
-
-Last year I added some minimal interactivity features, first via running the command line
-tools, and later rewritten using the zfs library. This was mainly driven by the need to
-manually enter the password and mount datasets for encrypted ZFS. Currently supported
-features are:
+Currently supported features are:
 
  * Show pool and vdev status including scrub progress
- * Report errors in notification center
- * Import pools
+ * Show pool / filesystem properties
+ * Show filesystem and vdev stats
+ * Import pools and Export pools
  * Mount / unmount datasets
  * Load encryption keys for encrypted datasets
+ * Scrub pools
+ * Report errors in notification center
 
 
 Installation
