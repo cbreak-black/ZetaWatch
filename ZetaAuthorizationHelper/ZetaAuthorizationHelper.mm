@@ -11,7 +11,8 @@
 
 #import "CommonAuthorization.h"
 
-#include "ZFSUtils.hpp"
+#include "ZFSWrapper/ZFSUtils.hpp"
+#include "ZetaCPPUtils.hpp"
 
 @interface ZetaAuthorizationHelper () <NSXPCListenerDelegate, ZetaAuthorizationHelperProtocol>
 {
@@ -254,10 +255,30 @@
 	if (error == nil)
 	{
 		NSString * poolName = [exportData objectForKey:@"pool"];
+		bool force = false;
+		if (id o = [exportData objectForKey:@"force"])
+			force = [o boolValue];
 		try
 		{
 			auto pool = _zfs.pool(std::string(poolName.UTF8String));
-			pool.exportPool();
+			// Unmount all filesystems (to give more detailed error feedback)
+			std::vector<std::string> failed;
+			pool.iterAllFileSystems([&failed,force](zfs::ZFileSystem fs)
+			{
+				if (!fs.unmount(force))
+					failed.emplace_back(fs.name());
+			});
+			if (!failed.empty())
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithFormat:
+						@"Unmount Error: %s",formatForHumans(failed).c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+				return;
+			}
+			// Export Pool
+			pool.exportPool(force);
 			reply(nullptr);
 		}
 		catch (std::exception const & e)
@@ -323,31 +344,40 @@
 	if (error == nil)
 	{
 		NSString * fsName = [mountData objectForKey:@"filesystem"];
+		bool force = false;
+		if (id o = [mountData objectForKey:@"force"])
+			force = [o boolValue];
 		try
 		{
-			bool success = true;
+			std::vector<std::string> failed;
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
-				success = fs.unmount() && success;
+				if (!fs.unmount(force))
+					failed.emplace_back(fs.name());
 			}
 			else
 			{
-				_zfs.iterPools([&success](zfs::ZPool pool)
+				_zfs.iterPools([&failed,force](zfs::ZPool pool)
 				{
-					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([&failed,force](zfs::ZFileSystem fs)
 					{
-						success = fs.unmount() && success;
+						if (!fs.unmount(force))
+							failed.emplace_back(fs.name());
 					});
 				});
 			}
-			if (success)
+			if (failed.empty())
 			{
 				reply(nullptr);
 			}
 			else
 			{
-				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unount Error"}]);
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithFormat:
+						@"Unmount Error: %s",formatForHumans(failed).c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
 		}
 		catch (std::exception const & e)

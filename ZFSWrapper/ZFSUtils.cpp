@@ -19,6 +19,9 @@
 #include <libzfs.h>
 #include <libzfs_core.h>
 
+#include <sys/zfs_mount.h>
+#include <sys/mount.h>
+
 extern "C"
 {
 	// From #include <sys/zfs_context_userland.h>
@@ -120,11 +123,14 @@ namespace zfs
 		return mount();
 	}
 
-	bool ZFileSystem::unmount()
+	bool ZFileSystem::unmount(bool force)
 	{
 		if (!mounted())
 			return true; // already unmounted, success
-		return !zfs_unmount(m_handle, nullptr, 0);
+		int flags = 0;
+		if (force)
+			flags |= MS_FORCE;
+		return !zfs_unmount(m_handle, nullptr, flags);
 	}
 
 	struct Pipe

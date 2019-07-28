@@ -126,6 +126,7 @@
 		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
 		70703F3622AD7633002C760A /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IDDiskArbitrationUtils.cpp; sourceTree = "<group>"; };
+		7072697B22EDB2BE002C760A /* ZetaCPPUtils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ZetaCPPUtils.hpp; sourceTree = "<group>"; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
 		709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaPoolWatcher.h; sourceTree = "<group>"; };
 		70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IDDiskArbitrationUtils.hpp; path = InvariantDisks/IDDiskArbitrationUtils.hpp; sourceTree = "<group>"; };
@@ -336,6 +337,7 @@
 				70EABDC51FF9AAB800BA39B8 /* ZetaAuthorizationHelperProtocol.h */,
 				70EABDD21FF9B21C00BA39B8 /* ZetaAuthorizationHelper.h */,
 				70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm */,
+				7072697B22EDB2BE002C760A /* ZetaCPPUtils.hpp */,
 				70EABDCC1FF9ACB300BA39B8 /* main.m */,
 				70EABDD11FF9AE2800BA39B8 /* Info.plist */,
 				70EABDD51FF9B40F00BA39B8 /* Launchd.plist */,

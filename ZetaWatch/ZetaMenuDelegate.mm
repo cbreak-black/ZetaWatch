@@ -135,6 +135,10 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMenuDelegate * delegate)
 									 action:@selector(unmountFilesystem:) keyEquivalent:@""];
 			item.representedObject = fsName;
 			item.target = delegate;
+			item = [fsMenu addItemWithTitle:@"Unmount (Force)"
+									 action:@selector(forceUnmountFilesystem:) keyEquivalent:@""];
+			item.representedObject = fsName;
+			item.target = delegate;
 		}
 	}
 	// Selected Properties
@@ -312,10 +316,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 		NSString * poolName = [NSString stringWithUTF8String:pool.name()];
 		NSMenuItem * item = nullptr;
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		item = [vdevMenu addItemWithTitle:@"Export"
-								   action:@selector(exportPool:) keyEquivalent:@""];
-		item.representedObject = poolName;
-		item.target = delegate;
 		if (scrub.state == zfs::ScanStat::scanning)
 		{
 			item = [vdevMenu addItemWithTitle:@"Scrub Stop"
@@ -330,6 +330,14 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 			item.representedObject = poolName;
 			item.target = delegate;
 		}
+		item = [vdevMenu addItemWithTitle:@"Export"
+								   action:@selector(exportPool:) keyEquivalent:@""];
+		item.representedObject = poolName;
+		item.target = delegate;
+		item = [vdevMenu addItemWithTitle:@"Export (Force)"
+								   action:@selector(forceExportPool:) keyEquivalent:@""];
+		item.representedObject = poolName;
+		item.target = delegate;
 		// All Properties
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
@@ -453,6 +461,16 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	 }];
 }
 
+- (IBAction)forceExportPool:(id)sender
+{
+	NSDictionary * opts = @{@"pool": [sender representedObject], @"force": @YES};
+	[_authorization exportPools:opts withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
+}
+
 - (IBAction)mountAllFilesystems:(id)sender
 {
 	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
@@ -475,6 +493,16 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 - (IBAction)unmountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
+	 {
+		 if (error)
+			 [self errorFromHelper:error];
+	 }];
+}
+
+- (IBAction)forceUnmountFilesystem:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"force": @YES};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
 		 if (error)
