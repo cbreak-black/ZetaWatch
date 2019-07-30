@@ -133,6 +133,9 @@ namespace zfs
 		mountpoint.resize(mountpoint.find('\0'));
 		if (mountpoint == ZFS_MOUNTPOINT_LEGACY || mountpoint == ZFS_MOUNTPOINT_NONE)
 			return true; // no need to do anything, success
+		auto ks = keyStatus();
+		if (ks == KeyStatus::unavailable)
+			return true; // can't mount without key, "success"
 		return mount();
 	}
 
@@ -210,7 +213,15 @@ namespace zfs
 		char prompt[] = "prompt";
 		auto res = zfs_crypto_load_key(m_handle, B_FALSE, prompt);
 		bool writeRes = future.get();
-		return res == 0 && writeRes;
+		if (res == 0 && writeRes)
+		{
+			zfs_refresh_properties(m_handle);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	bool ZFileSystem::unloadKey()
