@@ -35,7 +35,19 @@ namespace zfs
 	class LibZFSHandle
 	{
 	public:
+		/*!
+		 Opens a new lib zfs handle and owns it.
+		 */
 		LibZFSHandle();
+
+		/*!
+		 Adopts a handle from somewhere else, no ownership is transfered
+		 */
+		explicit LibZFSHandle(libzfs_handle_t * handle);
+
+		/*!
+		 Closes the associated handle if it is owned.
+		 */
 		~LibZFSHandle();
 
 	public:
@@ -63,6 +75,12 @@ namespace zfs
 		 Returns the pool with the given name.
 		 */
 		ZPool pool(std::string const & name) const;
+
+	public: // Errors
+		std::string lastErrorAction() const;
+		std::string lastErrorDescription() const;
+		std::string lastError() const;
+		void throwLastError(std::string const & action);
 
 	public: // requires root permission
 		struct Importable
@@ -96,6 +114,7 @@ namespace zfs
 
 	private:
 		libzfs_handle_t * m_handle;
+		bool m_owned;
 	};
 
 	/*!
@@ -138,6 +157,9 @@ namespace zfs
 	public:
 		ZFileSystem(ZFileSystem && other) noexcept;
 		ZFileSystem & operator=(ZFileSystem && other) noexcept;
+
+	public:
+		LibZFSHandle libHandle() const;
 
 	public:
 		char const * name() const;
@@ -243,6 +265,9 @@ namespace zfs
 	public:
 		ZPool(ZPool && other) noexcept;
 		ZPool & operator=(ZPool && other) noexcept;
+
+	public:
+		LibZFSHandle libHandle() const;
 
 	public:
 		char const * name() const;

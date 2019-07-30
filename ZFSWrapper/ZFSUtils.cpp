@@ -32,7 +32,7 @@ extern "C"
 namespace zfs
 {
 	LibZFSHandle::LibZFSHandle() :
-		m_handle(libzfs_init())
+		m_handle(libzfs_init()), m_owned(true)
 	{
 		if (m_handle == nullptr)
 		{
@@ -40,21 +40,29 @@ namespace zfs
 		}
 	}
 
+	LibZFSHandle::LibZFSHandle(libzfs_handle_t * handle) :
+		m_handle(handle), m_owned(false)
+	{
+	}
+
 	LibZFSHandle::~LibZFSHandle()
 	{
-		if (m_handle)
+		if (m_handle && m_owned)
 			libzfs_fini(m_handle);
 	}
 
 	LibZFSHandle::LibZFSHandle(LibZFSHandle && other) noexcept :
-	m_handle(other.m_handle)
+		m_handle(other.m_handle), m_owned(other.m_owned)
 	{
 		other.m_handle = nullptr;
 	}
 
 	LibZFSHandle & LibZFSHandle::operator=(LibZFSHandle && other) noexcept
 	{
+		if (m_handle && m_owned)
+			libzfs_fini(m_handle);
 		m_handle = other.m_handle;
+		m_owned = other.m_owned;
 		other.m_handle = nullptr;
 		return *this;
 	}
@@ -89,6 +97,11 @@ namespace zfs
 		m_handle = other.m_handle;
 		other.m_handle = nullptr;
 		return *this;
+	}
+
+	LibZFSHandle ZFileSystem::libHandle() const
+	{
+		return LibZFSHandle(zfs_get_handle(m_handle));
 	}
 
 	char const * ZFileSystem::name() const
@@ -444,6 +457,11 @@ namespace zfs
 		return *this;
 	}
 
+	LibZFSHandle ZPool::libHandle() const
+	{
+		return LibZFSHandle(zpool_get_handle(m_handle));
+	}
+
 	char const * ZPool::name() const
 	{
 		return zpool_get_name(m_handle);
@@ -594,15 +612,15 @@ namespace zfs
 	void ZPool::exportPool(bool force)
 	{
 		std::stringstream ss;
-		ss << "ZetaWatch export " << (force ? "-f" : "") << name();
+		ss << "export " << (force ? "-f" : "") << name();
 		boolean_t forceBT = force ? B_TRUE : B_FALSE;
 		int res = 0;
 		res = zpool_disable_datasets(m_handle, forceBT);
 		if (res != 0)
-			throw std::runtime_error("Unable to " + ss.str() + " (dissable_datasets)");
+			libHandle().throwLastError(ss.str());
 		res = zpool_export(m_handle, forceBT, ss.str().c_str());
 		if (res != 0)
-			throw std::runtime_error("Unable to " + ss.str() + " (export)");
+			libHandle().throwLastError(ss.str());
 	}
 
 	void ZPool::scrub()
@@ -610,7 +628,7 @@ namespace zfs
 		int res = 0;
 		res = zpool_scan(m_handle, POOL_SCAN_SCRUB, POOL_SCRUB_NORMAL);
 		if (res != 0)
-			throw std::runtime_error("Unable to scrub " + std::string(name()) + " (scan)");
+			libHandle().throwLastError("scrub " + std::string(name()));
 	}
 
 	void ZPool::scrubStop()
@@ -618,7 +636,7 @@ namespace zfs
 		int res = 0;
 		res = zpool_scan(m_handle, POOL_SCAN_NONE, POOL_SCRUB_NORMAL);
 		if (res != 0)
-			throw std::runtime_error("Unable to scrub -s " + std::string(name()) + " (scan)");
+			libHandle().throwLastError("scrub -s " + std::string(name()));
 	}
 
 	zpool_handle_t * ZPool::handle() const
@@ -691,6 +709,26 @@ namespace zfs
 	ZPool LibZFSHandle::pool(std::string const & name) const
 	{
 		return ZPool(m_handle, name);
+	}
+
+	std::string LibZFSHandle::lastErrorAction() const
+	{
+		return std::string(libzfs_error_action(m_handle));
+	}
+
+	std::string LibZFSHandle::lastErrorDescription() const
+	{
+		return std::string(libzfs_error_description(m_handle));
+	}
+
+	std::string LibZFSHandle::lastError() const
+	{
+		return lastErrorAction() + " (" + lastErrorDescription() + ")";
+	}
+
+	void LibZFSHandle::throwLastError(std::string const & action)
+	{
+		throw std::runtime_error("Error in " + action + ": " + lastError());
 	}
 
 	std::vector<LibZFSHandle::Importable> LibZFSHandle::importablePools() const

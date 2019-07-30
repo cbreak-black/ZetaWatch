@@ -13,8 +13,8 @@
 - (void)errorFromHelper:(NSError*)error
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"Helper Error", @"Helper Error notification Title");
-	NSString * errorFormat = NSLocalizedString(@"Helper encountered an error: %@.", @"Helper Error notification Format");
+	notification.title = NSLocalizedString(@"ZetaWatch Error", @"Helper Error notification Title");
+	NSString * errorFormat = NSLocalizedString(@"%@.", @"Helper Error notification Format");
 	notification.informativeText = [NSString stringWithFormat:errorFormat, [error localizedDescription]];
 	notification.hasActionButton = NO;
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];

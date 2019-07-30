@@ -170,45 +170,43 @@
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
+		std::vector<std::string> failures;
 		try
 		{
 			NSNumber * pool = [importData objectForKey:@"poolGUID"];
 			if (pool != nil)
 			{
 				auto importedPool = _zfs.import([pool unsignedLongLongValue]);
-				bool success = true;
-				importedPool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+				importedPool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 				{
-					success = fs.automount() && success;
+					if (!fs.automount())
+						failures.emplace_back(_zfs.lastError());
 				});
-				if (success)
-				{
-					reply(nullptr);
-				}
-				else
-				{
-					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
-				}
 			}
 			else
 			{
 				auto pools = _zfs.importAllPools();
-				bool success = true;
 				for (auto const & pool : pools)
 				{
-					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 					{
-						success = fs.automount() && success;
+						if (!fs.automount())
+							failures.emplace_back(_zfs.lastError());
 					});
 				}
-				if (success)
-				{
-					reply(nullptr);
-				}
-				else
-				{
-					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Import Error"}]);
-				}
+			}
+			if (failures.empty())
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
+						formatForHumans(failures).c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+
 			}
 		}
 		catch (std::exception const & e)
@@ -261,22 +259,6 @@
 		try
 		{
 			auto pool = _zfs.pool(std::string(poolName.UTF8String));
-			// Unmount all filesystems (to give more detailed error feedback)
-			std::vector<std::string> failed;
-			pool.iterAllFileSystems([&failed,force](zfs::ZFileSystem fs)
-			{
-				if (!fs.unmount(force))
-					failed.emplace_back(fs.name());
-			});
-			if (!failed.empty())
-			{
-				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithFormat:
-						@"Unmount Error: %s",formatForHumans(failed).c_str()]
-				};
-				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
-				return;
-			}
 			// Export Pool
 			pool.exportPool(force);
 			reply(nullptr);
@@ -301,29 +283,35 @@
 		NSString * fsName = [mountData objectForKey:@"filesystem"];
 		try
 		{
-			bool success = true;
+			std::vector<std::string> failures;
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
-				success = fs.mount() && success;
+				if (!fs.mount())
+					failures.emplace_back(_zfs.lastError());
 			}
 			else
 			{
-				_zfs.iterPools([&success](zfs::ZPool pool)
+				_zfs.iterPools([self,&failures](zfs::ZPool pool)
 				{
-					pool.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 					{
-						success = fs.mount() && success;
+						if (!fs.mount())
+							failures.emplace_back(_zfs.lastError());
 					});
 				});
 			}
-			if (success)
+			if (failures.empty())
 			{
 				reply(nullptr);
 			}
 			else
 			{
-				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Mount Error"}]);
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
+						formatForHumans(failures).c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
 		}
 		catch (std::exception const & e)
@@ -349,33 +337,33 @@
 			force = [o boolValue];
 		try
 		{
-			std::vector<std::string> failed;
+			std::vector<std::string> failures;
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
 				if (!fs.unmount(force))
-					failed.emplace_back(fs.name());
+					failures.emplace_back(_zfs.lastError());
 			}
 			else
 			{
-				_zfs.iterPools([&failed,force](zfs::ZPool pool)
+				_zfs.iterPools([self,&failures,force](zfs::ZPool pool)
 				{
-					pool.iterAllFileSystems([&failed,force](zfs::ZFileSystem fs)
+					pool.iterAllFileSystems([self,&failures,force](zfs::ZFileSystem fs)
 					{
 						if (!fs.unmount(force))
-							failed.emplace_back(fs.name());
+							failures.emplace_back(_zfs.lastError());
 					});
 				});
 			}
-			if (failed.empty())
+			if (failures.empty())
 			{
 				reply(nullptr);
 			}
 			else
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithFormat:
-						@"Unmount Error: %s",formatForHumans(failed).c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
+						formatForHumans(failures).c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -409,18 +397,31 @@
 			auto success = fs.loadKey([key UTF8String]);
 			if (success)
 			{
+				std::vector<std::string> failures;
 				// Encryption Root Filesystem itself
-				success = fs.automount() && success;
+				if (!fs.automount())
+					failures.emplace_back(_zfs.lastError());
 				// All contained filesystems recursively
-				fs.iterAllFileSystems([&success](zfs::ZFileSystem fs)
+				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 				{
-					success = fs.automount() && success;
+					if (!fs.automount())
+						failures.emplace_back(_zfs.lastError());
 				});
-				reply(nullptr);
+				if (failures.empty())
+				{
+					reply(nullptr);
+				}
+				else
+				{
+					NSDictionary * userInfo = @{
+						NSLocalizedDescriptionKey: [NSString stringWithUTF8String:formatForHumans(failures).c_str()]
+					};
+					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+				}
 			}
 			else
 			{
-				reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Password"}]);
+				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Password"}]);
 			}
 		}
 		catch (std::exception const & e)
