@@ -20,6 +20,7 @@
 
 - (void)errorDetectedInPool:(std::string const &)pool;
 - (void)errorDetected:(std::string const &)error;
+- (void)newPoolDetected:(zfs::ZPool const &)pool;
 
 @end
 
@@ -27,11 +28,12 @@
 
 - (id)init;
 
+- (void)checkForChanges;
 - (std::vector<zfs::ZPool>)pools;
 
 - (void)keepAwake;
 - (void)stopKeepingAwake;
 
-@property (weak) id<ZetaPoolWatcherDelegate> delegate;
+@property (weak) IBOutlet id<ZetaPoolWatcherDelegate> delegate;
 
 @end

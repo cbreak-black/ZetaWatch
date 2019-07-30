@@ -271,6 +271,7 @@ namespace zfs
 
 	public:
 		char const * name() const;
+		uint64_t guid() const;
 		uint64_t status() const; //!< zpool_status_t
 		NVList config() const;
 

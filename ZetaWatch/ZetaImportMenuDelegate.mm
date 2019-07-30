@@ -9,6 +9,7 @@
 #import "ZetaImportMenuDelegate.h"
 
 #import "ZetaAuthorization.h"
+#import "ZetaPoolWatcher.h"
 
 @implementation ZetaImportMenuDelegate
 
@@ -68,6 +69,8 @@
 	 {
 		 if (error)
 			 [self errorFromHelper:error];
+		 else
+			 [[self poolWatcher] checkForChanges];
 	 }];
 }
 

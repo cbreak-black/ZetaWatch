@@ -478,6 +478,11 @@ namespace zfs
 		return zpool_get_name(m_handle);
 	}
 
+	uint64_t ZPool::guid() const
+	{
+		return zpool_get_prop_int(m_handle, ZPOOL_PROP_GUID, nullptr);
+	}
+
 	uint64_t ZPool::status() const
 	{
 		char * cp = nullptr;

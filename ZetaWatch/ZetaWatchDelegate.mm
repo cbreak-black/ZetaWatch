@@ -22,8 +22,8 @@
 
 @property (weak) IBOutlet NSWindow * window;
 @property (weak) IBOutlet NSMenu * zetaMenu;
-@property (weak) IBOutlet ZetaMenuDelegate * zetaMenuDelegate;
 @property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoaderDelegate;
+@property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
 @end
 
@@ -43,6 +43,8 @@
 		@"autoUnlock": @YES,
 		@"autoImport": @YES
 	}];
+	// Watcher
+	[[self poolWatcher] checkForChanges];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

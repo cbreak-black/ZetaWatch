@@ -30,7 +30,6 @@
 @interface ZetaMenuDelegate ()
 {
 	NSMutableArray * _dynamicMenus;
-	ZetaPoolWatcher * _watcher;
 	DASessionRef _diskArbitrationSession;
 }
 
@@ -43,8 +42,6 @@
 	if (self = [super init])
 	{
 		_dynamicMenus = [[NSMutableArray alloc] init];
-		_watcher = [[ZetaPoolWatcher alloc] init];
-		_watcher.delegate = self;
 		_diskArbitrationSession = DASessionCreate(nullptr);
 	}
 	return self;
@@ -364,7 +361,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 		return;
 	NSInteger poolItemRootIdx = poolMenuIdx + 1;
 	NSUInteger poolIdx = 0;
-	for (auto && pool: [_watcher pools])
+	for (auto && pool: [[self poolWatcher] pools])
 	{
 		NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
 			pool.name(), zfs::emojistring_pool_status_t(pool.status())];
@@ -391,7 +388,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	unlockAllItem.target = self;
 	unlockAllItem.representedObject = allEncryptionRoots;
 	[unlockMenu addItem:[NSMenuItem separatorItem]];
-	for (auto && pool: [_watcher pools])
+	for (auto && pool: [[self poolWatcher] pools])
 	{
 		for (auto & fs : pool.allFileSystems())
 		{
@@ -444,6 +441,23 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }
 
+- (void)newPoolDetected:(const zfs::ZPool &)pool
+{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoUnlock"])
+	{
+		for (auto & fs : pool.allFileSystems())
+		{
+			auto [encRoot, isRoot] = fs.encryptionRoot();
+			auto keyStatus = fs.keyStatus();
+			if (isRoot && keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+			{
+				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+				[_zetaKeyLoader unlockFileSystem:fsName];
+			}
+		}
+	}
+}
+
 #pragma mark ZFS Maintenance
 
 - (IBAction)importAllPools:(id)sender
@@ -452,6 +466,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	 {
 		 if (error)
 			 [self errorFromHelper:error];
+		 else
+			 [[self poolWatcher] checkForChanges];
 	 }];
 }
 
@@ -462,6 +478,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	 {
 		 if (error)
 			 [self errorFromHelper:error];
+		 else
+			 [[self poolWatcher] checkForChanges];
 	 }];
 }
 
@@ -472,6 +490,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	 {
 		 if (error)
 			 [self errorFromHelper:error];
+		 else
+			 [[self poolWatcher] checkForChanges];
 	 }];
 }
 

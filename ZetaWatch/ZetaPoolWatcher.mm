@@ -24,6 +24,7 @@ CFStringRef powerAssertionReason = CFSTR("ZFS Scrub in progress");
 	// ZFS
 	zfs::LibZFSHandle _zfsHandle;
 	std::vector<zfs::ZPool> _pools;
+	std::vector<uint64_t> _knownPools;
 
 	// Statistics
 	std::map<uint64_t,zfs::VDevStat> _errorStats;
@@ -68,9 +69,15 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 
 - (void)timedUpdate:(NSTimer*)timer
 {
+	[self checkForChanges];
+}
+
+- (void)checkForChanges
+{
 	try
 	{
 		auto p = [self pools];
+		[self checkForNewPools:p];
 		[self checkForNewErrors:p];
 		auto scrubCounter = [self countScrubsInProgress:p];
 		if (scrubCounter > 0)
@@ -126,6 +133,34 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 		[[self delegate] errorDetected:e.what()];
 	}
 	return false;
+}
+
+std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
+{
+	std::vector<uint64_t> guids;
+	for (auto const & p : pools)
+	{
+		guids.push_back(p.guid());
+	}
+	std::sort(guids.begin(), guids.end());
+	return guids;
+}
+
+- (void)checkForNewPools:(std::vector<zfs::ZPool> const &)pools
+{
+	for (auto const & p : pools)
+	{
+		if (std::binary_search(_knownPools.begin(), _knownPools.end(), p.guid()))
+		{
+			// Already known pool
+		}
+		else
+		{
+			// New pool
+			[[self delegate] newPoolDetected:p];
+		}
+	}
+	_knownPools = poolsToGUID(pools);
 }
 
 - (uint64_t)countScrubsInProgress:(std::vector<zfs::ZPool> const &)pools

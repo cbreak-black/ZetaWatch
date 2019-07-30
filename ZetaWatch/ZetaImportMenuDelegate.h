@@ -14,9 +14,12 @@
 #import "ZetaAuthorization.h"
 #import "ZetaBaseDelegate.h"
 
+@class ZetaPoolWatcher;
+
 @interface ZetaImportMenuDelegate : ZetaBaseDelegate <NSMenuDelegate>
 
 @property (weak) IBOutlet NSMenu * importMenu;
+@property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
 @end
 

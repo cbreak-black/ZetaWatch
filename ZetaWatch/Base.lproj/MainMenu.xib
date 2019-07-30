@@ -15,14 +15,15 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
+                <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
                 <outlet property="zetaKeyLoaderDelegate" destination="R7D-cp-kuE" id="KCZ-sp-kdc"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
-                <outlet property="zetaMenuDelegate" destination="8rf-zp-5r9" id="79g-6y-RnC"/>
             </connections>
         </customObject>
         <customObject id="8rf-zp-5r9" userLabel="ZetaMenuDelegate" customClass="ZetaMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
+                <outlet property="poolWatcher" destination="Gim-eq-VbR" id="Sat-ah-3Qq"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
             </connections>
         </customObject>
@@ -30,6 +31,7 @@
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
                 <outlet property="importMenu" destination="fE9-G4-NH4" id="jfo-ja-1Zj"/>
+                <outlet property="poolWatcher" destination="Gim-eq-VbR" id="aD3-N2-eyI"/>
             </connections>
         </customObject>
         <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoaderDelegate" customClass="ZetaKeyLoaderDelegate">
@@ -40,6 +42,11 @@
                 <outlet property="progressIndicator" destination="IW2-QV-nuy" id="1wo-S0-51q"/>
                 <outlet property="queryField" destination="vtC-BP-wc5" id="cQa-7q-bCw"/>
                 <outlet property="statusField" destination="egb-Mb-iyZ" id="FbE-63-Kfl"/>
+            </connections>
+        </customObject>
+        <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher">
+            <connections>
+                <outlet property="delegate" destination="8rf-zp-5r9" id="8a6-Ch-yci"/>
             </connections>
         </customObject>
         <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
