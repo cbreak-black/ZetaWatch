@@ -8,22 +8,48 @@
 
 #import "ZetaKeyLoaderDelegate.h"
 
+#include <deque>
+
 @interface ZetaKeyLoaderDelegate ()
+{
+	std::deque<NSString*> filesystems;
+}
 
 @end
 
 @implementation ZetaKeyLoaderDelegate
+
+- (void)unlockFileSystem:(NSString*)filesystem
+{
+	[self addFilesystemToUnlock:filesystem];
+	if (![_popover isShown])
+		[self show];
+}
+
+- (void)show
+{
+	[self updateFileSystem];
+	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+	[_popover showRelativeToRect:NSMakeRect(0, 0, 0, 0)
+						  ofView:[_statusItem button]
+				   preferredEdge:NSRectEdgeMinY];
+}
 
 - (IBAction)loadKey:(id)sender
 {
 	[self showActionInProgress:NSLocalizedString(@"Loading Key...", @"LoadingKeyStatus")];
 	NSString * pass = [_passwordField stringValue];
 	[self clearPassword];
-	NSDictionary * opts = @{@"filesystem": _representedFileSystem, @"key": pass};
+	NSDictionary * opts = @{@"filesystem": [self representedFilesystem], @"key": pass};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
 		 [self performSelectorOnMainThread:@selector(handleLoadKeyReply:) withObject:error waitUntilDone:NO];
 	 }];
+}
+
+- (IBAction)skipFileSystem:(id)sender
+{
+	[self advanceFileSystem];
 }
 
 - (void)handleLoadKeyReply:(NSError*)error
@@ -31,11 +57,19 @@
 	[self completeAction];
 	if (error)
 	{
-		[self showError:[error localizedDescription]];
+		if ([error.domain isEqualToString:@"ZFSKeyError"])
+		{
+			[self showError:[error localizedDescription]];
+		}
+		else
+		{
+			[self errorFromHelper:error];
+			[self advanceFileSystem];
+		}
 	}
 	else
 	{
-		[_popover performClose:self];
+		[self advanceFileSystem];
 	}
 }
 
@@ -77,15 +111,57 @@
 	return YES;
 }
 
-- (NSString*)representedFilesystem
+- (void)addFilesystemToUnlock:(NSString*)filesystem
 {
-	return _representedFileSystem;
+	filesystems.push_back(filesystem);
 }
 
-- (void)setRepresentedFileSystem:(NSString *)representedFileSystem
+- (NSString*)representedFilesystem
 {
-	_representedFileSystem = representedFileSystem;
-	[_queryField setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Enter the password for %@", @"Password Query"), _representedFileSystem]];
+	if (filesystems.empty())
+		return nullptr;
+	return filesystems.front();
+}
+
+- (void)advanceFileSystem
+{
+	filesystems.pop_front();
+	if (filesystems.empty())
+	{
+		[_popover performClose:self];
+	}
+	else
+	{
+		[self updateFileSystem];
+	}
+}
+
+- (void)updateFileSystem
+{
+	if (filesystems.empty())
+	{
+		[_queryField setStringValue:@""];
+	}
+	else
+	{
+		[_queryField setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Enter the password for %@", @"Password Query"), filesystems.front()]];
+	}
+}
+
+- (BOOL)popoverShouldClose:(NSPopover *)popover
+{
+	if (!filesystems.empty())
+	{
+		filesystems.pop_front();
+		if (filesystems.empty())
+			return YES;
+		[self updateFileSystem];
+		return NO;
+	}
+	else
+	{
+		return YES;
+	}
 }
 
 - (void)popoverWillShow:(NSNotification *)notification
@@ -97,6 +173,7 @@
 	[self clearPassword];
 	[_passwordField abortEditing];
 	[self hideStatus];
+	filesystems.clear();
 }
 
 @end

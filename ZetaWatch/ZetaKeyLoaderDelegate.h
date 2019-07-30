@@ -14,14 +14,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZetaKeyLoaderDelegate : ZetaBaseDelegate <NSPopoverDelegate>
 
+@property (weak) NSStatusItem * statusItem;
 @property (weak) IBOutlet NSPopover * popover;
 @property (weak) IBOutlet NSSecureTextField * passwordField;
 @property (weak) IBOutlet NSTextField * queryField;
 @property (weak) IBOutlet NSTextField * statusField;
 @property (weak) IBOutlet NSProgressIndicator * progressIndicator;
-@property (nonatomic) NSString * representedFileSystem;
+
+- (void)unlockFileSystem:(NSString*)filesystem;
 
 - (IBAction)loadKey:(id)sender;
+- (IBAction)skipFileSystem:(id)sender;
 
 - (BOOL)popoverShouldDetach:(NSPopover *)popover;
 

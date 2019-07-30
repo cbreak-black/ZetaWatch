@@ -15,7 +15,6 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
-                <outlet property="passwordPopover" destination="5Lh-hG-dv8" id="4LS-vI-vnS"/>
                 <outlet property="zetaKeyLoaderDelegate" destination="R7D-cp-kuE" id="KCZ-sp-kdc"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
                 <outlet property="zetaMenuDelegate" destination="8rf-zp-5r9" id="79g-6y-RnC"/>
@@ -24,7 +23,7 @@
         <customObject id="8rf-zp-5r9" userLabel="ZetaMenuDelegate" customClass="ZetaMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
-                <outlet property="zetaWatchDelegate" destination="Voe-Tx-rLC" id="iql-cr-MgO"/>
+                <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
             </connections>
         </customObject>
         <customObject id="geo-tu-CMM" userLabel="ZetaImportMenuDelegate" customClass="ZetaImportMenuDelegate">

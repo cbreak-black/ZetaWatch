@@ -383,10 +383,14 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	if (actionMenuIdx < 0)
 		return;
 	// Unlock
-	NSUInteger encryptionRootCount = 0;
 	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
+	NSMutableArray * allEncryptionRoots = [NSMutableArray array];
+	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:@"Load all Keys..." action:@selector(loadAllKeys:) keyEquivalent:@""];
+	unlockAllItem.target = self;
+	unlockAllItem.representedObject = allEncryptionRoots;
+	[unlockMenu addItem:[NSMenuItem separatorItem]];
 	for (auto && pool: [_watcher pools])
 	{
 		for (auto & fs : pool.allFileSystems())
@@ -400,11 +404,11 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 														  action:@selector(loadKey:) keyEquivalent:@""];
 				item.representedObject = fsName;
 				item.target = self;
-				encryptionRootCount++;
+				[allEncryptionRoots addObject:fsName];
 			}
 		}
 	}
-	if (encryptionRootCount > 0)
+	if ([allEncryptionRoots count] > 0)
 	{
 		[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
 		[_dynamicMenus addObject:unlockItem];
@@ -513,7 +517,15 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 - (IBAction)loadKey:(id)sender
 {
 	NSString * fs = [sender representedObject];
-	[_zetaWatchDelegate showPopoverLoadKeyForFilesystem:fs];
+	[_zetaKeyLoader unlockFileSystem:fs];
+}
+
+- (IBAction)loadAllKeys:(id)sender
+{
+	NSArray<NSString*> * fss = [sender representedObject];
+	for (NSString * fs in fss) {
+		[_zetaKeyLoader unlockFileSystem:fs];
+	}
 }
 
 - (IBAction)scrubPool:(id)sender

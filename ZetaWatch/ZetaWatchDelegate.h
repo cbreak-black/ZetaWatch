@@ -14,7 +14,5 @@
 
 @interface ZetaWatchDelegate : NSObject <NSApplicationDelegate>
 
-- (void)showPopoverLoadKeyForFilesystem:(NSString*)fs;
-
 @end
 

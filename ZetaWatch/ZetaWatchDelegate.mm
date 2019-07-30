@@ -24,7 +24,6 @@
 @property (weak) IBOutlet NSMenu * zetaMenu;
 @property (weak) IBOutlet ZetaMenuDelegate * zetaMenuDelegate;
 @property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoaderDelegate;
-@property (weak) IBOutlet NSPopover * passwordPopover;
 
 @end
 
@@ -38,6 +37,7 @@
 	[zetaImage setTemplate:YES];
 	_statusItem.button.image = zetaImage;
 	_statusItem.menu = _zetaMenu;
+	_zetaKeyLoaderDelegate.statusItem = _statusItem;
 	// User Defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		@"autoUnlock": @YES,
@@ -47,13 +47,6 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-}
-
-- (void)showPopoverLoadKeyForFilesystem:(NSString*)fs
-{
-	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-	[_zetaKeyLoaderDelegate setRepresentedFileSystem:fs];
-	[_passwordPopover showRelativeToRect:NSMakeRect(0, 0, 0, 0) ofView:[_statusItem button] preferredEdge:NSRectEdgeMinY];
 }
 
 @end
