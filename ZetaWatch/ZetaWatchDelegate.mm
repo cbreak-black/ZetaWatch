@@ -38,6 +38,11 @@
 	[zetaImage setTemplate:YES];
 	_statusItem.button.image = zetaImage;
 	_statusItem.menu = _zetaMenu;
+	// User Defaults
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
+		@"autoUnlock": @YES,
+		@"autoImport": @YES
+	}];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

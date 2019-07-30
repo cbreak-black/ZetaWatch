@@ -73,6 +73,26 @@
                         <action selector="mountAllFilesystems:" target="8rf-zp-5r9" id="bPj-lW-Dmo"/>
                     </connections>
                 </menuItem>
+                <menuItem isSeparatorItem="YES" id="Ttd-8u-p8d"/>
+                <menuItem title="Settings" id="abZ-nP-vC5">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Settings" id="Zp5-as-Y5e">
+                        <items>
+                            <menuItem title="Auto-Import Pools" id="O0q-h1-njv">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="oMO-Og-s5N" name="value" keyPath="values.autoImport" id="LV6-2F-8fO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Auto-Unlock Datasets" id="1bo-el-qdg">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="oMO-Og-s5N" name="value" keyPath="values.autoUnlock" id="sSC-4i-zjn"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="ZkL-mf-Ahh"/>
                 <menuItem title="Quit" id="PuA-D0-otp">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -794,6 +814,7 @@
                 <outlet property="delegate" destination="R7D-cp-kuE" id="4kg-JY-FmY"/>
             </connections>
         </popover>
+        <userDefaultsController representsSharedInstance="YES" id="oMO-Og-s5N"/>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>
