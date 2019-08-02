@@ -21,15 +21,12 @@
 	 {
 		 if (error)
 		 {
-			 [self performSelectorOnMainThread:@selector(importablePoolsError:)
-									withObject:error waitUntilDone:NO];
+			 [self importablePoolsError:error];
 		 }
 		 else
 		 {
-			 [self performSelectorOnMainThread:@selector(importablePoolsDiscovered:)
-									withObject:importablePools waitUntilDone:NO];
+			 [self importablePoolsDiscovered:importablePools];
 		 }
-
 	 }];
 }
 

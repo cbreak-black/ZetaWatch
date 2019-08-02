@@ -30,8 +30,9 @@
 {
 	[self updateFileSystem];
 	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+	NSView * positioningView = [_statusItem button];
 	[_popover showRelativeToRect:NSMakeRect(0, 0, 0, 0)
-						  ofView:[_statusItem button]
+						  ofView:positioningView
 				   preferredEdge:NSRectEdgeMinY];
 }
 
@@ -43,7 +44,7 @@
 	NSDictionary * opts = @{@"filesystem": [self representedFilesystem], @"key": pass};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
-		 [self performSelectorOnMainThread:@selector(handleLoadKeyReply:) withObject:error waitUntilDone:NO];
+		 [self handleLoadKeyReply:error];
 	 }];
 }
 
@@ -126,13 +127,10 @@
 - (void)advanceFileSystem
 {
 	filesystems.pop_front();
+	[self updateFileSystem];
 	if (filesystems.empty())
 	{
 		[_popover performClose:self];
-	}
-	else
-	{
-		[self updateFileSystem];
 	}
 }
 
@@ -153,9 +151,9 @@
 	if (!filesystems.empty())
 	{
 		filesystems.pop_front();
+		[self updateFileSystem];
 		if (filesystems.empty())
 			return YES;
-		[self updateFileSystem];
 		return NO;
 	}
 	else
@@ -174,6 +172,7 @@
 	[_passwordField abortEditing];
 	[self hideStatus];
 	filesystems.clear();
+	[self updateFileSystem];
 }
 
 @end

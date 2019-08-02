@@ -161,14 +161,31 @@
 	task(nil, proxy);
 }
 
+- (void)dispatchReply:(void(^)(void))reply
+{
+	[self performSelectorOnMainThread:@selector(dispatchReplyMainThread:) withObject:reply waitUntilDone:FALSE];
+}
+
+- (void)dispatchReplyMainThread:(void(^)(void))reply
+{
+	reply();
+}
+
 - (void)getVersionWithReply:(void (^)(NSError * error, NSString *))reply
 {
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error, nil);
+		 {
+			 [self dispatchReply:^(){ reply(error, nil); }];
+		 }
 		 else
-			 [proxy getVersionWithReply:reply];
+		 {
+			 [proxy getVersionWithReply:^(NSError * error, NSString * version)
+			  {
+				  [self dispatchReply:^(){ reply(error, version); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -178,9 +195,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy importPools:importData authorization:self.authorization withReply:reply];
+		 {
+			 [proxy importPools:importData authorization:self.authorization
+					  withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -189,9 +214,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error, NULL);
+		 {
+			 [self dispatchReply:^(){ reply(error, nil); }];
+		 }
 		 else
-			 [proxy importablePoolsWithAuthorization:self.authorization withReply:reply];
+		 {
+			 [proxy importablePoolsWithAuthorization:self.authorization
+										   withReply:^(NSError * error, NSDictionary * importablePools)
+			  {
+				  [self dispatchReply:^(){ reply(error, importablePools); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -201,9 +234,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy exportPools:exportData authorization:self.authorization withReply:reply];
+		 {
+			 [proxy exportPools:exportData authorization:self.authorization
+					  withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -213,9 +254,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy mountFilesystems:mountData authorization:self.authorization withReply:reply];
+		 {
+			 [proxy mountFilesystems:mountData authorization:self.authorization
+						   withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -225,9 +274,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy unmountFilesystems:mountData authorization:self.authorization withReply:reply];
+		 {
+			 [proxy unmountFilesystems:mountData authorization:self.authorization
+							 withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -237,9 +294,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy loadKeyForFilesystem:data authorization:self.authorization withReply:reply];
+		 {
+			 [proxy loadKeyForFilesystem:data authorization:self.authorization
+							   withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 
@@ -249,9 +314,17 @@
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
-			 reply(error);
+		 {
+			 [self dispatchReply:^(){ reply(error); }];
+		 }
 		 else
-			 [proxy scrubPool:poolData authorization:self.authorization withReply:reply];
+		 {
+			 [proxy scrubPool:poolData authorization:self.authorization
+					withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){ reply(error); }];
+			  }];
+		 }
 	 }];
 }
 

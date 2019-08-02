@@ -458,16 +458,33 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	}
 }
 
+- (void)handlePoolChangeReply:(NSError*)error
+{
+	if (error)
+		[self errorFromHelper:error];
+	else
+		[[self poolWatcher] checkForChanges];
+}
+
+- (void)handleFileSystemChangeReply:(NSError*)error
+{
+	if (error)
+		[self errorFromHelper:error];
+}
+
+- (void)handleMetaDataChangeReply:(NSError*)error
+{
+	if (error)
+		[self errorFromHelper:error];
+}
+
 #pragma mark ZFS Maintenance
 
 - (IBAction)importAllPools:(id)sender
 {
 	[_authorization importPools:@{} withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
-		 else
-			 [[self poolWatcher] checkForChanges];
+		 [self handlePoolChangeReply:error];
 	 }];
 }
 
@@ -476,10 +493,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"pool": [sender representedObject]};
 	[_authorization exportPools:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
-		 else
-			 [[self poolWatcher] checkForChanges];
+		 [self handlePoolChangeReply:error];
 	 }];
 }
 
@@ -488,10 +502,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"pool": [sender representedObject], @"force": @YES};
 	[_authorization exportPools:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
-		 else
-			 [[self poolWatcher] checkForChanges];
+		 [self handlePoolChangeReply:error];
 	 }];
 }
 
@@ -499,8 +510,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 {
 	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleFileSystemChangeReply:error];
 	 }];
 }
 
@@ -509,8 +519,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
 	[_authorization mountFilesystems:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleFileSystemChangeReply:error];
 	 }];
 }
 
@@ -519,8 +528,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleFileSystemChangeReply:error];
 	 }];
 }
 
@@ -529,8 +537,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"force": @YES};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleFileSystemChangeReply:error];
 	 }];
 }
 
@@ -553,8 +560,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"pool": [sender representedObject]};
 	[_authorization scrubPool:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleMetaDataChangeReply:error];
 	 }];
 }
 
@@ -563,8 +569,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	NSDictionary * opts = @{@"pool": [sender representedObject], @"stop": @YES};
 	[_authorization scrubPool:opts withReply:^(NSError * error)
 	 {
-		 if (error)
-			 [self errorFromHelper:error];
+		 [self handleMetaDataChangeReply:error];
 	 }];
 }
 
