@@ -480,14 +480,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 
 #pragma mark ZFS Maintenance
 
-- (IBAction)importAllPools:(id)sender
-{
-	[_authorization importPools:@{} withReply:^(NSError * error)
-	 {
-		 [self handlePoolChangeReply:error];
-	 }];
-}
-
 - (IBAction)exportPool:(id)sender
 {
 	NSDictionary * opts = @{@"pool": [sender representedObject]};

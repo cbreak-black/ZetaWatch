@@ -67,12 +67,6 @@
                         </connections>
                     </menu>
                 </menuItem>
-                <menuItem title="Import all Pools" id="ex0-MP-SYc">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="importAllPools:" target="8rf-zp-5r9" id="cyT-XV-d7K"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="Mount all Filesystems" id="Gk5-sm-R9o">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
