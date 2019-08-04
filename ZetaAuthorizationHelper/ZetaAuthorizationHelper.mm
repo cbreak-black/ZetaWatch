@@ -231,8 +231,9 @@
 			NSMutableDictionary * poolsDict = [[NSMutableDictionary alloc] initWithCapacity:pools.size()];
 			for (auto const & pool : pools)
 			{
-				[poolsDict setObject:[NSNumber numberWithUnsignedLongLong:pool.guid]
-							  forKey:[NSString stringWithUTF8String:pool.name.c_str()]];
+				NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
+				NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
+				[poolsDict setObject:name forKey:guid];
 			}
 			reply(nullptr, poolsDict);
 		}

@@ -18,9 +18,11 @@
 
 @protocol ZetaPoolWatcherDelegate <NSObject>
 
+- (void)newPoolDetected:(zfs::ZPool const &)pool;
+
+@optional
 - (void)errorDetectedInPool:(std::string const &)pool;
 - (void)errorDetected:(std::string const &)error;
-- (void)newPoolDetected:(zfs::ZPool const &)pool;
 
 @end
 
@@ -34,6 +36,6 @@
 - (void)keepAwake;
 - (void)stopKeepingAwake;
 
-@property (weak) IBOutlet id<ZetaPoolWatcherDelegate> delegate;
+@property (strong) NSMutableArray<id<ZetaPoolWatcherDelegate>> * delegates;
 
 @end

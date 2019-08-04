@@ -15,6 +15,7 @@
 #import "ZetaPoolWatcher.h"
 #import "ZetaBaseDelegate.h"
 #import "ZetaPoolWatcher.h"
+#import "ZetaAutoImporter.h"
 #import "ZetaKeyLoaderDelegate.h"
 
 enum ZetaMenuTags
@@ -28,7 +29,6 @@ enum ZetaMenuTags
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoader;
 
-- (IBAction)importAllPools:(id)sender;
 - (IBAction)mountAllFilesystems:(id)sender;
 
 @end

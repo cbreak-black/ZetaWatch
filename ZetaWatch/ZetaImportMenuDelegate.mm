@@ -40,13 +40,13 @@
 		NSMenuItem * item = [_importMenu itemAtIndex:2];
 		[item setTitle:[NSString stringWithFormat:
 						@"%lu importable Pools found", [importablePools count]]];
-		for (NSString * name in importablePools)
+		for (NSNumber * guid in importablePools)
 		{
-			NSMenuItem * item = [_importMenu addItemWithTitle:name action:@selector(importPool:) keyEquivalent:@""];
-			[item setTitle:[NSString stringWithFormat:@"%@ (%llu)", name, [importablePools[name] unsignedLongLongValue]]];
+			NSString * title = [NSString stringWithFormat:@"%@ (%llu)", importablePools[guid], [guid unsignedLongLongValue]];
+			NSMenuItem * item = [_importMenu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
 			[item setAction:@selector(importPool:)];
 			[item setTarget:self];
-			[item setRepresentedObject:importablePools[name]];
+			[item setRepresentedObject:guid];
 		}
 	}
 	else

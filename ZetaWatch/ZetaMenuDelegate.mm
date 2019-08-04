@@ -47,6 +47,14 @@
 	return self;
 }
 
+- (void)awakeFromNib
+{
+	if (self.poolWatcher)
+	{
+		[self.poolWatcher.delegates addObject:self];
+	}
+}
+
 - (void)dealloc
 {
 	CFRelease(_diskArbitrationSession);

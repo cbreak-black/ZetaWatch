@@ -56,6 +56,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 			target:self selector:@selector(timedUpdate:) userInfo:nil repeats:YES];
 		_autoUpdateTimer.tolerance = 8;
 		[[NSRunLoop currentRunLoop] addTimer:_autoUpdateTimer forMode:NSDefaultRunLoopMode];
+		delegates = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -112,7 +113,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 			{
 				if ([self checkDev:vdev])
 				{
-					[[self delegate] errorDetectedInPool:pool.name()];
+					[self notifyErrorInPool:pool.name()];
 					return true;
 				}
 
@@ -121,7 +122,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 				{
 					if ([self checkDev:device])
 					{
-						[[self delegate] errorDetectedInPool:pool.name()];
+						[self notifyErrorInPool:pool.name()];
 						return true;
 					}
 				}
@@ -130,9 +131,39 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	}
 	catch (std::exception const & e)
 	{
-		[[self delegate] errorDetected:e.what()];
+		[self notifyError:e.what()];
 	}
 	return false;
+}
+
+- (void)notifyNewPoolDetected:(zfs::ZPool const &)pool
+{
+	for (id<ZetaPoolWatcherDelegate> d in [self delegates])
+	{
+		[d newPoolDetected:pool];
+	}
+}
+
+- (void)notifyErrorInPool:(std::string const &)pool
+{
+	for (id<ZetaPoolWatcherDelegate> d in [self delegates])
+	{
+		if ([d respondsToSelector:@selector(errorDetectedInPool:)])
+		{
+			[d errorDetectedInPool:pool];
+		}
+	}
+}
+
+- (void)notifyError:(std::string const &)pool
+{
+	for (id<ZetaPoolWatcherDelegate> d in [self delegates])
+	{
+		if ([d respondsToSelector:@selector(errorDetected:)])
+		{
+			[d errorDetected:pool];
+		}
+	}
 }
 
 std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
@@ -157,7 +188,7 @@ std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 		else
 		{
 			// New pool
-			[[self delegate] newPoolDetected:p];
+			[self notifyNewPoolDetected:p];
 		}
 	}
 	_knownPools = poolsToGUID(pools);
@@ -178,7 +209,7 @@ std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 	}
 	catch (std::exception const & e)
 	{
-		[[self delegate] errorDetected:e.what()];
+		[self notifyError:e.what()];
 	}
 	return scrubsInProgress;
 }
@@ -192,7 +223,7 @@ std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 	}
 	catch (std::exception const & e)
 	{
-		[[self delegate] errorDetected:e.what()];
+		[self notifyError:e.what()];
 	}
 	return pools;
 }
@@ -229,6 +260,6 @@ std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 	}
 }
 
-@synthesize delegate;
+@synthesize delegates;
 
 @end

@@ -44,9 +44,11 @@
                 <outlet property="statusField" destination="egb-Mb-iyZ" id="FbE-63-Kfl"/>
             </connections>
         </customObject>
-        <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher">
+        <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher"/>
+        <customObject id="PVX-FU-gbc" userLabel="ZetaIDWatcher" customClass="ZetaAutoImporter">
             <connections>
-                <outlet property="delegate" destination="8rf-zp-5r9" id="8a6-Ch-yci"/>
+                <outlet property="_authorization" destination="GUh-uV-dxo" id="hKw-Oj-ONj"/>
+                <outlet property="poolWatcher" destination="Gim-eq-VbR" id="SfY-Cy-iuS"/>
             </connections>
         </customObject>
         <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
