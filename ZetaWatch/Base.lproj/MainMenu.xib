@@ -737,12 +737,12 @@
             </items>
         </menu>
         <customView id="40L-u9-aeI" userLabel="PasswordDialog">
-            <rect key="frame" x="0.0" y="0.0" width="554" height="104"/>
+            <rect key="frame" x="0.0" y="0.0" width="555" height="104"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <secureTextField verticalHuggingPriority="750" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="JpZ-yq-Swt">
-                    <rect key="frame" x="92" y="45" width="442" height="22"/>
-                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="nB2-dg-ZrZ">
+                    <rect key="frame" x="92" y="49" width="443" height="22"/>
+                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="nB2-dg-ZrZ">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -755,7 +755,7 @@
                     </secureTextFieldCell>
                 </secureTextField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vtC-BP-wc5">
-                    <rect key="frame" x="90" y="75" width="446" height="17"/>
+                    <rect key="frame" x="90" y="79" width="447" height="17"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="17" id="J3h-Ms-Ygd"/>
                     </constraints>
@@ -773,8 +773,8 @@
                     </constraints>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="qon-SO-Jhf"/>
                 </imageView>
-                <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="egb-Mb-iyZ">
-                    <rect key="frame" x="114" y="20" width="422" height="17"/>
+                <textField hidden="YES" horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="egb-Mb-iyZ">
+                    <rect key="frame" x="114" y="20" width="277" height="17"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="Status" id="Mwk-R6-lED">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -782,41 +782,158 @@
                     </textFieldCell>
                 </textField>
                 <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="IW2-QV-nuy">
-                    <rect key="frame" x="92" y="20" width="16" height="17"/>
+                    <rect key="frame" x="92" y="20" width="16" height="16"/>
                 </progressIndicator>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xth-17-Uyp">
+                    <rect key="frame" x="458" y="13" width="83" height="32"/>
+                    <buttonCell key="cell" type="push" title="Unlock" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="piW-QM-gQc">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="loadKey:" target="R7D-cp-kuE" id="062-OO-Y0n"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sXs-lU-vuw">
+                    <rect key="frame" x="391" y="13" width="67" height="32"/>
+                    <buttonCell key="cell" type="push" title="Skip" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vVt-vK-kZ4">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="skipFileSystem:" target="R7D-cp-kuE" id="HLD-XO-u4Y"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
-                <constraint firstItem="vtC-BP-wc5" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" id="1gu-dR-bQA"/>
-                <constraint firstAttribute="trailing" secondItem="egb-Mb-iyZ" secondAttribute="trailing" constant="20" symbolic="YES" id="87D-jM-D4I"/>
+                <constraint firstAttribute="bottom" secondItem="sXs-lU-vuw" secondAttribute="bottom" constant="20" symbolic="YES" id="0VA-kp-xSZ"/>
+                <constraint firstAttribute="trailing" secondItem="Xth-17-Uyp" secondAttribute="trailing" constant="20" symbolic="YES" id="1cC-Nw-Mpg"/>
+                <constraint firstItem="vtC-BP-wc5" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="1gu-dR-bQA"/>
                 <constraint firstItem="LRH-QE-iBn" firstAttribute="leading" secondItem="40L-u9-aeI" secondAttribute="leading" constant="20" symbolic="YES" id="8Ld-Ru-1X8"/>
                 <constraint firstItem="vtC-BP-wc5" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" priority="750" constant="20" symbolic="YES" id="AfF-td-1Z6"/>
                 <constraint firstAttribute="bottom" secondItem="LRH-QE-iBn" secondAttribute="bottom" constant="20" symbolic="YES" id="GJz-ex-VEU"/>
-                <constraint firstItem="IW2-QV-nuy" firstAttribute="top" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="Mef-as-LYH"/>
+                <constraint firstAttribute="bottom" secondItem="Xth-17-Uyp" secondAttribute="bottom" constant="20" symbolic="YES" id="KPl-GI-4YV"/>
+                <constraint firstItem="IW2-QV-nuy" firstAttribute="top" relation="greaterThanOrEqual" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="Mef-as-LYH"/>
                 <constraint firstItem="egb-Mb-iyZ" firstAttribute="leading" secondItem="IW2-QV-nuy" secondAttribute="trailing" constant="8" symbolic="YES" id="Nl8-ra-JyC"/>
-                <constraint firstItem="JpZ-yq-Swt" firstAttribute="top" secondItem="vtC-BP-wc5" secondAttribute="bottom" constant="8" id="abq-QG-ftd"/>
+                <constraint firstItem="Xth-17-Uyp" firstAttribute="top" relation="greaterThanOrEqual" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="P47-oI-yFJ"/>
+                <constraint firstItem="Xth-17-Uyp" firstAttribute="leading" secondItem="sXs-lU-vuw" secondAttribute="trailing" constant="12" symbolic="YES" id="XSz-Lh-EYu"/>
+                <constraint firstItem="JpZ-yq-Swt" firstAttribute="top" secondItem="vtC-BP-wc5" secondAttribute="bottom" constant="8" symbolic="YES" id="abq-QG-ftd"/>
                 <constraint firstAttribute="bottom" secondItem="egb-Mb-iyZ" secondAttribute="bottom" constant="20" symbolic="YES" id="emi-Ch-eys"/>
                 <constraint firstItem="IW2-QV-nuy" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="ixF-n5-DK8"/>
-                <constraint firstItem="egb-Mb-iyZ" firstAttribute="top" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="l8W-4p-UJX"/>
+                <constraint firstItem="egb-Mb-iyZ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="l8W-4p-UJX"/>
                 <constraint firstItem="JpZ-yq-Swt" firstAttribute="leading" secondItem="LRH-QE-iBn" secondAttribute="trailing" constant="8" symbolic="YES" id="lDB-KI-2Ff"/>
+                <constraint firstItem="sXs-lU-vuw" firstAttribute="leading" secondItem="egb-Mb-iyZ" secondAttribute="trailing" constant="8" symbolic="YES" id="tdT-So-PUO"/>
                 <constraint firstItem="LRH-QE-iBn" firstAttribute="top" secondItem="40L-u9-aeI" secondAttribute="top" constant="20" symbolic="YES" id="u0N-kd-ick"/>
                 <constraint firstAttribute="bottom" secondItem="IW2-QV-nuy" secondAttribute="bottom" constant="20" symbolic="YES" id="xVj-2I-nq5"/>
                 <constraint firstAttribute="trailing" secondItem="JpZ-yq-Swt" secondAttribute="trailing" constant="20" id="xXA-Ui-KUB"/>
+                <constraint firstItem="sXs-lU-vuw" firstAttribute="top" relation="greaterThanOrEqual" secondItem="JpZ-yq-Swt" secondAttribute="bottom" constant="8" symbolic="YES" id="yUJ-Wh-FsI"/>
                 <constraint firstAttribute="trailing" secondItem="vtC-BP-wc5" secondAttribute="trailing" constant="20" symbolic="YES" id="ziC-dL-Eus"/>
             </constraints>
-            <point key="canvasLocation" x="144" y="406"/>
+            <connections>
+                <outlet property="nextKeyView" destination="JpZ-yq-Swt" id="djn-Eh-4Qs"/>
+            </connections>
+            <point key="canvasLocation" x="143.5" y="414.5"/>
         </customView>
-        <viewController id="3wl-p9-tQW" userLabel="Popover View Controller">
+        <viewController id="3wl-p9-tQW" userLabel="Password Popover View Controller">
             <connections>
                 <outlet property="view" destination="40L-u9-aeI" id="SJp-sP-WqY"/>
             </connections>
         </viewController>
-        <popover behavior="t" id="5Lh-hG-dv8">
+        <popover behavior="semitransient" id="5Lh-hG-dv8" userLabel="Password Popover">
             <connections>
                 <outlet property="contentViewController" destination="3wl-p9-tQW" id="3c9-rd-q9f"/>
                 <outlet property="delegate" destination="R7D-cp-kuE" id="4kg-JY-FmY"/>
             </connections>
         </popover>
+        <viewController id="cvg-uB-4z4" userLabel="Import Popover View Controller">
+            <connections>
+                <outlet property="view" destination="GMb-WG-gt7" id="KTw-JK-BeN"/>
+            </connections>
+        </viewController>
+        <popover behavior="semitransient" id="BNT-uI-e5Z" userLabel="Import Popover">
+            <connections>
+                <outlet property="contentViewController" destination="cvg-uB-4z4" id="ihh-qg-O93"/>
+            </connections>
+        </popover>
         <userDefaultsController representsSharedInstance="YES" id="oMO-Og-s5N"/>
+        <customView id="GMb-WG-gt7" userLabel="ImportPoolDialog">
+            <rect key="frame" x="0.0" y="0.0" width="554" height="104"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0d-S0-6AV">
+                    <rect key="frame" x="20" y="20" width="64" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="64" id="VoR-wq-Bxg"/>
+                        <constraint firstAttribute="width" constant="64" id="ei1-h6-Rbe"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="Xec-xx-hpk"/>
+                </imageView>
+                <textField horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="aT3-Yv-LDt">
+                    <rect key="frame" x="90" y="67" width="446" height="17"/>
+                    <textFieldCell key="cell" refusesFirstResponder="YES" title="Import Pool..." id="C30-70-5xn">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="e5J-pY-Cpg">
+                    <rect key="frame" x="460" y="13" width="80" height="32"/>
+                    <buttonCell key="cell" type="push" title="Import" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hzh-0J-CU1">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B1t-jC-NZP">
+                    <rect key="frame" x="381" y="13" width="79" height="32"/>
+                    <buttonCell key="cell" type="push" title="Ignore" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="h9q-I4-Kc9">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                    </buttonCell>
+                </button>
+                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="gpB-aJ-ubI">
+                    <rect key="frame" x="92" y="20" width="16" height="16"/>
+                </progressIndicator>
+                <textField hidden="YES" horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="y44-cd-qJ2">
+                    <rect key="frame" x="114" y="20" width="267" height="17"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Status" id="lQA-Xl-Jcg">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="X0d-S0-6AV" firstAttribute="leading" secondItem="GMb-WG-gt7" secondAttribute="leading" constant="20" symbolic="YES" id="8Uv-al-p8n"/>
+                <constraint firstItem="aT3-Yv-LDt" firstAttribute="leading" secondItem="X0d-S0-6AV" secondAttribute="trailing" constant="8" symbolic="YES" id="DHP-fX-zVC"/>
+                <constraint firstItem="e5J-pY-Cpg" firstAttribute="leading" secondItem="B1t-jC-NZP" secondAttribute="trailing" constant="12" symbolic="YES" id="DvM-6B-iow"/>
+                <constraint firstAttribute="bottom" secondItem="y44-cd-qJ2" secondAttribute="bottom" constant="20" symbolic="YES" id="FbR-5E-UCm"/>
+                <constraint firstItem="gpB-aJ-ubI" firstAttribute="leading" secondItem="X0d-S0-6AV" secondAttribute="trailing" constant="8" symbolic="YES" id="G95-FG-hvy"/>
+                <constraint firstItem="y44-cd-qJ2" firstAttribute="leading" secondItem="gpB-aJ-ubI" secondAttribute="trailing" constant="8" symbolic="YES" id="VjO-vd-IPa"/>
+                <constraint firstItem="aT3-Yv-LDt" firstAttribute="top" secondItem="GMb-WG-gt7" secondAttribute="top" constant="20" symbolic="YES" id="Vlh-zN-vM8"/>
+                <constraint firstAttribute="bottom" secondItem="gpB-aJ-ubI" secondAttribute="bottom" constant="20" symbolic="YES" id="a2d-gR-Gmi"/>
+                <constraint firstItem="B1t-jC-NZP" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aT3-Yv-LDt" secondAttribute="bottom" constant="8" symbolic="YES" id="b68-Y0-TD7"/>
+                <constraint firstItem="X0d-S0-6AV" firstAttribute="top" secondItem="GMb-WG-gt7" secondAttribute="top" constant="20" symbolic="YES" id="cYD-6Z-ucF"/>
+                <constraint firstItem="B1t-jC-NZP" firstAttribute="leading" secondItem="y44-cd-qJ2" secondAttribute="trailing" constant="8" symbolic="YES" id="cmM-Ra-48g"/>
+                <constraint firstAttribute="trailing" secondItem="e5J-pY-Cpg" secondAttribute="trailing" constant="20" symbolic="YES" id="dcP-0J-LWI"/>
+                <constraint firstAttribute="trailing" secondItem="aT3-Yv-LDt" secondAttribute="trailing" constant="20" symbolic="YES" id="dwi-Kr-Hgc"/>
+                <constraint firstAttribute="bottom" secondItem="B1t-jC-NZP" secondAttribute="bottom" constant="20" symbolic="YES" id="ejc-vS-Kh8"/>
+                <constraint firstItem="e5J-pY-Cpg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aT3-Yv-LDt" secondAttribute="bottom" constant="8" symbolic="YES" id="kWu-90-ql9"/>
+                <constraint firstAttribute="bottom" secondItem="e5J-pY-Cpg" secondAttribute="bottom" constant="20" symbolic="YES" id="rtl-mI-44v"/>
+            </constraints>
+            <point key="canvasLocation" x="144" y="581"/>
+        </customView>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>
