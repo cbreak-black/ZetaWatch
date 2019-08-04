@@ -30,6 +30,7 @@
         <customObject id="geo-tu-CMM" userLabel="ZetaImportMenuDelegate" customClass="ZetaImportMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
+                <outlet property="autoImporter" destination="PVX-FU-gbc" id="Wpo-l0-uGC"/>
                 <outlet property="importMenu" destination="fE9-G4-NH4" id="jfo-ja-1Zj"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="aD3-N2-eyI"/>
             </connections>
@@ -45,7 +46,7 @@
             </connections>
         </customObject>
         <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher"/>
-        <customObject id="PVX-FU-gbc" userLabel="ZetaIDWatcher" customClass="ZetaAutoImporter">
+        <customObject id="PVX-FU-gbc" userLabel="ZetaAutoImporter" customClass="ZetaAutoImporter">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="hKw-Oj-ONj"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="SfY-Cy-iuS"/>

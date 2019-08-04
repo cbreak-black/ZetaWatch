@@ -19,41 +19,28 @@
 	NSMenuItem * importAllItem = [menu addItemWithTitle:@"Import all Pools" action:@selector(importAllPools:) keyEquivalent:@""];
 	importAllItem.target = self;
 	[menu addItem:[NSMenuItem separatorItem]];
-	[menu addItemWithTitle:@"Searching for importable Pools..." action:NULL keyEquivalent:@""];
-	[_authorization importablePoolsWithReply:^(NSError * error, NSDictionary * importablePools)
-	 {
-		 if (error)
-		 {
-			 [self importablePoolsError:error];
-		 }
-		 else
-		 {
-			 [self importablePoolsDiscovered:importablePools];
-		 }
-	 }];
-}
-
-- (void)importablePoolsDiscovered:(NSDictionary*)importablePools
-{
-	if ([importablePools count] > 0)
+	auto importablePools = [self.autoImporter importablePools];
+	if (importablePools.size() > 0)
 	{
-		NSMenuItem * item = [_importMenu itemAtIndex:2];
-		[item setTitle:[NSString stringWithFormat:
-						@"%lu importable Pools found", [importablePools count]]];
-		for (NSNumber * guid in importablePools)
+		for (auto const & pool : importablePools)
 		{
-			NSString * title = [NSString stringWithFormat:@"%@ (%llu)", importablePools[guid], [guid unsignedLongLongValue]];
+			NSString * title = [NSString stringWithFormat:@"%s (%llu)",
+								pool.name.c_str(), pool.guid];
 			NSMenuItem * item = [_importMenu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
 			[item setAction:@selector(importPool:)];
 			[item setTarget:self];
-			[item setRepresentedObject:guid];
+			[item setRepresentedObject:[NSNumber numberWithUnsignedLongLong:pool.guid]];
 		}
 	}
 	else
 	{
-		NSMenuItem * item = [_importMenu itemAtIndex:2];
-		[item setTitle:@"No importable Pools found"];
+		[_importMenu addItemWithTitle:@"No importable Pools found"
+							   action:NULL keyEquivalent:@""];
 	}
+}
+
+- (void)importablePoolsDiscovered:(NSDictionary*)importablePools
+{
 }
 
 - (void)importablePoolsError:(NSError*)error
