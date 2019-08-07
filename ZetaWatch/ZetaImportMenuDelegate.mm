@@ -11,6 +11,8 @@
 #import "ZetaAuthorization.h"
 #import "ZetaPoolWatcher.h"
 
+#include "ZFSStrings.hpp"
+
 @implementation ZetaImportMenuDelegate
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
@@ -24,8 +26,10 @@
 	{
 		for (auto const & pool : importablePools)
 		{
-			NSString * title = [NSString stringWithFormat:@"%s (%llu)",
-								pool.name.c_str(), pool.guid];
+			NSString * title = [NSString stringWithFormat:@"%s %@ (%llu)",
+				pool.name.c_str(),
+				zfs::emojistring_pool_status_t(pool.status),
+				pool.guid];
 			NSMenuItem * item = [_importMenu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
 			[item setAction:@selector(importPool:)];
 			[item setTarget:self];

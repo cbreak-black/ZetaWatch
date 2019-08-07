@@ -209,7 +209,7 @@
 	 }];
 }
 
-- (void)importablePoolsWithReply:(void(^)(NSError * error, NSDictionary * importablePools))reply
+- (void)importablePoolsWithReply:(void(^)(NSError * error, NSArray * importablePools))reply
 {
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
@@ -220,7 +220,7 @@
 		 else
 		 {
 			 [proxy importablePoolsWithAuthorization:self.authorization
-										   withReply:^(NSError * error, NSDictionary * importablePools)
+										   withReply:^(NSError * error, NSArray * importablePools)
 			  {
 				  [self dispatchReply:^(){ reply(error, importablePools); }];
 			  }];

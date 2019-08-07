@@ -220,7 +220,7 @@
 	}
 }
 
-- (void)importablePoolsWithAuthorization:(NSData *)authData withReply:(void (^)(NSError *, NSDictionary *))reply
+- (void)importablePoolsWithAuthorization:(NSData *)authData withReply:(void (^)(NSError *, NSArray *))reply
 {
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
@@ -228,14 +228,17 @@
 		try
 		{
 			auto pools = _zfs.importablePools();
-			NSMutableDictionary * poolsDict = [[NSMutableDictionary alloc] initWithCapacity:pools.size()];
+			NSMutableArray * poolsArray = [[NSMutableArray alloc] initWithCapacity:pools.size()];
 			for (auto const & pool : pools)
 			{
 				NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
 				NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
-				[poolsDict setObject:name forKey:guid];
+				NSNumber * status = [NSNumber numberWithUnsignedLongLong:pool.status];
+				NSDictionary * poolDict =
+				@{@"name": name, @"guid": guid, @"status": status};
+				[poolsArray addObject:poolDict];
 			}
-			reply(nullptr, poolsDict);
+			reply(nullptr, poolsArray);
 		}
 		catch (std::exception const & e)
 		{

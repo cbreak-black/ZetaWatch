@@ -16,11 +16,6 @@
 #include <string>
 #include <algorithm>
 
-bool operator<(PoolID const & a, PoolID const & b)
-{
-	return a.guid < b.guid;
-}
-
 /*!
  If Auto-Import is configured:
  Discovered importable pools get classified into known and new pools. Pools that
@@ -37,9 +32,9 @@ bool operator<(PoolID const & a, PoolID const & b)
 	NSTimer * checkTimer;
 
 	// Management
-	std::vector<PoolID> _importable;
-	std::vector<PoolID> _importableKnown;
-	std::set<PoolID> _knownPools;
+	std::vector<zfs::ImportablePool> _importable;
+	std::vector<zfs::ImportablePool> _importableKnown;
+	std::set<zfs::ImportablePool> _knownPools;
 }
 
 - (void)scheduleChecking;
@@ -51,6 +46,7 @@ class ZetaIDHandler : public ID::DiskArbitrationHandler
 public:
 	ZetaIDHandler(ZetaAutoImporter * watcher) : watcher(watcher)
 	{
+		scheduleChecking();
 	}
 
 public:
@@ -114,53 +110,51 @@ private:
 
 - (void)checkForImportablePools
 {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoImport"])
-	{
-		[_authorization importablePoolsWithReply:
-		 ^(NSError * error, NSDictionary * importablePools)
-		 {
-			if (error)
-				[self errorFromHelper:error];
-			else
-				[self handleImportablePools:importablePools];
-		 }];
-	}
+	[_authorization importablePoolsWithReply:
+	 ^(NSError * error, NSArray * importablePools)
+	 {
+		if (error)
+			[self errorFromHelper:error];
+		else
+			[self handleImportablePools:importablePools];
+	 }];
 }
 
-std::vector<PoolID> dictToPoolVec(NSDictionary * poolDict)
+std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 {
-	std::vector<PoolID> pools;
-	for (NSNumber * guidNum in poolDict)
+	std::vector<zfs::ImportablePool> pools;
+	for (NSDictionary * poolDict in poolsArray)
 	{
 		pools.push_back({
-			[guidNum unsignedLongLongValue],
-			[poolDict[guidNum] UTF8String]
+			[poolDict[@"name"] UTF8String],
+			[poolDict[@"guid"] unsignedLongLongValue],
+			[poolDict[@"status"] unsignedLongLongValue]
 		});
 	}
 	std::sort(pools.begin(), pools.end());
 	return pools;
 }
 
-- (void)handleImportablePools:(NSDictionary*)importablePools
+- (void)handleImportablePools:(NSArray*)importablePools
 {
-	std::vector<PoolID> importableAll = dictToPoolVec(importablePools);
+	std::vector<zfs::ImportablePool> importableAll = arrayToPoolVec(importablePools);
 	// Find the pools that had not been imported before
-	std::vector<PoolID> importableFresh;
+	std::vector<zfs::ImportablePool> importableFresh;
 	std::set_difference(importableAll.begin(), importableAll.end(),
 						_knownPools.begin(), _knownPools.end(),
 						std::back_inserter(importableFresh));
 	// Find the pools that had been imported before
-	std::vector<PoolID> importableKnown;
+	std::vector<zfs::ImportablePool> importableKnown;
 	std::set_difference(importableAll.begin(), importableAll.end(),
 						importableFresh.begin(), importableFresh.end(),
 						std::back_inserter(importableKnown));
 	// Find new importable pools
-	std::vector<PoolID> importableNew;
+	std::vector<zfs::ImportablePool> importableNew;
 	std::set_difference(importableFresh.begin(), importableFresh.end(),
 						_importable.begin(), _importable.end(),
 						std::back_inserter(importableNew));
 	// Find no longer importable pools that were known before
-	std::vector<PoolID> importableKnownRemoved;
+	std::vector<zfs::ImportablePool> importableKnownRemoved;
 	std::set_difference(_importableKnown.begin(), _importableKnown.end(),
 						importableAll.begin(), importableAll.end(),
 						std::back_inserter(importableKnownRemoved));
@@ -171,12 +165,14 @@ std::vector<PoolID> dictToPoolVec(NSDictionary * poolDict)
 	[self handleRemovedKnownImportablePools:importableKnownRemoved];
 }
 
-- (void)handleNewImportablePools:(std::vector<PoolID> const &)importableNew
+- (void)handleNewImportablePools:(std::vector<zfs::ImportablePool> const &)importableNew
 {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoImport"])
 	{
 		for (auto const & pool : importableNew)
 		{
+			if (!zfs::healthy(pool.status))
+				continue; // skip pools that aren't healthy
 			NSLog(@"Auto-Importing pool %s", pool.name.c_str());
 			NSDictionary * pools = @{ @"poolGUID": [NSNumber numberWithUnsignedLongLong:pool.guid] };
 			[_authorization importPools:pools withReply:^(NSError * error)
@@ -187,7 +183,7 @@ std::vector<PoolID> dictToPoolVec(NSDictionary * poolDict)
 	}
 }
 
-- (void)handleRemovedKnownImportablePools:(std::vector<PoolID> const &)importableKnownRemoved
+- (void)handleRemovedKnownImportablePools:(std::vector<zfs::ImportablePool> const &)importableKnownRemoved
 {
 	for (auto const & p : importableKnownRemoved)
 	{
@@ -197,12 +193,12 @@ std::vector<PoolID> dictToPoolVec(NSDictionary * poolDict)
 
 - (void)newPoolDetected:(zfs::ZPool const &)pool
 {
-	_knownPools.insert({pool.guid(), pool.name()});
+	_knownPools.insert({pool.name(), pool.guid(), 0});
 	// An imported pool might have changed which pools can be imported
 	[self scheduleChecking];
 }
 
-- (void)handlePoolImportReply:(NSError*)error forPool:(PoolID)pool
+- (void)handlePoolImportReply:(NSError*)error forPool:(zfs::ImportablePool const &)pool
 {
 	if (error)
 	{
@@ -214,7 +210,7 @@ std::vector<PoolID> dictToPoolVec(NSDictionary * poolDict)
 	}
 }
 
-- (std::vector<PoolID> const &)importablePools
+- (std::vector<zfs::ImportablePool> const &)importablePools
 {
 	return _importable;
 }

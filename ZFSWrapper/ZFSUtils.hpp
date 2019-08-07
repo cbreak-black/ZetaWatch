@@ -29,6 +29,13 @@ namespace zfs
 	class ZPool;
 	class ZFileSystem;
 
+	struct ImportablePool
+	{
+		std::string name;
+		uint64_t guid;
+		uint64_t status;
+	};
+
 	/*!
 	 \brief Represents libzfs initialization
 	 */
@@ -83,16 +90,11 @@ namespace zfs
 		void throwLastError(std::string const & action);
 
 	public: // requires root permission
-		struct Importable
-		{
-			std::string name;
-			uint64_t guid;
-		};
 
 		/*!
 		 Finds importable pools.
 		 */
-		std::vector<Importable> importablePools() const;
+		std::vector<ImportablePool> importablePools() const;
 
 		/*!
 		 Imports all pools.
@@ -382,6 +384,12 @@ namespace zfs
 	 \returns A struct describing the scan status of the given vdev
 	 */
 	ScanStat scanStat(NVList const & vdev);
+
+	// Helper Functions
+	inline bool operator<(ImportablePool const & a, ImportablePool const & b)
+	{
+		return a.guid < b.guid;
+	}
 }
 
 #endif

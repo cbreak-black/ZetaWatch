@@ -747,17 +747,27 @@ namespace zfs
 		throw std::runtime_error("Error in " + action + ": " + lastError());
 	}
 
-	std::vector<LibZFSHandle::Importable> LibZFSHandle::importablePools() const
+	std::vector<ImportablePool> LibZFSHandle::importablePools() const
 	{
 		importargs_t args = {};
 		thread_init();
 		auto list = NVList(zpool_search_import(handle(), &args), zfs::NVList::TakeOwnership());
 		thread_fini();
-		std::vector<Importable> pools;
+		std::vector<ImportablePool> pools;
 		for (auto pair : list)
 		{
 			auto l = pair.convertTo<NVList>();
-			pools.push_back({pair.name(), l.lookup<uint64_t>("pool_guid")});
+			uint64_t poolState = l.lookup<uint64_t>(ZPOOL_CONFIG_POOL_STATE);
+			if (poolState == POOL_STATE_DESTROYED)
+				continue; // Ignore destroyed pools
+			char * msg = nullptr;
+			zpool_errata_t errata = {};
+			zpool_status_t status = zpool_import_status(l.toList(), &msg, &errata);
+			pools.push_back({
+				pair.name(),
+				l.lookup<uint64_t>(ZPOOL_CONFIG_POOL_GUID),
+				status
+			});
 		}
 		return pools;
 	}

@@ -11,13 +11,9 @@
 #import "ZetaBaseDelegate.h"
 #import "ZetaPoolWatcher.h"
 
-#include <vector>
+#include "ZFSUtils.hpp"
 
-struct PoolID
-{
-	uint64_t guid;
-	std::string name;
-};
+#include <vector>
 
 @interface ZetaAutoImporter : ZetaBaseDelegate<ZetaPoolWatcherDelegate>
 
@@ -25,6 +21,6 @@ struct PoolID
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
-@property (readonly) std::vector<PoolID> const & importablePools;
+@property (readonly) std::vector<zfs::ImportablePool> const & importablePools;
 
 @end
