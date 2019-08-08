@@ -772,7 +772,8 @@ namespace zfs
 		return pools;
 	}
 
-	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle, importargs_t * args)
+	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle, importargs_t * args,
+											   bool allowUnhealthy)
 	{
 		thread_init();
 		auto list = NVList(zpool_search_import(handle, args), zfs::NVList::TakeOwnership());
@@ -781,6 +782,14 @@ namespace zfs
 		for (auto pair : list)
 		{
 			auto l = pair.convertTo<NVList>();
+			uint64_t poolState = l.lookup<uint64_t>(ZPOOL_CONFIG_POOL_STATE);
+			if (poolState == POOL_STATE_DESTROYED)
+				continue; // Ignore destroyed pools
+			char * msg = nullptr;
+			zpool_errata_t errata = {};
+			zpool_status_t status = zpool_import_status(l.toList(), &msg, &errata);
+			if (!allowUnhealthy && !healthy(status))
+				continue; // Ignore pools that aren't healthy
 			auto r = zpool_import(handle, l.toList(), nullptr, nullptr);
 			if (r == 0)
 			{
@@ -797,14 +806,14 @@ namespace zfs
 	std::vector<ZPool> LibZFSHandle::importAllPools() const
 	{
 		importargs_t args = {};
-		return import_with_args(handle(), &args);
+		return import_with_args(handle(), &args, false);
 	}
 
 	ZPool LibZFSHandle::import(std::string const & name) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		auto pools = import_with_args(handle(), &args);
+		auto pools = import_with_args(handle(), &args, true);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
@@ -814,7 +823,7 @@ namespace zfs
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		auto pools = import_with_args(handle(), &args);
+		auto pools = import_with_args(handle(), &args, true);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
