@@ -249,13 +249,56 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 	[vdevMenu setAutoenablesItems:NO];
 	try
 	{
-		auto vdevs = pool.vdevs();
+		// Scrub
 		auto scrub = pool.scanStat();
+		auto startDate = [NSDate dateWithTimeIntervalSince1970:scrub.scanStartTime];
+		auto endDate = [NSDate dateWithTimeIntervalSince1970:scrub.scanEndTime];
+		auto startString = [NSDateFormatter localizedStringFromDate:startDate dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterMediumStyle];
+		auto endString = [NSDateFormatter localizedStringFromDate:endDate dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterMediumStyle];
+		NSString * scanLine0;
+		switch (scrub.state)
+		{
+			case zfs::ScanStat::stateNone:
+			{
+				scanLine0 = [NSString stringWithFormat:NSLocalizedString(
+					@"Never scrubed", @"Scrub None")];
+				break;
+			}
+			case zfs::ScanStat::scanning:
+			{
+				scanLine0 = [NSString stringWithFormat:NSLocalizedString(
+					@"Last scrub from %@ is still in progress", @"Scrub Scanning"),
+							 startString];
+				break;
+			}
+			case zfs::ScanStat::finished:
+			{
+				scanLine0 = [NSString stringWithFormat:NSLocalizedString(
+					@"Last scrub from %@ to %@ finished successfully", @"Scrub Finished"),
+							 startString, endString];
+				break;
+			}
+			case zfs::ScanStat::canceled:
+			{
+				scanLine0 = [NSString stringWithFormat:NSLocalizedString(
+					@"Last scrub from %@ to %@ was canceled", @"Scrub Canceled"),
+							 startString, endString];
+				break;
+			}
+		}
+		auto scrubItem = [vdevMenu addItemWithTitle:scanLine0 action:nullptr keyEquivalent:@""];
+		auto scrubMenu = [[NSMenu alloc] init];
+		scrubItem.submenu = scrubMenu;
+		NSString * poolName = [NSString stringWithUTF8String:pool.name()];
 		if (scrub.state == zfs::ScanStat::scanning)
 		{
+			auto item = [scrubMenu addItemWithTitle:
+						 NSLocalizedString(@"Stop Scrub", @"Stop Scrub")
+											 action:@selector(scrubStopPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+			// Scan Stats
 			auto elapsed = getElapsed(scrub);
-			NSString * scanLine0 = [NSString stringWithFormat:NSLocalizedString(
-				@"Scrub in Progress:", @"Scrub Menu Entry 0")];
 			NSString * scanLine1 = [NSString stringWithFormat:NSLocalizedString(
 				@"%s scanned at %s, %s issued at %s", @"Scrub Menu Entry 1"),
 									formatBytes(scrub.scanned).c_str(),
@@ -268,13 +311,22 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 									100.0*scrub.issued/scrub.total,
 									formatTimeRemaining(scrub, elapsed).c_str(),
 									scrub.errors];
-			[vdevMenu addItemWithTitle:scanLine0 action:nullptr keyEquivalent:@""];
 			auto m1 = [vdevMenu addItemWithTitle:scanLine1 action:nullptr keyEquivalent:@""];
 			auto m2 = [vdevMenu addItemWithTitle:scanLine2 action:nullptr keyEquivalent:@""];
 			m1.indentationLevel = 1;
 			m2.indentationLevel = 1;
-			[vdevMenu addItem:[NSMenuItem separatorItem]];
 		}
+		else
+		{
+			auto item = [scrubMenu addItemWithTitle:
+						 NSLocalizedString(@"Start Scrub", @"Start Scrub")
+											 action:@selector(scrubPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		// VDevs
+		auto vdevs = pool.vdevs();
 		for (auto && vdev: vdevs)
 		{
 			// VDev
@@ -317,32 +369,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 				item.submenu = createFSMenu(std::move(fs), delegate);
 			}
 		}
-		// Actions
-		NSString * poolName = [NSString stringWithUTF8String:pool.name()];
-		NSMenuItem * item = nullptr;
-		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		if (scrub.state == zfs::ScanStat::scanning)
-		{
-			item = [vdevMenu addItemWithTitle:@"Scrub Stop"
-									   action:@selector(scrubStopPool:) keyEquivalent:@""];
-			item.representedObject = poolName;
-			item.target = delegate;
-		}
-		else
-		{
-			item = [vdevMenu addItemWithTitle:@"Scrub"
-									   action:@selector(scrubPool:) keyEquivalent:@""];
-			item.representedObject = poolName;
-			item.target = delegate;
-		}
-		item = [vdevMenu addItemWithTitle:@"Export"
-								   action:@selector(exportPool:) keyEquivalent:@""];
-		item.representedObject = poolName;
-		item.target = delegate;
-		item = [vdevMenu addItemWithTitle:@"Export (Force)"
-								   action:@selector(forceExportPool:) keyEquivalent:@""];
-		item.representedObject = poolName;
-		item.target = delegate;
 		// All Properties
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
@@ -352,6 +378,20 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 		allPropsItem.submenu = allProps;
 		allPropsItem.representedObject = pd;
 		[vdevMenu addItem:allPropsItem];
+		// Export Actions
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		{
+			auto item = [vdevMenu addItemWithTitle:@"Export"
+				action:@selector(exportPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
+		{
+			auto item = [vdevMenu addItemWithTitle:@"Export (Force)"
+				action:@selector(forceExportPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
 
 	}
 	catch (std::exception const & e)

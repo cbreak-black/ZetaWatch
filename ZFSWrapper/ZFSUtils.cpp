@@ -904,6 +904,8 @@ namespace zfs
 		interfaceStat.passStartTime = scanStat.pss_pass_start;
 		interfaceStat.passPausedSeconds = scanStat.pss_pass_scrub_spent_paused;
 		interfaceStat.errors = scanStat.pss_errors;
+		interfaceStat.scanStartTime = scanStat.pss_start_time;
+		interfaceStat.scanEndTime = scanStat.pss_end_time;
 		return interfaceStat;
 	}
 

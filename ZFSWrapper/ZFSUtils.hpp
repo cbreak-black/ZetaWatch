@@ -238,6 +238,8 @@ namespace zfs
 		uint64_t passStartTime;
 		uint64_t passPausedSeconds;
 		uint64_t errors;
+		uint64_t scanStartTime;
+		uint64_t scanEndTime;
 	};
 
 	/*!
