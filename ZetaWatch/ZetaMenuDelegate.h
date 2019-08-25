@@ -26,7 +26,7 @@ enum ZetaMenuTags
 	ActionAnchorMenuTag = 101
 };
 
-@interface ZetaMenuDelegate : ZetaBaseDelegate <NSMenuDelegate,ZetaPoolWatcherDelegate>
+@interface ZetaMenuDelegate : ZetaBaseDelegate <NSMenuDelegate>
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoader;

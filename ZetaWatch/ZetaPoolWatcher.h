@@ -18,9 +18,8 @@
 
 @protocol ZetaPoolWatcherDelegate <NSObject>
 
-- (void)newPoolDetected:(zfs::ZPool const &)pool;
-
 @optional
+- (void)newPoolDetected:(zfs::ZPool const &)pool;
 - (void)errorDetectedInPool:(std::string const &)pool;
 - (void)errorDetected:(std::string const &)error;
 

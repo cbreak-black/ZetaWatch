@@ -197,14 +197,14 @@
 	if (target == nil)
 		target = @"all pools";
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"importing", @"Importing Action") withTarget:target];
+		NSLocalizedString(@"Importing", @"Importing Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
 			 [self dispatchReply:^(){
 				 reply(error);
-				 [self stopNotification:notification];
+				 [self stopNotification:notification withError:error];
 			 }];
 		 }
 		 else
@@ -214,7 +214,7 @@
 			  {
 				  [self dispatchReply:^(){
 					  reply(error);
-					  [self stopNotification:notification];
+					  [self stopNotification:notification withError:error];
 				  }];
 			  }];
 		 }
@@ -247,14 +247,14 @@
 	if (target == nil)
 		target = NSLocalizedString(@"all pools", @"All Pools");
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"exporting", @"Exporting Action") withTarget:target];
+		NSLocalizedString(@"Exporting", @"Exporting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
 			 [self dispatchReply:^(){
 				 reply(error);
-				 [self stopNotification:notification];
+				 [self stopNotification:notification withError:error];
 			 }];
 		 }
 		 else
@@ -264,7 +264,7 @@
 			  {
 				  [self dispatchReply:^(){
 					  reply(error);
-					  [self stopNotification:notification];
+					  [self stopNotification:notification withError:error];
 				  }];
 			  }];
 		 }
@@ -278,14 +278,14 @@
 	if (target == nil)
 		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"mounting", @"Mounting Action") withTarget:target];
+		NSLocalizedString(@"Mounting", @"Mounting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
 			 [self dispatchReply:^(){
 				 reply(error);
-				 [self stopNotification:notification];
+				 [self stopNotification:notification withError:error];
 			 }];
 		 }
 		 else
@@ -295,7 +295,7 @@
 			  {
 				  [self dispatchReply:^(){
 					  reply(error);
-					  [self stopNotification:notification];
+					  [self stopNotification:notification withError:error];
 				  }];
 			  }];
 		 }
@@ -309,14 +309,14 @@
 	if (target == nil)
 		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"unmounting", @"Unmounting Action") withTarget:target];
+		NSLocalizedString(@"Unmounting", @"Unmounting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
 			 [self dispatchReply:^(){
 				 reply(error);
-				 [self stopNotification:notification];
+				 [self stopNotification:notification withError:error];
 			 }];
 		 }
 		 else
@@ -326,7 +326,7 @@
 			  {
 				  [self dispatchReply:^(){
 					  reply(error);
-					  [self stopNotification:notification];
+					  [self stopNotification:notification withError:error];
 				  }];
 			  }];
 		 }
@@ -340,14 +340,14 @@
 	if (target == nil)
 		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"loading key for", @"LoadKey Action") withTarget:target];
+		NSLocalizedString(@"Loading Key for", @"LoadKey Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
 			 [self dispatchReply:^(){
 				 reply(error);
-				 [self stopNotification:notification];
+				 [self stopNotification:notification withError:error];
 			 }];
 		 }
 		 else
@@ -357,7 +357,7 @@
 			  {
 				  [self dispatchReply:^(){
 					  reply(error);
-					  [self stopNotification:notification];
+					  [self stopNotification:notification withError:error];
 				  }];
 			  }];
 		 }
@@ -386,14 +386,14 @@
 
 - (ZetaNotification*)startNotificationForAction:(NSString*)action withTarget:(NSString*)target
 {
-	NSString * titleFormat = NSLocalizedString(@"ZetaWatch is %@ %@", @"Helper Status notification Title Format");
+	NSString * titleFormat = NSLocalizedString(@"%@ %@", @"Helper Status notification Title Format");
 	NSString * title = [NSString stringWithFormat:titleFormat, action, target];
 	return [self.notificationCenter startAction:title];
 }
 
-- (void)stopNotification:(ZetaNotification*)notification
+- (void)stopNotification:(ZetaNotification*)notification withError:(NSError*)error
 {
-	[self.notificationCenter stopAction:notification];
+	[self.notificationCenter stopAction:notification withError:error];
 }
 
 @end

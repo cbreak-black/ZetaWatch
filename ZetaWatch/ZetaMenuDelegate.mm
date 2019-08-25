@@ -48,14 +48,6 @@
 	return self;
 }
 
-- (void)awakeFromNib
-{
-	if (self.poolWatcher)
-	{
-		[self.poolWatcher.delegates addObject:self];
-	}
-}
-
 - (void)dealloc
 {
 	CFRelease(_diskArbitrationSession);
@@ -487,43 +479,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 		[menu removeItem:m];
 	}
 	[_dynamicMenus removeAllObjects];
-}
-
-- (void)errorDetectedInPool:(std::string const &)pool
-{
-	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"ZFS Pool Error", @"ZFS Pool Error Title");
-	NSString * errorFormat = NSLocalizedString(@"ZFS detected an error on pool %s.", @"ZFS Pool Error Format");
-	notification.informativeText = [NSString stringWithFormat:errorFormat, pool.c_str()];
-	notification.hasActionButton = NO;
-	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
-}
-
-- (void)errorDetected:(std::string const &)error
-{
-	NSUserNotification * notification = [[NSUserNotification alloc] init];
-	notification.title = NSLocalizedString(@"ZFS Error", @"ZFS Error Title");
-	NSString * errorFormat = NSLocalizedString(@"ZFS encountered an error: %s.", @"ZFS Error Format");
-	notification.informativeText = [NSString stringWithFormat:errorFormat, error.c_str()];
-	notification.hasActionButton = NO;
-	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
-}
-
-- (void)newPoolDetected:(const zfs::ZPool &)pool
-{
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoUnlock"])
-	{
-		for (auto & fs : pool.allFileSystems())
-		{
-			auto [encRoot, isRoot] = fs.encryptionRoot();
-			auto keyStatus = fs.keyStatus();
-			if (isRoot && keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
-			{
-				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
-				[_zetaKeyLoader unlockFileSystem:fsName];
-			}
-		}
-	}
 }
 
 - (void)handlePoolChangeReply:(NSError*)error

@@ -9,10 +9,11 @@
 #import <Cocoa/Cocoa.h>
 
 #import "ZetaBaseDelegate.h"
+#import "ZetaPoolWatcher.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZetaKeyLoaderDelegate : ZetaBaseDelegate <NSPopoverDelegate>
+@interface ZetaKeyLoaderDelegate : ZetaBaseDelegate <NSPopoverDelegate,ZetaPoolWatcherDelegate>
 
 @property (weak) NSStatusItem * statusItem;
 @property (weak) IBOutlet NSPopover * popover;
@@ -20,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) IBOutlet NSTextField * queryField;
 @property (weak) IBOutlet NSTextField * statusField;
 @property (weak) IBOutlet NSProgressIndicator * progressIndicator;
+
+@property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
 - (void)unlockFileSystem:(NSString*)filesystem;
 

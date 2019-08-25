@@ -140,7 +140,10 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	for (id<ZetaPoolWatcherDelegate> d in [self delegates])
 	{
-		[d newPoolDetected:pool];
+		if ([d respondsToSelector:@selector(newPoolDetected:)])
+		{
+			[d newPoolDetected:pool];
+		}
 	}
 }
 

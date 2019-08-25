@@ -19,6 +19,14 @@
 
 @implementation ZetaKeyLoaderDelegate
 
+- (void)awakeFromNib
+{
+	if (self.poolWatcher)
+	{
+		[self.poolWatcher.delegates addObject:self];
+	}
+}
+
 - (void)unlockFileSystem:(NSString*)filesystem
 {
 	[self addFilesystemToUnlock:filesystem];
@@ -173,6 +181,24 @@
 	[self hideStatus];
 	filesystems.clear();
 	[self updateFileSystem];
+}
+
+
+- (void)newPoolDetected:(const zfs::ZPool &)pool
+{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoUnlock"])
+	{
+		for (auto & fs : pool.allFileSystems())
+		{
+			auto [encRoot, isRoot] = fs.encryptionRoot();
+			auto keyStatus = fs.keyStatus();
+			if (isRoot && keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+			{
+				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+				[self unlockFileSystem:fsName];
+			}
+		}
+	}
 }
 
 @end
