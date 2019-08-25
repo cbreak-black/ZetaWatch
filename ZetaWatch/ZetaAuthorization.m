@@ -200,10 +200,18 @@
 		 }
 		 else
 		 {
+			 NSString * target = importData[@"poolGUID"];
+			 if (target == nil)
+				 target = @"all pools";
+			 NSUserNotification * notification = [self startNotificationForAction:
+				NSLocalizedString(@"importing", @"Importing Action") withTarget:target];
 			 [proxy importPools:importData authorization:self.authorization
 					  withReply:^(NSError * error)
 			  {
-				  [self dispatchReply:^(){ reply(error); }];
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification];
+				  }];
 			  }];
 		 }
 	 }];
@@ -239,10 +247,18 @@
 		 }
 		 else
 		 {
+			 NSString * target = exportData[@"pool"];
+			 if (target == nil)
+				 target = NSLocalizedString(@"all pools", @"All Pools");
+			 NSUserNotification * notification = [self startNotificationForAction:
+				NSLocalizedString(@"exporting", @"Exporting Action") withTarget:target];
 			 [proxy exportPools:exportData authorization:self.authorization
 					  withReply:^(NSError * error)
 			  {
-				  [self dispatchReply:^(){ reply(error); }];
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification];
+				  }];
 			  }];
 		 }
 	 }];
@@ -259,10 +275,18 @@
 		 }
 		 else
 		 {
+			 NSString * target = mountData[@"filesystem"];
+			 if (target == nil)
+				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+			 NSUserNotification * notification = [self startNotificationForAction:
+				NSLocalizedString(@"mounting", @"Mounting Action") withTarget:target];
 			 [proxy mountFilesystems:mountData authorization:self.authorization
 						   withReply:^(NSError * error)
 			  {
-				  [self dispatchReply:^(){ reply(error); }];
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification];
+				  }];
 			  }];
 		 }
 	 }];
@@ -279,10 +303,18 @@
 		 }
 		 else
 		 {
+			 NSString * target = mountData[@"filesystem"];
+			 if (target == nil)
+				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+			 NSUserNotification * notification = [self startNotificationForAction:
+				NSLocalizedString(@"unmounting", @"Unmounting Action") withTarget:target];
 			 [proxy unmountFilesystems:mountData authorization:self.authorization
 							 withReply:^(NSError * error)
 			  {
-				  [self dispatchReply:^(){ reply(error); }];
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification];
+				  }];
 			  }];
 		 }
 	 }];
@@ -299,10 +331,18 @@
 		 }
 		 else
 		 {
+			 NSString * target = data[@"filesystem"];
+			 if (target == nil)
+				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+			 NSUserNotification * notification = [self startNotificationForAction:
+				NSLocalizedString(@"loading key", @"LoadKey Action") withTarget:target];
 			 [proxy loadKeyForFilesystem:data authorization:self.authorization
 							   withReply:^(NSError * error)
 			  {
-				  [self dispatchReply:^(){ reply(error); }];
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification];
+				  }];
 			  }];
 		 }
 	 }];
@@ -326,6 +366,21 @@
 			  }];
 		 }
 	 }];
+}
+
+- (NSUserNotification*)startNotificationForAction:(NSString*)action withTarget:(NSString*)target
+{
+	NSUserNotification * notification = [[NSUserNotification alloc] init];
+	NSString * titleFormat = NSLocalizedString(@"ZetaWatch is %@ %@", @"Helper Status notification Title Format");
+	notification.title = [NSString stringWithFormat:titleFormat, action, target];
+	notification.hasActionButton = NO;
+	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+	return notification;
+}
+
+- (void)stopNotification:(NSUserNotification*)notification
+{
+	[[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
 }
 
 @end
