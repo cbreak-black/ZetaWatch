@@ -1,19 +1,19 @@
 //
-//  ZetaImportMenuDelegate.m
+//  ZetaImportMenu.m
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaImportMenuDelegate.h"
+#import "ZetaImportMenu.h"
 
 #import "ZetaAuthorization.h"
 #import "ZetaPoolWatcher.h"
 
 #include "ZFSStrings.hpp"
 
-@implementation ZetaImportMenuDelegate
+@implementation ZetaImportMenu
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {

@@ -8,14 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaBaseDelegate.h"
+#import "ZetaMenuBase.h"
 #import "ZetaPoolWatcher.h"
 
 #include "ZFSUtils.hpp"
 
 #include <vector>
 
-@interface ZetaAutoImporter : ZetaBaseDelegate<ZetaPoolWatcherDelegate>
+@interface ZetaAutoImporter : ZetaMenuBase<ZetaPoolWatcherDelegate>
 
 - (id)init;
 

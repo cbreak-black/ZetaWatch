@@ -1,5 +1,5 @@
 //
-//  ZetaMenuDelegate.mm
+//  ZetaMainMenu.mm
 //  ZetaWatch
 //
 //  Created by Gerhard Röthlin on 2015.12.20.
@@ -10,12 +10,12 @@
 //  Additional licensing options are described in the README file.
 //
 
-#import "ZetaMenuDelegate.h"
-#import "ZetaImportMenuDelegate.h"
+#import "ZetaMainMenu.h"
+#import "ZetaImportMenu.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
-#import "ZetaFileSystemPropertyMenuDelegate.h"
-#import "ZetaPoolPropertyMenuDelegate.h"
+#import "ZetaFileSystemPropertyMenu.h"
+#import "ZetaPoolPropertyMenu.h"
 #import "ZetaNotificationCenter.h"
 
 #include "ZFSUtils.hpp"
@@ -28,7 +28,7 @@
 #include <sstream>
 #include <chrono>
 
-@interface ZetaMenuDelegate ()
+@interface ZetaMainMenu ()
 {
 	NSMutableArray * _dynamicMenus;
 	DASessionRef _diskArbitrationSession;
@@ -36,7 +36,7 @@
 
 @end
 
-@implementation ZetaMenuDelegate
+@implementation ZetaMainMenu
 
 - (id)init
 {
@@ -105,7 +105,7 @@ inline std::string formatTimeRemaining(zfs::ScanStat const & scanStat, std::chro
 
 #pragma mark ZFS Inspection
 
-NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMenuDelegate * delegate)
+NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 {
 	NSMenu * fsMenu = [[NSMenu alloc] init];
 	[fsMenu setAutoenablesItems:NO];
@@ -163,7 +163,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMenuDelegate * delegate)
 	// All Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
-	ZetaFileSystemPropertyMenuDelegate * pd = [[ZetaFileSystemPropertyMenuDelegate alloc] initWithFileSystem:std::move(fs)];
+	ZetaFileSystemPropertyMenu * pd = [[ZetaFileSystemPropertyMenu alloc] initWithFileSystem:std::move(fs)];
 	allProps.delegate = pd;
 	NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
 	allPropsItem.submenu = allProps;
@@ -195,7 +195,7 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 }
 
 NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
-	NSMenu * menu, DASessionRef daSession, ZetaMenuDelegate * delegate)
+	NSMenu * menu, DASessionRef daSession, ZetaMainMenu * delegate)
 {
 	// Menu Item
 	auto stat = zfs::vdevStat(device);
@@ -237,7 +237,7 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 	return item;
 }
 
-NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessionRef daSession)
+NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRef daSession)
 {
 	NSMenu * vdevMenu = [[NSMenu alloc] init];
 	[vdevMenu setAutoenablesItems:NO];
@@ -366,7 +366,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 		// All Properties
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
-		ZetaPoolPropertyMenuDelegate * pd = [[ZetaPoolPropertyMenuDelegate alloc] initWithPool:std::move(pool)];
+		ZetaPoolPropertyMenu * pd = [[ZetaPoolPropertyMenu alloc] initWithPool:std::move(pool)];
 		allProps.delegate = pd;
 		NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
 		allPropsItem.submenu = allProps;

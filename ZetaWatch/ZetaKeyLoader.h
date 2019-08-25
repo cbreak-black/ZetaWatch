@@ -1,5 +1,5 @@
 //
-//  ZetaKeyLoaderDelegate.h
+//  ZetaKeyLoader.h
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.16.
@@ -8,12 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaBaseDelegate.h"
+#import "ZetaMenuBase.h"
 #import "ZetaPoolWatcher.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface ZetaKeyLoaderDelegate : ZetaBaseDelegate <NSPopoverDelegate,ZetaPoolWatcherDelegate>
+@interface ZetaKeyLoader : ZetaMenuBase <NSPopoverDelegate,ZetaPoolWatcherDelegate>
 
 @property (weak) NSStatusItem * statusItem;
 @property (weak) IBOutlet NSPopover * popover;
@@ -32,5 +30,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)popoverShouldDetach:(NSPopover *)popover;
 
 @end
-
-NS_ASSUME_NONNULL_END

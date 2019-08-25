@@ -1,5 +1,5 @@
 //
-//  ZetaPoolPropertyMenuDelegate.h
+//  ZetaPoolPropertyMenu.h
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.22.
@@ -9,18 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaBaseDelegate.h"
+#import "ZetaMenuBase.h"
 
 #include "ZFSUtils.hpp"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface ZetaPoolPropertyMenuDelegate : ZetaBaseDelegate <NSMenuDelegate>
+@interface ZetaPoolPropertyMenu : ZetaMenuBase <NSMenuDelegate>
 
 - (id)initWithPool:(zfs::ZPool &&)pool;
 
 - (void)menuNeedsUpdate:(NSMenu*)menu;
 
 @end
-
-NS_ASSUME_NONNULL_END

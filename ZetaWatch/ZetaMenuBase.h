@@ -1,13 +1,13 @@
 //
-//  ZetaBaseDelegate.h
+//  ZetaMenuBase.h
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#ifndef ZetaBaseDelegate_h
-#define ZetaBaseDelegate_h
+#ifndef ZetaMenuBase_h
+#define ZetaMenuBase_h
 
 #import <Cocoa/Cocoa.h>
 
@@ -15,7 +15,7 @@
 
 #include "ZetaFormatHelpers.hpp"
 
-@interface ZetaBaseDelegate : NSObject
+@interface ZetaMenuBase : NSObject
 {
 	IBOutlet ZetaAuthorization * _authorization;
 }
@@ -51,7 +51,7 @@ NSString * formatNSString(NSString * format, T const & t, U const & u, V const &
 }
 
 template<typename... T>
-NSMenuItem * addMenuItem(NSMenu * menu, ZetaBaseDelegate * delegate,
+NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuBase * delegate,
 						 NSString * format, T const & ... t)
 {
 	auto title = formatNSString(format, t...);
@@ -61,4 +61,4 @@ NSMenuItem * addMenuItem(NSMenu * menu, ZetaBaseDelegate * delegate,
 	return item;
 }
 
-#endif /* ZetaBaseDelegate_h */
+#endif /* ZetaMenuBase_h */

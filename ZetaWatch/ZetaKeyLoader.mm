@@ -1,23 +1,23 @@
 //
-//  ZetaKeyLoaderDelegate.m
+//  ZetaKeyLoader.m
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.16.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaKeyLoaderDelegate.h"
+#import "ZetaKeyLoader.h"
 
 #include <deque>
 
-@interface ZetaKeyLoaderDelegate ()
+@interface ZetaKeyLoader ()
 {
 	std::deque<NSString*> filesystems;
 }
 
 @end
 
-@implementation ZetaKeyLoaderDelegate
+@implementation ZetaKeyLoader
 
 - (void)awakeFromNib
 {

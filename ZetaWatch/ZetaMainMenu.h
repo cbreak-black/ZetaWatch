@@ -1,5 +1,5 @@
 //
-//  ZetaMenuDelegate.h
+//  ZetaMainMenu.h
 //  ZetaWatch
 //
 //  Created by Gerhard Röthlin on 2015.12.20.
@@ -13,10 +13,10 @@
 #import <Cocoa/Cocoa.h>
 
 #import "ZetaPoolWatcher.h"
-#import "ZetaBaseDelegate.h"
+#import "ZetaMenuBase.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAutoImporter.h"
-#import "ZetaKeyLoaderDelegate.h"
+#import "ZetaKeyLoader.h"
 
 @class ZetaNotificationCenter;
 
@@ -26,10 +26,10 @@ enum ZetaMenuTags
 	ActionAnchorMenuTag = 101
 };
 
-@interface ZetaMenuDelegate : ZetaBaseDelegate <NSMenuDelegate>
+@interface ZetaMainMenu : ZetaMenuBase <NSMenuDelegate>
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
-@property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoader;
+@property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 
 - (IBAction)mountAllFilesystems:(id)sender;

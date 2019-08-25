@@ -20,7 +20,7 @@
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
             </connections>
         </customObject>
-        <customObject id="8rf-zp-5r9" userLabel="ZetaMenuDelegate" customClass="ZetaMenuDelegate">
+        <customObject id="8rf-zp-5r9" userLabel="ZetaMainMenu" customClass="ZetaMainMenu">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
                 <outlet property="notificationCenter" destination="ZZj-pd-85j" id="DDy-Za-7rV"/>
@@ -28,7 +28,7 @@
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
             </connections>
         </customObject>
-        <customObject id="geo-tu-CMM" userLabel="ZetaImportMenuDelegate" customClass="ZetaImportMenuDelegate">
+        <customObject id="geo-tu-CMM" userLabel="ZetaImportMenu" customClass="ZetaImportMenu">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="Psx-ls-DeC"/>
                 <outlet property="autoImporter" destination="PVX-FU-gbc" id="Wpo-l0-uGC"/>
@@ -36,7 +36,7 @@
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="aD3-N2-eyI"/>
             </connections>
         </customObject>
-        <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoaderDelegate" customClass="ZetaKeyLoaderDelegate">
+        <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoader" customClass="ZetaKeyLoader">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="j1a-fu-F0a"/>
                 <outlet property="passwordField" destination="JpZ-yq-Swt" id="wki-ew-pno"/>

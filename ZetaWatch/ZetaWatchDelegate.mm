@@ -12,17 +12,16 @@
 
 #import "ZetaWatchDelegate.h"
 
-#import "ZetaMenuDelegate.h"
-#import "ZetaKeyLoaderDelegate.h"
+#import "ZetaMainMenu.h"
+#import "ZetaKeyLoader.h"
 
 @interface ZetaWatchDelegate ()
 {
 	NSStatusItem * _statusItem;
 }
 
-@property (weak) IBOutlet NSWindow * window;
 @property (weak) IBOutlet NSMenu * zetaMenu;
-@property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoaderDelegate;
+@property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoaderDelegate;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
 @end

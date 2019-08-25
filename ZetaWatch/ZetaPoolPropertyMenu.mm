@@ -1,14 +1,14 @@
 //
-//  ZetaPoolPropertyMenuDelegate.mm
+//  ZetaPoolPropertyMenu.mm
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.22.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaPoolPropertyMenuDelegate.h"
+#import "ZetaPoolPropertyMenu.h"
 
-@implementation ZetaPoolPropertyMenuDelegate
+@implementation ZetaPoolPropertyMenu
 {
 	zfs::ZPool _pool;
 }

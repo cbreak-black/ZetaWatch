@@ -1,14 +1,14 @@
 //
-//  ZetaFileSystemPropertyMenuDelegate.mm
+//  ZetaFileSystemPropertyMenu.mm
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.22.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaFileSystemPropertyMenuDelegate.h"
+#import "ZetaFileSystemPropertyMenu.h"
 
-@implementation ZetaFileSystemPropertyMenuDelegate
+@implementation ZetaFileSystemPropertyMenu
 {
 	zfs::ZFileSystem _fs;
 }

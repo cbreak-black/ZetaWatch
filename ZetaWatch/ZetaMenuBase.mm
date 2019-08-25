@@ -1,14 +1,14 @@
 //
-//  ZetaBaseDelegate.mm
+//  ZetaMenuBase.mm
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaBaseDelegate.h"
+#import "ZetaMenuBase.h"
 
-@implementation ZetaBaseDelegate
+@implementation ZetaMenuBase
 
 - (void)errorFromHelper:(NSError*)error
 {
