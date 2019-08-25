@@ -16,6 +16,7 @@
 #import "ZetaAuthorization.h"
 #import "ZetaFileSystemPropertyMenuDelegate.h"
 #import "ZetaPoolPropertyMenuDelegate.h"
+#import "ZetaNotificationCenter.h"
 
 #include "ZFSUtils.hpp"
 #include "ZFSStrings.hpp"
@@ -63,6 +64,7 @@
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
 	[self clearDynamicMenu:menu];
+	[self createNotificationMenu:menu];
 	[self createPoolMenu:menu];
 	[self createActionMenu:menu];
 }
@@ -400,6 +402,24 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMenuDelegate * delegate, DASessi
 							action:nullptr keyEquivalent:@""];
 	}
 	return vdevMenu;
+}
+
+- (void)createNotificationMenu:(NSMenu*)menu
+{
+	if ([self.notificationCenter.inProgressActions count] > 0)
+	{
+		NSUInteger notifIdx = 0;
+		for (ZetaNotification * notification in self.notificationCenter.inProgressActions)
+		{
+			NSMenuItem * notifItem = [[NSMenuItem alloc] initWithTitle:notification.title action:nil keyEquivalent:@""];
+			[menu insertItem:notifItem atIndex:0];
+			[_dynamicMenus addObject:notifItem];
+			++notifIdx;
+		}
+		NSMenuItem * sepItem = [NSMenuItem separatorItem];
+		[menu insertItem:sepItem atIndex:notifIdx];
+		[_dynamicMenus addObject:sepItem];
+	}
 }
 
 - (void)createPoolMenu:(NSMenu*)menu

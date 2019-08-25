@@ -9,8 +9,9 @@
 #import "ZetaAuthorization.h"
 
 #import "ZetaAuthorizationHelperProtocol.h"
-
 #import "CommonAuthorization.h"
+
+#import "ZetaNotificationCenter.h"
 
 #include <ServiceManagement/ServiceManagement.h>
 
@@ -192,19 +193,22 @@
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply
 {
+	NSString * target = importData[@"poolGUID"];
+	if (target == nil)
+		target = @"all pools";
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"importing", @"Importing Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
-			 [self dispatchReply:^(){ reply(error); }];
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification];
+			 }];
 		 }
 		 else
 		 {
-			 NSString * target = importData[@"poolGUID"];
-			 if (target == nil)
-				 target = @"all pools";
-			 NSUserNotification * notification = [self startNotificationForAction:
-				NSLocalizedString(@"importing", @"Importing Action") withTarget:target];
 			 [proxy importPools:importData authorization:self.authorization
 					  withReply:^(NSError * error)
 			  {
@@ -239,19 +243,22 @@
 - (void)exportPools:(NSDictionary *)exportData
 		  withReply:(void(^)(NSError * error))reply
 {
+	NSString * target = exportData[@"pool"];
+	if (target == nil)
+		target = NSLocalizedString(@"all pools", @"All Pools");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"exporting", @"Exporting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
-			 [self dispatchReply:^(){ reply(error); }];
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification];
+			 }];
 		 }
 		 else
 		 {
-			 NSString * target = exportData[@"pool"];
-			 if (target == nil)
-				 target = NSLocalizedString(@"all pools", @"All Pools");
-			 NSUserNotification * notification = [self startNotificationForAction:
-				NSLocalizedString(@"exporting", @"Exporting Action") withTarget:target];
 			 [proxy exportPools:exportData authorization:self.authorization
 					  withReply:^(NSError * error)
 			  {
@@ -267,19 +274,22 @@
 - (void)mountFilesystems:(NSDictionary *)mountData
 			   withReply:(void(^)(NSError * error))reply
 {
+	NSString * target = mountData[@"filesystem"];
+	if (target == nil)
+		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"mounting", @"Mounting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
-			 [self dispatchReply:^(){ reply(error); }];
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification];
+			 }];
 		 }
 		 else
 		 {
-			 NSString * target = mountData[@"filesystem"];
-			 if (target == nil)
-				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
-			 NSUserNotification * notification = [self startNotificationForAction:
-				NSLocalizedString(@"mounting", @"Mounting Action") withTarget:target];
 			 [proxy mountFilesystems:mountData authorization:self.authorization
 						   withReply:^(NSError * error)
 			  {
@@ -295,19 +305,22 @@
 - (void)unmountFilesystems:(NSDictionary *)mountData
 			   withReply:(void(^)(NSError * error))reply
 {
+	NSString * target = mountData[@"filesystem"];
+	if (target == nil)
+		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"unmounting", @"Unmounting Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
-			 [self dispatchReply:^(){ reply(error); }];
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification];
+			 }];
 		 }
 		 else
 		 {
-			 NSString * target = mountData[@"filesystem"];
-			 if (target == nil)
-				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
-			 NSUserNotification * notification = [self startNotificationForAction:
-				NSLocalizedString(@"unmounting", @"Unmounting Action") withTarget:target];
 			 [proxy unmountFilesystems:mountData authorization:self.authorization
 							 withReply:^(NSError * error)
 			  {
@@ -323,19 +336,22 @@
 - (void)loadKeyForFilesystem:(NSDictionary *)data
 					withReply:(void(^)(NSError * error))reply
 {
+	NSString * target = data[@"filesystem"];
+	if (target == nil)
+		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"loading key for", @"LoadKey Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
 	 {
 		 if (error)
 		 {
-			 [self dispatchReply:^(){ reply(error); }];
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification];
+			 }];
 		 }
 		 else
 		 {
-			 NSString * target = data[@"filesystem"];
-			 if (target == nil)
-				 target = NSLocalizedString(@"all filesystems", @"All Filesystems");
-			 NSUserNotification * notification = [self startNotificationForAction:
-				NSLocalizedString(@"loading key", @"LoadKey Action") withTarget:target];
 			 [proxy loadKeyForFilesystem:data authorization:self.authorization
 							   withReply:^(NSError * error)
 			  {
@@ -368,19 +384,16 @@
 	 }];
 }
 
-- (NSUserNotification*)startNotificationForAction:(NSString*)action withTarget:(NSString*)target
+- (ZetaNotification*)startNotificationForAction:(NSString*)action withTarget:(NSString*)target
 {
-	NSUserNotification * notification = [[NSUserNotification alloc] init];
 	NSString * titleFormat = NSLocalizedString(@"ZetaWatch is %@ %@", @"Helper Status notification Title Format");
-	notification.title = [NSString stringWithFormat:titleFormat, action, target];
-	notification.hasActionButton = NO;
-	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
-	return notification;
+	NSString * title = [NSString stringWithFormat:titleFormat, action, target];
+	return [self.notificationCenter startAction:title];
 }
 
-- (void)stopNotification:(NSUserNotification*)notification
+- (void)stopNotification:(ZetaNotification*)notification
 {
-	[[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
+	[self.notificationCenter stopAction:notification];
 }
 
 @end

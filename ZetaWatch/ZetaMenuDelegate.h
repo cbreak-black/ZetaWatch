@@ -18,6 +18,8 @@
 #import "ZetaAutoImporter.h"
 #import "ZetaKeyLoaderDelegate.h"
 
+@class ZetaNotificationCenter;
+
 enum ZetaMenuTags
 {
 	ZPoolAnchorMenuTag = 100,
@@ -28,6 +30,7 @@ enum ZetaMenuTags
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet ZetaKeyLoaderDelegate * zetaKeyLoader;
+@property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 
 - (IBAction)mountAllFilesystems:(id)sender;
 

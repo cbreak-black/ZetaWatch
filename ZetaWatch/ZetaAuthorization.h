@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class ZetaNotificationCenter;
+
 /*!
  This class wraps privileged operations that require authorization.
 
@@ -43,5 +45,8 @@
 		withReply:(void(^)(NSError * error))reply;
 
 - (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task;
+
+
+@property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 
 @end

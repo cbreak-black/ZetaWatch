@@ -23,6 +23,7 @@
         <customObject id="8rf-zp-5r9" userLabel="ZetaMenuDelegate" customClass="ZetaMenuDelegate">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
+                <outlet property="notificationCenter" destination="ZZj-pd-85j" id="DDy-Za-7rV"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="Sat-ah-3Qq"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
             </connections>
@@ -52,7 +53,12 @@
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="SfY-Cy-iuS"/>
             </connections>
         </customObject>
-        <customObject id="GUh-uV-dxo" customClass="ZetaAuthorization"/>
+        <customObject id="ZZj-pd-85j" userLabel="ZetaNotificationCenter" customClass="ZetaNotificationCenter"/>
+        <customObject id="GUh-uV-dxo" userLabel="ZetaAuthorization" customClass="ZetaAuthorization">
+            <connections>
+                <outlet property="notificationCenter" destination="ZZj-pd-85j" id="TOz-7T-gp3"/>
+            </connections>
+        </customObject>
         <menu title="Zeta" id="Xld-Up-BZ8">
             <items>
                 <menuItem title="ZFS Pools" tag="100" hidden="YES" enabled="NO" id="SFT-8i-4hp">
