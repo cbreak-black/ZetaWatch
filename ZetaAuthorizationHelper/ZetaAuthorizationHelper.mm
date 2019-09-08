@@ -285,6 +285,9 @@
 	if (error == nil)
 	{
 		NSString * fsName = [mountData objectForKey:@"filesystem"];
+		bool recursive = false;
+		if (id o = [mountData objectForKey:@"recursive"])
+			recursive = [o boolValue];
 		try
 		{
 			std::vector<std::string> failures;
@@ -293,6 +296,14 @@
 				auto fs = _zfs.filesystem([fsName UTF8String]);
 				if (!fs.mount())
 					failures.emplace_back(_zfs.lastError());
+				if (recursive)
+				{
+					fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
+					{
+						if (!fs.mount())
+							failures.emplace_back(_zfs.lastError());
+					});
+				}
 			}
 			else
 			{
@@ -339,12 +350,23 @@
 		bool force = false;
 		if (id o = [mountData objectForKey:@"force"])
 			force = [o boolValue];
+		bool recursive = false;
+		if (id o = [mountData objectForKey:@"recursive"])
+			recursive = [o boolValue];
 		try
 		{
 			std::vector<std::string> failures;
 			if (fsName)
 			{
 				auto fs = _zfs.filesystem([fsName UTF8String]);
+				if (recursive)
+				{
+					fs.iterAllFileSystemsReverse([self,&failures,force](zfs::ZFileSystem fs)
+					{
+						if (!fs.unmount(force))
+							failures.emplace_back(_zfs.lastError());
+					});
+				}
 				if (!fs.unmount(force))
 					failures.emplace_back(_zfs.lastError());
 			}
@@ -352,7 +374,7 @@
 			{
 				_zfs.iterPools([self,&failures,force](zfs::ZPool pool)
 				{
-					pool.iterAllFileSystems([self,&failures,force](zfs::ZFileSystem fs)
+					pool.iterAllFileSystemsReverse([self,&failures,force](zfs::ZFileSystem fs)
 					{
 						if (!fs.unmount(force))
 							failures.emplace_back(_zfs.lastError());

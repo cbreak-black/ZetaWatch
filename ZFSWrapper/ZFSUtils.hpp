@@ -188,8 +188,13 @@ namespace zfs
 		//! Iterates over all direct child filesystems
 		void iterChildFilesystems(std::function<void(ZFileSystem)> callback) const;
 
-		//! Iterates over all child filesystems recursively
+		//! Iterates over all child filesystems recursively, visiting all parent
+		//! filesystems before the children.
 		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
+
+		//! Iterates over all child filesystems recursively, visiting all child
+		//! filesystems before the parent filesystem.
+		void iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const;
 
 	public: // requires root permission
 		bool mount(); //!< Mount the filesystem if possible
@@ -322,8 +327,14 @@ namespace zfs
 		//! \returns all child filesystems, recursively
 		std::vector<ZFileSystem> allFileSystems() const;
 
-		//! Iterates over all child filesystems recursively
+		//! Iterates over all child filesystems recursively, visiting all parent
+		//! filesystems before the children. This includes the root filesystem
 		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
+
+		//! Iterates over all child filesystems recursively, visiting all child
+		//! filesystems before the parent filesystem. This includes the root
+		//! filesystem
+		void iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const;
 
 	public:
 		//! Unmounts all filesystems and exports the pool

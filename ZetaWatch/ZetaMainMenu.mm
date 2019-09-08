@@ -121,6 +121,10 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			item.representedObject = fsName;
 			item.target = delegate;
 		}
+		item = [fsMenu addItemWithTitle:@"Mount Recursive"
+								 action:@selector(mountFilesystemRecursive:) keyEquivalent:@""];
+		item.representedObject = fsName;
+		item.target = delegate;
 		if (!fs.mounted())
 		{
 			item = [fsMenu addItemWithTitle:@"Mount"
@@ -128,7 +132,11 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			item.representedObject = fsName;
 			item.target = delegate;
 		}
-		else
+		item = [fsMenu addItemWithTitle:@"Unmount Recursive"
+								 action:@selector(unmountFilesystemRecursive:) keyEquivalent:@""];
+		item.representedObject = fsName;
+		item.target = delegate;
+		if (fs.mounted())
 		{
 			item = [fsMenu addItemWithTitle:@"Unmount"
 									 action:@selector(unmountFilesystem:) keyEquivalent:@""];
@@ -538,9 +546,27 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
+- (IBAction)mountFilesystemRecursive:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
+	[_authorization mountFilesystems:opts withReply:^(NSError * error)
+	 {
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
 - (IBAction)unmountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
+	 {
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)unmountFilesystemRecursive:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
 		 [self handleFileSystemChangeReply:error];

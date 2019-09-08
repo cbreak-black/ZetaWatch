@@ -432,6 +432,16 @@ namespace zfs
 		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
 	}
 
+	void ZFileSystem::iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const
+	{
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			zfs_iter_filesystems(fs.m_handle, ZFileSystemCallback::handle_s, &cb);
+			callback(std::move(fs));
+		});
+		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+	}
+
 	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :
 		m_handle(zpool_open(zfsHandle, name.c_str()))
 	{
@@ -623,6 +633,13 @@ namespace zfs
 	{
 		callback(rootFileSystem());
 		rootFileSystem().iterAllFileSystems(callback);
+	}
+
+	void ZPool::iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const
+	{
+		auto root = rootFileSystem();
+		root.iterAllFileSystemsReverse(callback);
+		callback(std::move(root));
 	}
 
 	void ZPool::exportPool(bool force)
