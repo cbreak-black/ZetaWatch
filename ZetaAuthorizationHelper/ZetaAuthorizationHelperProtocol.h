@@ -24,7 +24,9 @@
 
 - (void)unmountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
-- (void)loadKeyForFilesystem:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+- (void)loadKeyForFilesystem:(NSDictionary *)loadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
+- (void)unloadKeyForFilesystem:(NSDictionary *)unloadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 - (void)scrubPool:(NSDictionary *)poolData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 

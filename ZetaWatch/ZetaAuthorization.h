@@ -38,8 +38,11 @@
 - (void)unmountFilesystems:(NSDictionary *)mountData
 				 withReply:(void(^)(NSError * error))reply;
 
-- (void)loadKeyForFilesystem:(NSDictionary *)mountData
-				 withReply:(void(^)(NSError * error))reply;
+- (void)loadKeyForFilesystem:(NSDictionary *)loadData
+				   withReply:(void(^)(NSError * error))reply;
+
+- (void)unloadKeyForFilesystem:(NSDictionary *)unloadData
+					 withReply:(void(^)(NSError * error))reply;
 
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply;

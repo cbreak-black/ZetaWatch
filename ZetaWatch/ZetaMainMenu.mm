@@ -114,10 +114,18 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
 		NSMenuItem * item;
 		auto [encRoot, isRoot] = fs.encryptionRoot();
-		if (isRoot && fs.keyStatus() != zfs::ZFileSystem::KeyStatus::available)
+		if (isRoot)
 		{
-			item = [fsMenu addItemWithTitle:@"Load Key"
-									 action:@selector(loadKey:) keyEquivalent:@""];
+			if (fs.keyStatus() != zfs::ZFileSystem::KeyStatus::available)
+			{
+				item = [fsMenu addItemWithTitle:@"Load Key"
+					action:@selector(loadKey:) keyEquivalent:@""];
+			}
+			else
+			{
+				item = [fsMenu addItemWithTitle:@"Unoad Key"
+					action:@selector(unloadKey:) keyEquivalent:@""];
+			}
 			item.representedObject = fsName;
 			item.target = delegate;
 		}
@@ -451,10 +459,14 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
-	NSMutableArray * allEncryptionRoots = [NSMutableArray array];
+	NSMenuItem * lockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Unload Keys", @"Unload Key Menu Entry") action:NULL keyEquivalent:@""];
+	NSMenu * lockMenu = [[NSMenu alloc] init];
+	[lockItem setSubmenu:lockMenu];
+	NSMutableArray * lockedEncryptionRoots = [NSMutableArray array];
+	NSMutableArray * unlockedEncryptionRoots = [NSMutableArray array];
 	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:@"Load all Keys..." action:@selector(loadAllKeys:) keyEquivalent:@""];
 	unlockAllItem.target = self;
-	unlockAllItem.representedObject = allEncryptionRoots;
+	unlockAllItem.representedObject = lockedEncryptionRoots;
 	[unlockMenu addItem:[NSMenuItem separatorItem]];
 	for (auto && pool: [[self poolWatcher] pools])
 	{
@@ -462,18 +474,34 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		{
 			auto [encRoot, isRoot] = fs.encryptionRoot();
 			auto keyStatus = fs.keyStatus();
-			if (isRoot && keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+			if (isRoot)
 			{
 				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
-				NSMenuItem * item = [unlockMenu addItemWithTitle:fsName
-														  action:@selector(loadKey:) keyEquivalent:@""];
-				item.representedObject = fsName;
-				item.target = self;
-				[allEncryptionRoots addObject:fsName];
+				if (keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+				{
+					NSMenuItem * item = [unlockMenu addItemWithTitle:fsName
+						action:@selector(loadKey:) keyEquivalent:@""];
+					item.representedObject = fsName;
+					item.target = self;
+					[lockedEncryptionRoots addObject:fsName];
+				}
+				else
+				{
+					NSMenuItem * item = [lockMenu addItemWithTitle:fsName
+						action:@selector(unloadKey:) keyEquivalent:@""];
+					item.representedObject = fsName;
+					item.target = self;
+					[unlockedEncryptionRoots addObject:fsName];
+				}
 			}
 		}
 	}
-	if ([allEncryptionRoots count] > 0)
+	if ([unlockedEncryptionRoots count] > 0)
+	{
+		[menu insertItem:lockItem atIndex:actionMenuIdx + 1];
+		[_dynamicMenus addObject:lockItem];
+	}
+	if ([lockedEncryptionRoots count] > 0)
 	{
 		[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
 		[_dynamicMenus addObject:unlockItem];
@@ -594,6 +622,15 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	for (NSString * fs in fss) {
 		[_zetaKeyLoader unlockFileSystem:fs];
 	}
+}
+
+- (IBAction)unloadKey:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization unloadKeyForFilesystem:opts withReply:^(NSError * error)
+	 {
+		 [self handleFileSystemChangeReply:error];
+	 }];
 }
 
 - (IBAction)scrubPool:(id)sender

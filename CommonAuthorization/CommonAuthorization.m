@@ -104,6 +104,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
 		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,
 		  NSStringFromSelector(@selector(loadKeyForFilesystem:authorization:withReply:)): dictKey,
+		  NSStringFromSelector(@selector(unloadKeyForFilesystem:authorization:withReply:)): dictKey,
 		  NSStringFromSelector(@selector(scrubPool:authorization:withReply:)): dictScrub,
 		  };
 	});

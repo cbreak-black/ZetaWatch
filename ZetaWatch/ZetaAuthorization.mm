@@ -338,7 +338,7 @@
 {
 	NSString * target = data[@"filesystem"];
 	if (target == nil)
-		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
+		std::logic_error("Missing required parameter \"filesystem\"");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Loading Key for", @"LoadKey Action") withTarget:target];
 	[self executeWhenConnected:^(NSError * error, id proxy)
@@ -353,6 +353,37 @@
 		 else
 		 {
 			 [proxy loadKeyForFilesystem:data authorization:self.authorization
+							   withReply:^(NSError * error)
+			  {
+				  [self dispatchReply:^(){
+					  reply(error);
+					  [self stopNotification:notification withError:error];
+				  }];
+			  }];
+		 }
+	 }];
+}
+
+- (void)unloadKeyForFilesystem:(NSDictionary *)data
+					 withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = data[@"filesystem"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"filesystem\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Unloading Key for", @"UnloadKey Action") withTarget:target];
+	[self executeWhenConnected:^(NSError * error, id proxy)
+	 {
+		 if (error)
+		 {
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification withError:error];
+			 }];
+		 }
+		 else
+		 {
+			 [proxy unloadKeyForFilesystem:data authorization:self.authorization
 							   withReply:^(NSError * error)
 			  {
 				  [self dispatchReply:^(){

@@ -98,8 +98,14 @@
 		AuthorizationItem oneRight = { NULL, 0, NULL, 0 };
 		AuthorizationRights rights   = { 1, &oneRight };
 
-		oneRight.name = [[CommonAuthorization authorizationRightForCommand:command] UTF8String];
-		assert(oneRight.name != NULL);
+		auto right = [CommonAuthorization authorizationRightForCommand:command];
+		if (!right)
+		{
+			error = [NSError errorWithDomain:NSOSStatusErrorDomain code:paramErr userInfo:nil];
+			return error;
+		}
+
+		oneRight.name = [right UTF8String];
 
 		err = AuthorizationCopyRights(authRef, &rights, NULL,
 			kAuthorizationFlagExtendRights | kAuthorizationFlagInteractionAllowed,
@@ -405,13 +411,13 @@
 	}
 }
 
-- (void)loadKeyForFilesystem:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+- (void)loadKeyForFilesystem:(NSDictionary *)loadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
 	NSError * error = [self checkAuthorization:authData command:_cmd];
 	if (error == nil)
 	{
-		NSString * fsName = [mountData objectForKey:@"filesystem"];
-		NSString * key = [mountData objectForKey:@"key"];
+		NSString * fsName = [loadData objectForKey:@"filesystem"];
+		NSString * key = [loadData objectForKey:@"key"];
 		if (!fsName || !key)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
@@ -448,6 +454,57 @@
 			else
 			{
 				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Password"}]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
+- (void)unloadKeyForFilesystem:(NSDictionary *)unloadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * fsName = [unloadData objectForKey:@"filesystem"];
+		if (!fsName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			std::vector<std::string> failures;
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			fs.iterAllFileSystemsReverse([self,&failures](zfs::ZFileSystem fs)
+			{
+				if (!fs.unmount())
+					failures.emplace_back(_zfs.lastError());
+			});
+			if (!fs.unmount())
+				failures.emplace_back(_zfs.lastError());
+			if (failures.empty())
+			{
+				if (!fs.unloadKey())
+					failures.emplace_back("Unload Key failed");
+			}
+			if (failures.empty())
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
+						formatForHumans(failures).c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
 		}
 		catch (std::exception const & e)
