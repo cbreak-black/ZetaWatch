@@ -459,15 +459,21 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
-	NSMenuItem * lockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Unload Keys", @"Unload Key Menu Entry") action:NULL keyEquivalent:@""];
-	NSMenu * lockMenu = [[NSMenu alloc] init];
-	[lockItem setSubmenu:lockMenu];
-	NSMutableArray * lockedEncryptionRoots = [NSMutableArray array];
-	NSMutableArray * unlockedEncryptionRoots = [NSMutableArray array];
-	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:@"Load all Keys..." action:@selector(loadAllKeys:) keyEquivalent:@""];
+	NSMutableArray<NSString*> * lockedEncryptionRoots = [NSMutableArray array];
+	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:NSLocalizedString(@"Load all Keys...", @"Load All Menu Entry") action:@selector(loadAllKeys:) keyEquivalent:@""];
 	unlockAllItem.target = self;
 	unlockAllItem.representedObject = lockedEncryptionRoots;
 	[unlockMenu addItem:[NSMenuItem separatorItem]];
+	// Lock
+	NSMenuItem * lockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Unload Keys", @"Unload Key Menu Entry") action:NULL keyEquivalent:@""];
+	NSMenu * lockMenu = [[NSMenu alloc] init];
+	[lockItem setSubmenu:lockMenu];
+	NSMutableArray<NSString*> * unlockedEncryptionRoots = [NSMutableArray array];
+	NSMenuItem * lockAllItem = [lockMenu addItemWithTitle:NSLocalizedString(@"Unload all Keys...", @"Unload All Menu Entry") action:@selector(unloadAllKeys:) keyEquivalent:@""];
+	lockAllItem.target = self;
+	lockAllItem.representedObject = unlockedEncryptionRoots;
+	[lockMenu addItem:[NSMenuItem separatorItem]];
+	// Individual entries
 	for (auto && pool: [[self poolWatcher] pools])
 	{
 		for (auto & fs : pool.allFileSystems())
@@ -631,6 +637,27 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 [self handleFileSystemChangeReply:error];
 	 }];
+}
+
+- (void)unloadNextKey:(NSMutableArray<NSString*>*)fileSystems
+{
+	if ([fileSystems count] > 0)
+	{
+		NSString * fs = [fileSystems lastObject];
+		[fileSystems removeLastObject];
+		NSDictionary * opts = @{@"filesystem": fs};
+		[_authorization unloadKeyForFilesystem:opts withReply:^(NSError * error)
+		 {
+			 [self handleFileSystemChangeReply:error];
+			 [self unloadNextKey:fileSystems];
+		 }];
+	}
+}
+
+- (IBAction)unloadAllKeys:(id)sender
+{
+	NSMutableArray<NSString*> * fileSystems = [sender representedObject];
+	[self unloadNextKey:fileSystems];
 }
 
 - (IBAction)scrubPool:(id)sender
