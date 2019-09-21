@@ -94,6 +94,17 @@ executes actions on behalf of the user, such as mounting, unmounting or loading 
 the newest Mac OS X.
 
 
+Self Updating
+-------------
+
+The self-updating uses [SparkleFramework]. Since the newest released sparkle does not yet
+support hardened runtime, it needs to be compiled manually. Building the "Distribution"
+target in the Sparkle submodule in release mode is sufficient.
+The sparkle submodule contains a version that is slimmed down by removing most languages,
+which saves space. Since ZetaWatch is not localized, this is not a problem.
+To create a working fork, adjust the public key and update url in the Info.plist file.
+
+
 License
 =======
 
@@ -105,3 +116,5 @@ details.
 [`SMJobBless`]: https://developer.apple.com/documentation/servicemanagement/1431078-smjobbless?language=objc
 [Notarization]: https://developer.apple.com/documentation/security/notarizing_your_app_before_distribution?language=objc
 [ZFSImage]: https://raw.githubusercontent.com/cbreak-black/ZetaWatch/master/doc/ZetaWatch.jpg
+[SparkleFramework]: https://sparkle-project.org/
+[SparkleGithub]: https://github.com/sparkle-project/Sparkle

@@ -104,6 +104,19 @@
                                     <binding destination="oMO-Og-s5N" name="value" keyPath="values.autoUnlock" id="sSC-4i-zjn"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Auto Update" id="PuO-P5-LRP">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="oMO-Og-s5N" name="value" keyPath="values.SUEnableAutomaticChecks" id="7wB-4r-eBc"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="k2v-Lw-Y2t"/>
+                            <menuItem title="Check for Updates now..." id="e40-VT-eEj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="checkForUpdates:" target="7Va-uZ-m1K" id="yj1-Ju-zDX"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -946,6 +959,7 @@ Gw
             </constraints>
             <point key="canvasLocation" x="144" y="581"/>
         </customView>
+        <customObject id="7Va-uZ-m1K" customClass="SUUpdater"/>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>

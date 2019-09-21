@@ -1,0 +1,3 @@
+[submodule "ThirdParty/Sparkle"]
+	path = ThirdParty/Sparkle
+	url = ../Sparkle.git
