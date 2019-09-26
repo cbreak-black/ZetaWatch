@@ -62,7 +62,38 @@ namespace zfs
 		LibZFSHandle & operator=(LibZFSHandle && other) noexcept;
 
 	public:
-		/*
+		struct Version
+		{
+			std::uint16_t major;
+			std::uint16_t minor;
+			std::uint16_t patch;
+
+			friend bool operator==(Version const & a, Version const & b)
+			{
+				return (a.major == b.major &&
+						a.minor == b.minor &&
+						a.patch == b.patch);
+			}
+		};
+
+		/*!
+		 \returns the version of zfs that is loaded in kernel.
+		 */
+		static Version versionUserland();
+
+		/*!
+		 \returns the version of zfs libraries in userland.
+		 */
+		static Version versionKernel();
+
+		/*!
+		 \returns the version of zfs,
+		 \throws a runtime error if userland and kernel don't agree.
+		 */
+		static Version version();
+
+	public:
+		/*!
 		 Returns a filesystem loaded by name.
 		 */
 		ZFileSystem filesystem(std::string const & name) const;

@@ -15,6 +15,10 @@
 #import "ZetaMainMenu.h"
 #import "ZetaKeyLoader.h"
 
+#import "ZFSUtils.hpp"
+
+#import <Sparkle/Sparkle.h>
+
 @interface ZetaWatchDelegate ()
 {
 	NSStatusItem * _statusItem;
@@ -23,6 +27,7 @@
 @property (weak) IBOutlet NSMenu * zetaMenu;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoaderDelegate;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
+@property (weak) IBOutlet SUUpdater * updater;
 
 @end
 
@@ -44,6 +49,29 @@
 	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification
+{
+	try
+	{
+		// Update Feed URL to the one matching the current ZFS version, even if
+		// ZetaWatch was not compiled for it.
+		auto version = zfs::LibZFSHandle::version();
+		NSString * feedString = [NSString stringWithFormat:
+			@"https://zetawatch.the-color-black.net/download/%i.%i/appcast.xml",
+								 version.major, version.minor];
+		NSURL * feedURL = [NSURL URLWithString:feedString];
+		[self.updater setFeedURL:feedURL];
+		// TODO: Check for compatibility
+	}
+	catch (std::exception const & e)
+	{
+		NSLog(@"Error querying ZFS Version: %s", e.what());
+		// Disable auto update
+		[self.updater setAutomaticallyChecksForUpdates:NO];
+		[self.updater setAutomaticallyDownloadsUpdates:NO];
+	}
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <future>
 #include <sstream>
+#include <regex>
 
 #include <libzfs.h>
 #include <libzfs_core.h>
@@ -70,6 +71,55 @@ namespace zfs
 	libzfs_handle_t * LibZFSHandle::handle() const
 	{
 		return m_handle;
+	}
+
+	static LibZFSHandle::Version parseVersion(char const * versionString)
+	{
+		static std::regex versionRE(R"(^.*(\d+)\.(\d+)\.(\d+).*$)");
+		std::cmatch m;
+		if (!std::regex_match(versionString, m, versionRE))
+			throw std::runtime_error("Can't parse ZFS Version");
+		LibZFSHandle::Version version = {
+			static_cast<std::uint16_t>(atoi(m[1].first)),
+			static_cast<std::uint16_t>(atoi(m[2].first)),
+			static_cast<std::uint16_t>(atoi(m[3].first)),
+		};
+		return version;
+	}
+
+	std::ostream & operator<<(std::ostream & os, LibZFSHandle::Version const & v)
+	{
+		return os << v.major << '.' << v.minor << '.' << v.patch;
+	}
+
+	LibZFSHandle::Version LibZFSHandle::versionUserland()
+	{
+		char zver_userland[64] = {};
+		zfs_version_userland(zver_userland, sizeof(zver_userland));
+		return parseVersion(zver_userland);
+	}
+
+	LibZFSHandle::Version LibZFSHandle::versionKernel()
+	{
+		char zver_kernel[64] = {};
+		if (zfs_version_kernel(zver_kernel, sizeof(zver_kernel)) == -1)
+		{
+			throw std::runtime_error("Error getting zfs version from kernel");
+		}
+		return parseVersion(zver_kernel);
+	}
+
+	LibZFSHandle::Version LibZFSHandle::version()
+	{
+		auto vk = versionKernel();
+		auto vu = versionUserland();
+		if (vk.major != vu.major || vk.minor != vk.minor || vk.patch != vu.patch)
+		{
+			std::stringstream ss;
+			ss << "ZFS Kernel Module " << vk << " and ZFS Userland Library " << vu << " do not match";
+			throw std::runtime_error(ss.str());
+		}
+		return vk;
 	}
 
 	ZFileSystem::ZFileSystem() : m_handle(nullptr)

@@ -16,6 +16,7 @@
         <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
+                <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
                 <outlet property="zetaKeyLoaderDelegate" destination="R7D-cp-kuE" id="KCZ-sp-kdc"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
             </connections>
@@ -107,7 +108,7 @@
                             <menuItem title="Auto Update" id="PuO-P5-LRP">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <binding destination="oMO-Og-s5N" name="value" keyPath="values.SUEnableAutomaticChecks" id="7wB-4r-eBc"/>
+                                    <binding destination="7Va-uZ-m1K" name="value" keyPath="automaticallyChecksForUpdates" id="cJl-aO-zqY"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="k2v-Lw-Y2t"/>
