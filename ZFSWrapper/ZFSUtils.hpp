@@ -272,6 +272,7 @@ namespace zfs
 		uint64_t passExamined;
 		uint64_t passIssued;
 		uint64_t passStartTime;
+		uint64_t passPauseTime;
 		uint64_t passPausedSeconds;
 		uint64_t errors;
 		uint64_t scanStartTime;
@@ -373,6 +374,9 @@ namespace zfs
 
 		//! Starts a scrub
 		void scrub();
+
+		//! Pauses a scrub
+		void scrubPause();
 
 		//! Stops a scrub
 		void scrubStop();

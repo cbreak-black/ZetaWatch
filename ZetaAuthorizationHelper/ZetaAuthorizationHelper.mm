@@ -525,7 +525,7 @@
 	if (error == nil)
 	{
 		NSString * poolName = [poolData objectForKey:@"pool"];
-		NSNumber * stop = [poolData objectForKey:@"stop"];
+		NSString * command = [poolData objectForKey:@"command"];
 		if (!poolName)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
@@ -534,9 +534,15 @@
 		try
 		{
 			auto pool = _zfs.pool(std::string(poolName.UTF8String));
-			if (stop && [stop boolValue] == YES)
+			if (command)
 			{
-				pool.scrubStop();
+				if ([command isEqualToString:@"stop"])
+					pool.scrubStop();
+				else if ([command isEqualToString:@"pause"])
+					pool.scrubPause();
+				// No other commands are supported
+				else
+					reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Scrub Command"}]);
 			}
 			else
 			{

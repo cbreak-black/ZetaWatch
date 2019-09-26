@@ -300,15 +300,40 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		auto scrubMenu = [[NSMenu alloc] init];
 		scrubItem.submenu = scrubMenu;
 		NSString * poolName = [NSString stringWithUTF8String:pool.name()];
-		if (scrub.state == zfs::ScanStat::scanning)
+		if (scrub.state == zfs::ScanStat::scanning && scrub.passPauseTime == 0)
 		{
 			auto item = [scrubMenu addItemWithTitle:
 						 NSLocalizedString(@"Stop Scrub", @"Stop Scrub")
 											 action:@selector(scrubStopPool:) keyEquivalent:@""];
 			item.representedObject = poolName;
 			item.target = delegate;
+			item = [scrubMenu addItemWithTitle:
+						 NSLocalizedString(@"Pause Scrub", @"Pause Scrub")
+										action:@selector(scrubPausePool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
+		else
+		{
+			auto item = [scrubMenu addItemWithTitle:
+						 NSLocalizedString(@"Start Scrub", @"Start Scrub")
+											 action:@selector(scrubPool:) keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		}
+		if (scrub.state == zfs::ScanStat::scanning)
+		{
 			// Scan Stats
 			auto elapsed = getElapsed(scrub);
+			if (scrub.passPauseTime != 0)
+			{
+				auto pauseDate = [NSDate dateWithTimeIntervalSince1970:scrub.passPauseTime];
+				auto pauseString = [NSDateFormatter localizedStringFromDate:pauseDate dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterMediumStyle];
+				NSString * scanLinePaused = [NSString stringWithFormat:NSLocalizedString(
+					@"Scrub Paused since %@", @"Scrub Paused"), pauseString];
+				auto m = [vdevMenu addItemWithTitle:scanLinePaused action:nullptr keyEquivalent:@""];
+				m.indentationLevel = 1;
+			}
 			NSString * scanLine1 = [NSString stringWithFormat:NSLocalizedString(
 				@"%s scanned at %s, %s issued at %s", @"Scrub Menu Entry 1"),
 									formatBytes(scrub.scanned).c_str(),
@@ -325,14 +350,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 			auto m2 = [vdevMenu addItemWithTitle:scanLine2 action:nullptr keyEquivalent:@""];
 			m1.indentationLevel = 1;
 			m2.indentationLevel = 1;
-		}
-		else
-		{
-			auto item = [scrubMenu addItemWithTitle:
-						 NSLocalizedString(@"Start Scrub", @"Start Scrub")
-											 action:@selector(scrubPool:) keyEquivalent:@""];
-			item.representedObject = poolName;
-			item.target = delegate;
 		}
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		// VDevs
@@ -671,7 +688,16 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 
 - (IBAction)scrubStopPool:(id)sender
 {
-	NSDictionary * opts = @{@"pool": [sender representedObject], @"stop": @YES};
+	NSDictionary * opts = @{@"pool": [sender representedObject], @"command": @"stop"};
+	[_authorization scrubPool:opts withReply:^(NSError * error)
+	 {
+		 [self handleMetaDataChangeReply:error];
+	 }];
+}
+
+- (IBAction)scrubPausePool:(id)sender
+{
+	NSDictionary * opts = @{@"pool": [sender representedObject], @"command": @"pause"};
 	[_authorization scrubPool:opts withReply:^(NSError * error)
 	 {
 		 [self handleMetaDataChangeReply:error];

@@ -714,6 +714,14 @@ namespace zfs
 			libHandle().throwLastError("scrub " + std::string(name()));
 	}
 
+	void ZPool::scrubPause()
+	{
+		int res = 0;
+		res = zpool_scan(m_handle, POOL_SCAN_SCRUB, POOL_SCRUB_PAUSE);
+		if (res != 0)
+			libHandle().throwLastError("scrub -p " + std::string(name()));
+	}
+
 	void ZPool::scrubStop()
 	{
 		int res = 0;
@@ -969,6 +977,7 @@ namespace zfs
 		interfaceStat.passScanned = scanStat.pss_pass_exam;
 		interfaceStat.passIssued = scanStat.pss_pass_issued;
 		interfaceStat.passStartTime = scanStat.pss_pass_start;
+		interfaceStat.passPauseTime = scanStat.pss_pass_scrub_pause;
 		interfaceStat.passPausedSeconds = scanStat.pss_pass_scrub_spent_paused;
 		interfaceStat.errors = scanStat.pss_errors;
 		interfaceStat.scanStartTime = scanStat.pss_start_time;
