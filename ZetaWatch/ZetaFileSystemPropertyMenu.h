@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 
 #include "ZFSUtils.hpp"
 
-@interface ZetaFileSystemPropertyMenu : ZetaMenuBase <NSMenuDelegate>
+@interface ZetaFileSystemPropertyMenu : ZetaCommanderBase <NSMenuDelegate>
 
 - (id)initWithFileSystem:(zfs::ZFileSystem &&)fs;
 

@@ -72,7 +72,7 @@
 		}
 		else
 		{
-			[self errorFromHelper:error];
+			[self notifyErrorFromHelper:error];
 			[self advanceFileSystem];
 		}
 	}

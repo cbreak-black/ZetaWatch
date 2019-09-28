@@ -12,12 +12,12 @@
 #import <Cocoa/Cocoa.h>
 
 #import "ZetaAuthorization.h"
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 #import "ZetaAutoImporter.h"
 
 @class ZetaPoolWatcher;
 
-@interface ZetaImportMenu : ZetaMenuBase <NSMenuDelegate>
+@interface ZetaImportMenu : ZetaCommanderBase <NSMenuDelegate>
 
 @property (weak) IBOutlet NSMenu * importMenu;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;

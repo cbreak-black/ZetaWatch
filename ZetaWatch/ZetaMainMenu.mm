@@ -543,7 +543,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 - (void)handlePoolChangeReply:(NSError*)error
 {
 	if (error)
-		[self errorFromHelper:error];
+		[self notifyErrorFromHelper:error];
 	else
 		[[self poolWatcher] checkForChanges];
 }
@@ -551,13 +551,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 - (void)handleFileSystemChangeReply:(NSError*)error
 {
 	if (error)
-		[self errorFromHelper:error];
+		[self notifyErrorFromHelper:error];
 }
 
 - (void)handleMetaDataChangeReply:(NSError*)error
 {
 	if (error)
-		[self errorFromHelper:error];
+		[self notifyErrorFromHelper:error];
 }
 
 #pragma mark ZFS Maintenance
@@ -567,6 +567,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"pool": [sender representedObject]};
 	[_authorization exportPools:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Pool %@ exported", @"Pool Export Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handlePoolChangeReply:error];
 	 }];
 }
@@ -576,6 +583,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"pool": [sender representedObject], @"force": @YES};
 	[_authorization exportPools:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Pool %@ force-exported", @"Pool ForceExport Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handlePoolChangeReply:error];
 	 }];
 }
@@ -584,6 +598,12 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 {
 	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"All filesystems mounted", @"FS Mount Success all")];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -593,6 +613,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
 	[_authorization mountFilesystems:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ mounted", @"FS Mount Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -602,6 +629,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
 	[_authorization mountFilesystems:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ mounted recursively", @"FS Mount Recursive Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -611,6 +645,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ unmounted", @"FS Unmount Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -620,6 +661,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ unmounted recursively", @"FS Unmount Recursive Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -629,6 +677,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"force": @YES};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ force-unmounted", @"FS ForceUnmount Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -652,6 +707,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
 	[_authorization unloadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Key for %@ unloaded", @"Key Unload Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
 }
@@ -665,6 +727,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		NSDictionary * opts = @{@"filesystem": fs};
 		[_authorization unloadKeyForFilesystem:opts withReply:^(NSError * error)
 		 {
+			 if (!error)
+			 {
+				 NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Key for %@ unloaded", @"Key Unload Success format"),
+					fs];
+				 [self notifySuccessWithTitle:title text:nil];
+			 }
 			 [self handleFileSystemChangeReply:error];
 			 [self unloadNextKey:fileSystems];
 		 }];

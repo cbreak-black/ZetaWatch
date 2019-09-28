@@ -8,10 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 #import "ZetaPoolWatcher.h"
 
-@interface ZetaKeyLoader : ZetaMenuBase <NSPopoverDelegate,ZetaPoolWatcherDelegate>
+@interface ZetaKeyLoader : ZetaCommanderBase <NSPopoverDelegate,ZetaPoolWatcherDelegate>
 
 @property (weak) NSStatusItem * statusItem;
 @property (weak) IBOutlet NSPopover * popover;

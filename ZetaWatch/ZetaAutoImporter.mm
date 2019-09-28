@@ -114,7 +114,7 @@ private:
 	 ^(NSError * error, NSArray * importablePools)
 	 {
 		if (error)
-			[self errorFromHelper:error];
+			[self notifyErrorFromHelper:error];
 		else
 			[self handleImportablePools:importablePools];
 	 }];
@@ -173,11 +173,19 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 		{
 			if (!zfs::healthy(pool.status))
 				continue; // skip pools that aren't healthy
-			NSLog(@"Auto-Importing pool %s", pool.name.c_str());
-			NSDictionary * pools = @{ @"poolGUID": [NSNumber numberWithUnsignedLongLong:pool.guid] };
-			[_authorization importPools:pools withReply:^(NSError * error)
+			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
+			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
+			NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Auto-importing %@", @"Pool AutoImport short format"),
+					name];
+			NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"Auto-importing Pool %@ (%@)", @"Pool AutoImport format"),
+								name, guid];
+			[self notifySuccessWithTitle:title text:text];
+			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name};
+			[_authorization importPools:poolDict withReply:^(NSError * error)
 			 {
-				 [self handlePoolImportReply:error forPool:pool];
+				 [self handlePoolImportReply:error forPool:poolDict];
 			 }];
 		}
 	}
@@ -198,16 +206,23 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 	[self scheduleChecking];
 }
 
-- (void)handlePoolImportReply:(NSError*)error forPool:(zfs::ImportablePool const &)pool
+- (void)handlePoolImportReply:(NSError*)error forPool:(NSDictionary*)pool
 {
 	if (error)
 	{
-		[self errorFromHelper:error];
+		[self notifyErrorFromHelper:error];
 	}
 	else
 	{
-		[[self poolWatcher] checkForChanges];
+		NSString * title = [NSString stringWithFormat:
+			NSLocalizedString(@"Pool %@ auto-imported", @"Pool AutoImport Success short format"),
+				pool[@"poolName"]];
+		NSString * text = [NSString stringWithFormat:
+			NSLocalizedString(@"Pool %@ (%@) auto-imported", @"Pool AutoImport Success format"),
+			pool[@"poolName"], pool[@"poolGUID"]];
+		[self notifySuccessWithTitle:title text:text];
 	}
+	[[self poolWatcher] checkForChanges];
 }
 
 - (std::vector<zfs::ImportablePool> const &)importablePools

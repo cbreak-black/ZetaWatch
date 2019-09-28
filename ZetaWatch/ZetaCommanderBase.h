@@ -1,5 +1,5 @@
 //
-//  ZetaMenuBase.h
+//  ZetaCommanderBase.h
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
@@ -15,12 +15,13 @@
 
 #include "ZetaFormatHelpers.hpp"
 
-@interface ZetaMenuBase : NSObject
+@interface ZetaCommanderBase : NSObject
 {
 	IBOutlet ZetaAuthorization * _authorization;
 }
 
-- (void)errorFromHelper:(NSError*)error;
+- (void)notifySuccessWithTitle:(NSString*)title text:(NSString*)text;
+- (void)notifyErrorFromHelper:(NSError*)error;
 
 - (IBAction)copyRepresentedObject:(id)sender;
 
@@ -51,7 +52,7 @@ NSString * formatNSString(NSString * format, T const & t, U const & u, V const &
 }
 
 template<typename... T>
-NSMenuItem * addMenuItem(NSMenu * menu, ZetaMenuBase * delegate,
+NSMenuItem * addMenuItem(NSMenu * menu, ZetaCommanderBase * delegate,
 						 NSString * format, T const & ... t)
 {
 	auto title = formatNSString(format, t...);

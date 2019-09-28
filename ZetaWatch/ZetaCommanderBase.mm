@@ -1,16 +1,28 @@
 //
-//  ZetaMenuBase.mm
+//  ZetaCommanderBase.mm
 //  ZetaWatch
 //
 //  Created by cbreak on 19.06.02.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 
-@implementation ZetaMenuBase
+@implementation ZetaCommanderBase
 
-- (void)errorFromHelper:(NSError*)error
+- (void)notifySuccessWithTitle:(NSString*)title text:(NSString*)text
+{
+	NSUserNotification * notification = [[NSUserNotification alloc] init];
+	notification.title = title;
+	notification.informativeText = text == nil ? title : text;
+	notification.hasActionButton = NO;
+	auto nc = [NSUserNotificationCenter defaultUserNotificationCenter];
+	[nc deliverNotification:notification];
+	[nc performSelector:@selector(removeDeliveredNotification:)
+			 withObject:notification afterDelay:10];
+}
+
+- (void)notifyErrorFromHelper:(NSError*)error
 {
 	NSUserNotification * notification = [[NSUserNotification alloc] init];
 	notification.title = NSLocalizedString(@"ZetaWatch Error", @"Helper Error notification Title");

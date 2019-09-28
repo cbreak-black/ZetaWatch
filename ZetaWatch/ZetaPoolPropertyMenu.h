@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 
 #include "ZFSUtils.hpp"
 
-@interface ZetaPoolPropertyMenu : ZetaMenuBase <NSMenuDelegate>
+@interface ZetaPoolPropertyMenu : ZetaCommanderBase <NSMenuDelegate>
 
 - (id)initWithPool:(zfs::ZPool &&)pool;
 

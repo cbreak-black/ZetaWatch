@@ -35,6 +35,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+	// Menu Item
 	NSStatusBar * bar = [NSStatusBar systemStatusBar];
 	_statusItem = [bar statusItemWithLength:NSSquareStatusItemLength];
 	NSImage * zetaImage = [NSImage imageNamed:@"Zeta"];
@@ -49,6 +50,8 @@
 	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];
+	// User Notification Center Delegate
+	[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
@@ -76,6 +79,12 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
+	 shouldPresentNotification:(NSUserNotification *)notification
+{
+	return YES;
 }
 
 @end

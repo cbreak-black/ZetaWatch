@@ -13,7 +13,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "ZetaPoolWatcher.h"
-#import "ZetaMenuBase.h"
+#import "ZetaCommanderBase.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAutoImporter.h"
 #import "ZetaKeyLoader.h"
@@ -26,7 +26,7 @@ enum ZetaMenuTags
 	ActionAnchorMenuTag = 101
 };
 
-@interface ZetaMainMenu : ZetaMenuBase <NSMenuDelegate>
+@interface ZetaMainMenu : ZetaCommanderBase <NSMenuDelegate>
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;

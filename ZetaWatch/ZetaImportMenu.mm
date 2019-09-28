@@ -33,7 +33,11 @@
 			NSMenuItem * item = [_importMenu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
 			[item setAction:@selector(importPool:)];
 			[item setTarget:self];
-			[item setRepresentedObject:[NSNumber numberWithUnsignedLongLong:pool.guid]];
+			// Communicate pool to callback
+			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
+			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
+			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name };
+			[item setRepresentedObject:poolDict];
 		}
 	}
 	else
@@ -55,9 +59,17 @@
 
 - (IBAction)importPool:(id)sender
 {
-	NSDictionary * pools = @{ @"poolGUID": [sender representedObject] };
-	[_authorization importPools:pools withReply:^(NSError * error)
+	NSDictionary * pool = [sender representedObject];
+	[_authorization importPools:pool withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Pool %@ imported", @"Pool Import Success short format"), pool[@"poolName"]];
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"Pool %@ (%@) imported", @"Pool Import Success format"), pool[@"poolName"], pool[@"poolGUID"]];
+			 [self notifySuccessWithTitle:title text:text];
+		 }
 		 [self handlePoolChangeReply:error];
 	 }];
 }
@@ -66,6 +78,12 @@
 {
 	[_authorization importPools:@{} withReply:^(NSError * error)
 	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"All pools imported", @"Pool Import Success all")];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
 		 [self handlePoolChangeReply:error];
 	 }];
 }
@@ -73,9 +91,13 @@
 - (void)handlePoolChangeReply:(NSError*)error
 {
 	if (error)
-		[self errorFromHelper:error];
+	{
+		[self notifyErrorFromHelper:error];
+	}
 	else
+	{
 		[[self poolWatcher] checkForChanges];
+	}
 }
 
 @end
