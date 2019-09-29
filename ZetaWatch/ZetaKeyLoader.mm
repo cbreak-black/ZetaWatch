@@ -8,7 +8,10 @@
 
 #import "ZetaKeyLoader.h"
 
+#import <Security/Security.h>
+
 #include <deque>
+#include <type_traits>
 
 @interface ZetaKeyLoader ()
 {
@@ -36,7 +39,6 @@
 
 - (void)show
 {
-	[self updateFileSystem];
 	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 	NSView * positioningView = [_statusItem button];
 	[_popover showRelativeToRect:NSMakeRect(0, 0, 0, 0)
@@ -46,12 +48,24 @@
 
 - (IBAction)loadKey:(id)sender
 {
-	[self showActionInProgress:NSLocalizedString(@"Loading Key...", @"LoadingKeyStatus")];
 	NSString * pass = [_passwordField stringValue];
+	NSString * filesystem = [self representedFilesystem];
+	bool storeInKeychain = [_useKeychainCheckbox state] == NSControlStateValueOn;
 	[self clearPassword];
-	NSDictionary * opts = @{@"filesystem": [self representedFilesystem], @"key": pass};
+	[self loadKey:pass forFilesystem:filesystem storeInKeychain:storeInKeychain];
+}
+
+- (void)loadKey:(NSString*)password forFilesystem:(NSString*)filesystem
+		  storeInKeychain:(bool)storeInKeychain
+{
+	[self showActionInProgress:NSLocalizedString(@"Loading Key...", @"LoadingKeyStatus")];
+	NSDictionary * opts = @{@"filesystem": filesystem, @"key": password};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
+		 if (!error && storeInKeychain)
+		 {
+			 [self storePassword:password forFilesystem:filesystem];
+		 }
 		 [self handleLoadKeyReply:error];
 	 }];
 }
@@ -120,9 +134,120 @@
 	return YES;
 }
 
+- (bool)tryUnlockFromStoredPassword:(NSString*)filesystem
+{
+	NSString * password = [self retrievePasswordForFilesystem:filesystem];
+	if (password)
+	{
+		[self loadKey:password forFilesystem:filesystem storeInKeychain:false];
+		return true;
+	}
+	return false;
+}
+
+- (NSString*)retrievePasswordForFilesystem:(NSString*)filesystem
+{
+	void const * keys[] = {
+		kSecClass,
+		kSecAttrService,
+		kSecMatchLimit,
+		kSecReturnData,
+	};
+	void const * values[] = {
+		kSecClassGenericPassword,
+		(__bridge CFStringRef)filesystem,
+		kSecMatchLimitOne,
+		kCFBooleanTrue,
+	};
+	static_assert(std::extent_v<decltype(keys)> == std::extent_v<decltype(values)>);
+	constexpr size_t attributeCount = std::extent_v<decltype(keys)>;
+	CFDictionaryRef attributes =  CFDictionaryCreate(nullptr,
+		&keys[0], &values[0], attributeCount,
+		&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	void const * data = nullptr;
+	OSStatus result = SecItemCopyMatching(attributes, &data);
+	CFRelease(attributes);
+	if (result != errSecSuccess)
+	{
+		return nullptr;
+	}
+	NSString * password = [[NSString alloc] initWithData:CFBridgingRelease((CFDataRef)data)
+encoding:NSUTF8StringEncoding];
+	return password;
+}
+
+- (bool)deletePasswordForFilesystem:(NSString*)filesystem
+{
+	void const * keys[] = {
+		kSecClass,
+		kSecAttrService,
+		kSecMatchLimit,
+	};
+	void const * values[] = {
+		kSecClassGenericPassword,
+		(__bridge CFStringRef)filesystem,
+		kSecMatchLimitAll,
+	};
+	static_assert(std::extent_v<decltype(keys)> == std::extent_v<decltype(values)>);
+	constexpr size_t attributeCount = std::extent_v<decltype(keys)>;
+	CFDictionaryRef attributes =  CFDictionaryCreate(nullptr,
+		&keys[0], &values[0], attributeCount,
+		&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	OSStatus result = SecItemDelete(attributes);
+	CFRelease(attributes);
+	if (result != errSecSuccess)
+	{
+		return false;
+	}
+	return true;
+}
+
+- (bool)storePassword:(NSString*)password forFilesystem:(NSString*)filesystem
+{
+	[self deletePasswordForFilesystem:filesystem];
+	NSData * passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
+	NSString * label = [NSString stringWithFormat:@"ZetaWatch Password for ZFS filesystem %@", filesystem];
+	void const * keys[] = {
+		kSecClass,
+		kSecAttrLabel,
+		kSecAttrService,
+		kSecValueData,
+	};
+	void const * values[] = {
+		kSecClassGenericPassword,
+		(__bridge CFStringRef)label,
+		(__bridge CFStringRef)filesystem,
+		(__bridge CFDataRef)passwordData,
+	};
+	static_assert(std::extent_v<decltype(keys)> == std::extent_v<decltype(values)>);
+	constexpr size_t attributeCount = std::extent_v<decltype(keys)>;
+	CFDictionaryRef attributes =  CFDictionaryCreate(nullptr,
+		&keys[0], &values[0], attributeCount,
+		&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+	OSStatus result = SecItemAdd(attributes, nil);
+	CFRelease(attributes);
+	if (result != errSecSuccess)
+	{
+		CFStringRef errorString = SecCopyErrorMessageString(result, nullptr);
+		NSError * error = [NSError errorWithDomain:NSOSStatusErrorDomain
+											  code:result userInfo:
+		@{
+			NSLocalizedDescriptionKey: CFBridgingRelease(errorString)
+		}];
+		[self notifyErrorFromHelper:error];
+		return false;
+	}
+	return true;
+}
+
 - (void)addFilesystemToUnlock:(NSString*)filesystem
 {
 	filesystems.push_back(filesystem);
+	if (filesystems.size() == 1)
+	{
+		[self updateFileSystem];
+		[self tryUnlockFromStoredPassword:filesystem];
+	}
 }
 
 - (NSString*)representedFilesystem
@@ -140,6 +265,10 @@
 	{
 		[_popover performClose:self];
 	}
+	else
+	{
+		[self tryUnlockFromStoredPassword:filesystems.front()];
+	}
 }
 
 - (void)updateFileSystem
@@ -151,6 +280,8 @@
 	else
 	{
 		[_queryField setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Enter the password for %@", @"Password Query"), filesystems.front()]];
+		bool useKeychain = [[NSUserDefaults standardUserDefaults] boolForKey:@"useKeychain"];
+		[_useKeychainCheckbox setState:useKeychain ? NSControlStateValueOn : NSControlStateValueOff];
 	}
 }
 

@@ -46,7 +46,8 @@
 	// User Defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		@"autoUnlock": @YES,
-		@"autoImport": @YES
+		@"autoImport": @YES,
+		@"useKeychain": @NO,
 	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];

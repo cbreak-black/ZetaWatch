@@ -18,6 +18,7 @@
 @property (weak) IBOutlet NSSecureTextField * passwordField;
 @property (weak) IBOutlet NSTextField * queryField;
 @property (weak) IBOutlet NSTextField * statusField;
+@property (weak) IBOutlet NSButton * useKeychainCheckbox;
 @property (weak) IBOutlet NSProgressIndicator * progressIndicator;
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
