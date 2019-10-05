@@ -47,8 +47,8 @@
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply;
 
-- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task;
-
+- (void)executeWhenConnected:(void(^)(id proxy))task
+					 onError:(void(^)(NSError * error))handleError;
 
 @property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 

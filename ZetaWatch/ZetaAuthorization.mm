@@ -149,17 +149,46 @@
 	 }];
 }
 
-- (void)executeWhenConnected:(void(^)(NSError * error, id proxy))task
+- (void)executeWhenConnected:(void(^)(id proxy))task
+					 onError:(void(^)(NSError * error))handleError;
 {
 	// Ensure that there's a helper tool connection in place.
 	[self connectToHelperTool];
-	id proxy = [self.helperToolConnection remoteObjectProxyWithErrorHandler:
-		^(NSError * proxyError)
-	{
-		task(proxyError, nil);
-	}];
+	id proxy = [self.helperToolConnection remoteObjectProxyWithErrorHandler:handleError];
+	task(proxy);
+}
 
-	task(nil, proxy);
+- (void)executeOnProxy:(SEL)selector
+			  withData:(NSDictionary *)data
+			 withReply:(void(^)(NSError * error))reply
+	  withNotification:(ZetaNotification*)notification
+{
+	[self executeWhenConnected:^(id proxy)
+	 {
+		 auto block = ^(NSError * error)
+		 {
+			 [self dispatchReply:^(){
+				 reply(error);
+				 [self stopNotification:notification withError:error];
+			 }];
+		 };
+		 auto sig = [proxy methodSignatureForSelector:selector];
+		 auto inv = [NSInvocation invocationWithMethodSignature:sig];
+		 [inv setTarget:proxy];
+		 [inv setSelector:selector];
+		 NSDictionary * dataLoc = data;
+		 [inv setArgument:&dataLoc atIndex:2];
+		 [inv setArgument:&self->_authorization atIndex:3];
+		 [inv setArgument:&block atIndex:4];
+		 [inv invoke];
+	 }
+					   onError:^(NSError * error)
+	 {
+		 [self dispatchReply:^(){
+			 reply(error);
+			 [self stopNotification:notification withError:error];
+		 }];
+	 }];
 }
 
 - (void)dispatchReply:(void(^)(void))reply
@@ -174,19 +203,16 @@
 
 - (void)getVersionWithReply:(void (^)(NSError * error, NSString *))reply
 {
-	[self executeWhenConnected:^(NSError * error, id proxy)
+	[self executeWhenConnected:^(id proxy)
 	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){ reply(error, nil); }];
-		 }
-		 else
-		 {
-			 [proxy getVersionWithReply:^(NSError * error, NSString * version)
-			  {
-				  [self dispatchReply:^(){ reply(error, version); }];
-			  }];
-		 }
+		 [proxy getVersionWithReply:^(NSError * error, NSString * version)
+		  {
+			  [self dispatchReply:^(){ reply(error, version); }];
+		  }];
+	 }
+					   onError:^(NSError * error)
+	 {
+		 [self dispatchReply:^(){ reply(error, nil); }];
 	 }];
 }
 
@@ -198,45 +224,24 @@
 		target = @"all pools";
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Importing", @"Importing Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy importPools:importData authorization:self.authorization
-					  withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(importPools:authorization:withReply:)
+				withData:importData withReply:reply
+		withNotification:notification];
 }
 
 - (void)importablePoolsWithReply:(void(^)(NSError * error, NSArray * importablePools))reply
 {
-	[self executeWhenConnected:^(NSError * error, id proxy)
+	[self executeWhenConnected:^(id proxy)
 	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){ reply(error, nil); }];
-		 }
-		 else
-		 {
-			 [proxy importablePoolsWithAuthorization:self.authorization
-										   withReply:^(NSError * error, NSArray * importablePools)
-			  {
-				  [self dispatchReply:^(){ reply(error, importablePools); }];
-			  }];
-		 }
+		 [proxy importablePoolsWithAuthorization:self.authorization
+									   withReply:^(NSError * error, NSArray * importablePools)
+		  {
+			  [self dispatchReply:^(){ reply(error, importablePools); }];
+		  }];
+	 }
+					   onError:^(NSError * error)
+	 {
+		 [self dispatchReply:^(){ reply(error, nil); }];
 	 }];
 }
 
@@ -248,27 +253,9 @@
 		target = NSLocalizedString(@"all pools", @"All Pools");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Exporting", @"Exporting Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy exportPools:exportData authorization:self.authorization
-					  withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(exportPools:authorization:withReply:)
+				withData:exportData withReply:reply
+		withNotification:notification];
 }
 
 - (void)mountFilesystems:(NSDictionary *)mountData
@@ -279,27 +266,9 @@
 		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Mounting", @"Mounting Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy mountFilesystems:mountData authorization:self.authorization
-						   withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(mountFilesystems:authorization:withReply:)
+				withData:mountData withReply:reply
+		withNotification:notification];
 }
 
 - (void)unmountFilesystems:(NSDictionary *)mountData
@@ -310,27 +279,9 @@
 		target = NSLocalizedString(@"all filesystems", @"All Filesystems");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Unmounting", @"Unmounting Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy unmountFilesystems:mountData authorization:self.authorization
-							 withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(unmountFilesystems:authorization:withReply:)
+				withData:mountData withReply:reply
+		withNotification:notification];
 }
 
 - (void)loadKeyForFilesystem:(NSDictionary *)data
@@ -341,27 +292,9 @@
 		std::logic_error("Missing required parameter \"filesystem\"");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Loading Key for", @"LoadKey Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy loadKeyForFilesystem:data authorization:self.authorization
-							   withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(loadKeyForFilesystem:authorization:withReply:)
+				withData:data withReply:reply
+		withNotification:notification];
 }
 
 - (void)unloadKeyForFilesystem:(NSDictionary *)data
@@ -372,47 +305,17 @@
 		std::logic_error("Missing required parameter \"filesystem\"");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Unloading Key for", @"UnloadKey Action") withTarget:target];
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){
-				 reply(error);
-				 [self stopNotification:notification withError:error];
-			 }];
-		 }
-		 else
-		 {
-			 [proxy unloadKeyForFilesystem:data authorization:self.authorization
-							   withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){
-					  reply(error);
-					  [self stopNotification:notification withError:error];
-				  }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(unloadKeyForFilesystem:authorization:withReply:)
+				withData:data withReply:reply
+		withNotification:notification];
 }
 
 - (void)scrubPool:(NSDictionary *)poolData
 		withReply:(void(^)(NSError * error))reply
 {
-	[self executeWhenConnected:^(NSError * error, id proxy)
-	 {
-		 if (error)
-		 {
-			 [self dispatchReply:^(){ reply(error); }];
-		 }
-		 else
-		 {
-			 [proxy scrubPool:poolData authorization:self.authorization
-					withReply:^(NSError * error)
-			  {
-				  [self dispatchReply:^(){ reply(error); }];
-			  }];
-		 }
-	 }];
+	[self executeOnProxy:@selector(scrubPool:authorization:withReply:)
+				withData:poolData withReply:reply
+		withNotification:nullptr];
 }
 
 - (ZetaNotification*)startNotificationForAction:(NSString*)action withTarget:(NSString*)target
@@ -424,7 +327,10 @@
 
 - (void)stopNotification:(ZetaNotification*)notification withError:(NSError*)error
 {
-	[self.notificationCenter stopAction:notification withError:error];
+	if (notification)
+	{
+		[self.notificationCenter stopAction:notification withError:error];
+	}
 }
 
 @end
