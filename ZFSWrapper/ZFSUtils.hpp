@@ -240,6 +240,7 @@ namespace zfs
 		bool mount(); //!< Mount the filesystem if possible
 		bool automount(); //!< Only try to mount the filesystem if it can be automounted
 		bool unmount(bool force = false);
+		bool rollback(bool force = false);
 		bool loadKey(std::string const & key);
 		bool unloadKey();
 

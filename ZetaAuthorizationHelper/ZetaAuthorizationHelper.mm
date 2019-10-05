@@ -421,7 +421,42 @@
 
 - (void)rollbackFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
-	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * snapName = [fsData objectForKey:@"snapshot"];
+		bool force = false;
+		if (id o = [fsData objectForKey:@"force"])
+			force = [o boolValue];
+		if (!snapName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			auto snap = _zfs.filesystem([snapName UTF8String]);
+			if (snap.rollback(force))
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
 }
 
 - (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply

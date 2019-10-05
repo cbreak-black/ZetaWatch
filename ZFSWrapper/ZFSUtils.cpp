@@ -203,6 +203,18 @@ namespace zfs
 		return !zfs_unmount(m_handle, nullptr, flags);
 	}
 
+	bool ZFileSystem::rollback(bool force)
+	{
+		std::string snapName = name();
+		std::string baseName = snapName.substr(0, snapName.find_last_of('@'));
+		if (type() != snapshot)
+		{
+			throw std::runtime_error(snapName + " is not a snapshot");
+		}
+		auto baseFS = libHandle().filesystem(baseName);
+		return !zfs_rollback(baseFS.m_handle, m_handle, force);
+	}
+
 	struct Pipe
 	{
 		int fd[2];
