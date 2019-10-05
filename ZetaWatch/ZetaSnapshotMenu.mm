@@ -46,10 +46,18 @@ NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delega
 		item.representedObject = sName;
 		item.target = delegate;
 		item = [sMenu addItemWithTitle:@"Unmount (Force)"
-			action:@selector(forceUnmountFilesystem:) keyEquivalent:@""];
+			action:@selector(unmountFilesystemForce:) keyEquivalent:@""];
 		item.representedObject = sName;
 		item.target = delegate;
 	}
+	item = [sMenu addItemWithTitle:@"Rollback"
+		action:@selector(rollbackFilesystem:) keyEquivalent:@""];
+	item.representedObject = sName;
+	item.target = delegate;
+	item = [sMenu addItemWithTitle:@"Rollback (Force)"
+		action:@selector(rollbackFilesystemForce:) keyEquivalent:@""];
+	item.representedObject = sName;
+	item.target = delegate;
 	item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
 	item.representedObject = sName;
 	item.submenu = sMenu;

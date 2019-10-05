@@ -38,6 +38,9 @@
 - (void)unmountFilesystems:(NSDictionary *)mountData
 				 withReply:(void(^)(NSError * error))reply;
 
+- (void)rollbackFilesystem:(NSDictionary *)rollbackData
+				 withReply:(void(^)(NSError * error))reply;
+
 - (void)loadKeyForFilesystem:(NSDictionary *)loadData
 				   withReply:(void(^)(NSError * error))reply;
 

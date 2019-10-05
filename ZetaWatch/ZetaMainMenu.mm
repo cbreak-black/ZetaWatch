@@ -152,7 +152,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			item.representedObject = fsName;
 			item.target = delegate;
 			item = [fsMenu addItemWithTitle:@"Unmount (Force)"
-									 action:@selector(forceUnmountFilesystem:) keyEquivalent:@""];
+									 action:@selector(unmountFilesystemForce:) keyEquivalent:@""];
 			item.representedObject = fsName;
 			item.target = delegate;
 		}
@@ -428,7 +428,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		}
 		{
 			auto item = [vdevMenu addItemWithTitle:@"Export (Force)"
-				action:@selector(forceExportPool:) keyEquivalent:@""];
+				action:@selector(exportPoolForce:) keyEquivalent:@""];
 			item.representedObject = poolName;
 			item.target = delegate;
 		}
@@ -591,7 +591,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
-- (IBAction)forceExportPool:(id)sender
+- (IBAction)exportPoolForce:(id)sender
 {
 	NSDictionary * opts = @{@"pool": [sender representedObject], @"force": @YES};
 	[_authorization exportPools:opts withReply:^(NSError * error)
@@ -685,7 +685,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
-- (IBAction)forceUnmountFilesystem:(id)sender
+- (IBAction)unmountFilesystemForce:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"force": @YES};
 	[_authorization unmountFilesystems:opts withReply:^(NSError * error)
@@ -694,6 +694,38 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		 {
 			 NSString * title = [NSString stringWithFormat:
 				NSLocalizedString(@"Filesystem %@ force-unmounted", @"FS ForceUnmount Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)rollbackFilesystem:(id)sender
+{
+	NSDictionary * opts = @{@"snapshot": [sender representedObject]};
+	[_authorization rollbackFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Snapshot %@ rolled back", @"Rollback Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)rollbackFilesystemForce:(id)sender
+{
+	NSDictionary * opts = @{@"snapshot": [sender representedObject], @"force": @YES};
+	[_authorization rollbackFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Snapshot %@ force rolled back", @"ForceRollback Success format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:nil];
 		 }

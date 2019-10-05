@@ -284,6 +284,19 @@
 		withNotification:notification];
 }
 
+- (void)rollbackFilesystem:(NSDictionary *)rollbackData
+				 withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = rollbackData[@"snapshot"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"snapshot\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Rolling back", @"Rollback Action") withTarget:target];
+	[self executeOnProxy:@selector(rollbackFilesystem:authorization:withReply:)
+				withData:rollbackData withReply:reply
+		withNotification:notification];
+}
+
 - (void)loadKeyForFilesystem:(NSDictionary *)data
 					withReply:(void(^)(NSError * error))reply
 {
