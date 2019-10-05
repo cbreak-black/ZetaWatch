@@ -14,6 +14,7 @@
 #import "ZetaImportMenu.h"
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
+#import "ZetaSnapshotMenu.h"
 #import "ZetaFileSystemPropertyMenu.h"
 #import "ZetaPoolPropertyMenu.h"
 #import "ZetaNotificationCenter.h"
@@ -176,12 +177,24 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	addMenuItem(fsMenu, delegate,
 				NSLocalizedString(@"Mount Point:        \t %s", @"FS Mountpoint Menu Entry"),
 				fs.mountpoint());
-	// All Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
-	NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
+	// Snapshots
+	NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
+	NSMenu * snaps = [[NSMenu alloc] initWithTitle:snapsTitle];
+	ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs)];
+	snaps.delegate = sd;
+	NSMenuItem * snapsItem = [[NSMenuItem alloc] initWithTitle:snapsTitle
+		action:nullptr keyEquivalent:@""];
+	snapsItem.submenu = snaps;
+	snapsItem.representedObject = sd;
+	[fsMenu addItem:snapsItem];
+	// All Properties
+	NSString * allPropsTitle = NSLocalizedString(@"All Properties", @"All Properties");
+	NSMenu * allProps = [[NSMenu alloc] initWithTitle:allPropsTitle];
 	ZetaFileSystemPropertyMenu * pd = [[ZetaFileSystemPropertyMenu alloc] initWithFileSystem:std::move(fs)];
 	allProps.delegate = pd;
-	NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:@"All Properties" action:nullptr keyEquivalent:@""];
+	NSMenuItem * allPropsItem = [[NSMenuItem alloc] initWithTitle:allPropsTitle
+		action:nullptr keyEquivalent:@""];
 	allPropsItem.submenu = allProps;
 	allPropsItem.representedObject = pd;
 	[fsMenu addItem:allPropsItem];

@@ -15,7 +15,7 @@
 
 @interface ZetaPoolPropertyMenu : ZetaCommanderBase <NSMenuDelegate>
 
-- (id)initWithPool:(zfs::ZPool &&)pool;
+- (id)initWithPool:(zfs::ZPool)pool;
 
 - (void)menuNeedsUpdate:(NSMenu*)menu;
 

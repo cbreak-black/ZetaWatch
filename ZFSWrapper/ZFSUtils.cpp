@@ -126,6 +126,10 @@ namespace zfs
 	{
 	}
 
+	ZFileSystem::ZFileSystem(ZFileSystem const & handle) : m_handle(zfs_handle_dup(handle.m_handle))
+	{
+	}
+
 	ZFileSystem::ZFileSystem(zfs_handle_t * handle) : m_handle(handle)
 	{
 	}
@@ -465,6 +469,17 @@ namespace zfs
 		return children;
 	}
 
+	std::vector<ZFileSystem> ZFileSystem::snapshots() const
+	{
+		std::vector<ZFileSystem> snapshots;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			snapshots.push_back(std::move(fs));
+		});
+		zfs_iter_snapshots_sorted(m_handle, ZFileSystemCallback::handle_s, &cb, 0, 0);
+		return snapshots;
+	}
+
 	void ZFileSystem::iterChildFilesystems(std::function<void(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
@@ -490,6 +505,12 @@ namespace zfs
 			callback(std::move(fs));
 		});
 		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+	}
+
+	void ZFileSystem::iterSnapshots(std::function<void(ZFileSystem)> callback) const
+	{
+		ZFileSystemCallback cb(std::move(callback));
+		zfs_iter_snapshots_sorted(m_handle, ZFileSystemCallback::handle_s, &cb, 0, 0);
 	}
 
 	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :

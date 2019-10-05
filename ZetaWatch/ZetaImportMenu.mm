@@ -42,7 +42,7 @@
 	}
 	else
 	{
-		[_importMenu addItemWithTitle:@"No importable Pools found"
+		[_importMenu addItemWithTitle:NSLocalizedString(@"No importable Pools found", @"No Importable Pools")
 							   action:NULL keyEquivalent:@""];
 	}
 }

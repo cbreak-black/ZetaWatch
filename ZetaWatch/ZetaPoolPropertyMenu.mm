@@ -13,7 +13,7 @@
 	zfs::ZPool _pool;
 }
 
-- (id)initWithPool:(zfs::ZPool &&)pool
+- (id)initWithPool:(zfs::ZPool)pool
 {
 	if (self = [super init])
 	{

@@ -13,7 +13,7 @@
 	zfs::ZFileSystem _fs;
 }
 
-- (id)initWithFileSystem:(zfs::ZFileSystem &&)fs
+- (id)initWithFileSystem:(zfs::ZFileSystem)fs
 {
 	if (self = [super init])
 	{

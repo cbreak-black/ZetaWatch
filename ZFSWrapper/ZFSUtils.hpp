@@ -181,6 +181,9 @@ namespace zfs
 	public:
 		ZFileSystem();
 
+		//! \brief Copies underlying handle
+		explicit ZFileSystem(ZFileSystem const & handle);
+
 		//! \brief Takes ownership
 		explicit ZFileSystem(zfs_handle_t * handle);
 
@@ -216,6 +219,9 @@ namespace zfs
 		//! \returns all direct and indirect child filesystems
 		std::vector<ZFileSystem> allFileSystems() const;
 
+		//! \returns all direct and indirect child filesystems
+		std::vector<ZFileSystem> snapshots() const;
+
 		//! Iterates over all direct child filesystems
 		void iterChildFilesystems(std::function<void(ZFileSystem)> callback) const;
 
@@ -226,6 +232,9 @@ namespace zfs
 		//! Iterates over all child filesystems recursively, visiting all child
 		//! filesystems before the parent filesystem.
 		void iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const;
+
+		//! Iterates over all snapshots
+		void iterSnapshots(std::function<void(ZFileSystem)> callback) const;
 
 	public: // requires root permission
 		bool mount(); //!< Mount the filesystem if possible
