@@ -771,7 +771,11 @@ namespace zfs
 
 	ZFileSystem LibZFSHandle::filesystem(std::string const & name) const
 	{
-		auto fs = zfs_open(handle(), name.c_str(), ZFS_TYPE_FILESYSTEM);
+		int allowedTypes = ZFS_TYPE_FILESYSTEM
+			| ZFS_TYPE_SNAPSHOT
+			| ZFS_TYPE_POOL
+			| ZFS_TYPE_BOOKMARK;
+		auto fs = zfs_open(handle(), name.c_str(), allowedTypes);
 		if (fs == nullptr)
 			throw std::runtime_error("Filesystem " + name + " does not exist");
 		return ZFileSystem(fs);

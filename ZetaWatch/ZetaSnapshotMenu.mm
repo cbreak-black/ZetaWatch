@@ -8,18 +8,52 @@
 
 #import "ZetaSnapshotMenu.h"
 
+#import "ZetaMainMenu.h"
+
 @implementation ZetaSnapshotMenu
 {
 	zfs::ZFileSystem _fs;
+	ZetaMainMenu __weak * _delegate;
 }
 
-- (id)initWithFileSystem:(zfs::ZFileSystem)fs
+- (id)initWithFileSystem:(zfs::ZFileSystem)fs delegate:(ZetaMainMenu*)delegate
 {
 	if (self = [super init])
 	{
 		_fs = std::move(fs);
+		_delegate = delegate;
 	}
 	return self;
+}
+
+NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delegate)
+{
+	NSMenu * sMenu = [[NSMenu alloc] init];
+	[sMenu setAutoenablesItems:NO];
+	NSString * sName = [NSString stringWithUTF8String:snap.name()];
+	NSMenuItem * item;
+	if (!snap.mounted())
+	{
+		item = [sMenu addItemWithTitle:@"Mount"
+			action:@selector(mountFilesystem:) keyEquivalent:@""];
+		item.representedObject = sName;
+		item.target = delegate;
+	}
+	else
+	{
+		item = [sMenu addItemWithTitle:@"Unmount"
+			action:@selector(unmountFilesystem:) keyEquivalent:@""];
+		item.representedObject = sName;
+		item.target = delegate;
+		item = [sMenu addItemWithTitle:@"Unmount (Force)"
+			action:@selector(forceUnmountFilesystem:) keyEquivalent:@""];
+		item.representedObject = sName;
+		item.target = delegate;
+	}
+	item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
+	item.representedObject = sName;
+	item.submenu = sMenu;
+	return item;
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
@@ -30,8 +64,8 @@
 	{
 		for (auto const & s : snap)
 		{
-			NSString * title = [NSString stringWithFormat:NSLocalizedString(@"%s", @"Snapshot"), s.name()];
-			[menu addItemWithTitle:title action:NULL keyEquivalent:@""];
+			NSMenuItem * item = createSnapMenu(s, _delegate);
+			[menu addItem:item];
 		}
 	}
 	else

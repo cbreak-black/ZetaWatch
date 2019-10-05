@@ -181,7 +181,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	// Snapshots
 	NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
 	NSMenu * snaps = [[NSMenu alloc] initWithTitle:snapsTitle];
-	ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs)];
+	ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs) delegate:delegate];
 	snaps.delegate = sd;
 	NSMenuItem * snapsItem = [[NSMenuItem alloc] initWithTitle:snapsTitle
 		action:nullptr keyEquivalent:@""];

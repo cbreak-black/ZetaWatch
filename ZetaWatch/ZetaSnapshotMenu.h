@@ -14,9 +14,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ZetaMainMenu;
+
 @interface ZetaSnapshotMenu : ZetaCommanderBase <NSMenuDelegate>
 
-- (id)initWithFileSystem:(zfs::ZFileSystem)fs;
+- (id)initWithFileSystem:(zfs::ZFileSystem)fs delegate:(ZetaMainMenu*)main;
 
 - (void)menuNeedsUpdate:(NSMenu*)menu;
 

@@ -367,11 +367,19 @@
 				auto fs = _zfs.filesystem([fsName UTF8String]);
 				if (recursive)
 				{
-					fs.iterAllFileSystemsReverse([self,&failures,force](zfs::ZFileSystem fs)
+					auto unmountSnap = [self,&failures,force](zfs::ZFileSystem snap)
 					{
+						if (!snap.unmount(force))
+							failures.emplace_back(_zfs.lastError());
+					};
+					auto unmountFS = [self,&failures,force,&unmountSnap](zfs::ZFileSystem fs)
+					{
+						fs.iterSnapshots(unmountSnap);
 						if (!fs.unmount(force))
 							failures.emplace_back(_zfs.lastError());
-					});
+					};
+					fs.iterAllFileSystemsReverse(unmountFS);
+					fs.iterSnapshots(unmountSnap);
 				}
 				if (!fs.unmount(force))
 					failures.emplace_back(_zfs.lastError());

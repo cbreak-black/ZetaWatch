@@ -32,6 +32,20 @@ enum ZetaMenuTags
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 
+
+- (IBAction)exportPool:(id)sender;
+- (IBAction)forceExportPool:(id)sender;
 - (IBAction)mountAllFilesystems:(id)sender;
+- (IBAction)mountFilesystem:(id)sender;
+- (IBAction)mountFilesystemRecursive:(id)sender;
+- (IBAction)unmountFilesystem:(id)sender;
+- (IBAction)unmountFilesystemRecursive:(id)sender;
+- (IBAction)forceUnmountFilesystem:(id)sender;
+- (IBAction)loadKey:(id)sender;
+- (IBAction)loadAllKeys:(id)sender;
+- (IBAction)unloadKey:(id)sender;
+- (IBAction)unloadAllKeys:(id)sender;
+- (IBAction)scrubPool:(id)sender;
+- (IBAction)scrubStopPool:(id)sender;
 
 @end
