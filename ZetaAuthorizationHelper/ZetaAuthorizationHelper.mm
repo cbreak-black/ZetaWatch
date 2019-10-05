@@ -217,7 +217,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -248,7 +248,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}], nullptr);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}], nullptr);
 		}
 	}
 	else
@@ -275,7 +275,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -337,7 +337,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -410,13 +410,28 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
 	{
 		reply(error);
 	}
+}
+
+- (void)rollbackFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
+}
+
+- (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
+}
+
+- (void)destroyFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
 }
 
 - (void)loadKeyForFilesystem:(NSDictionary *)loadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
@@ -466,7 +481,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -517,7 +532,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
@@ -560,7 +575,7 @@
 		}
 		catch (std::exception const & e)
 		{
-			reply([NSError errorWithDomain:@"ZFS Exception" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 		}
 	}
 	else
