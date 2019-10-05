@@ -695,7 +695,7 @@
 					"$(ZFS_DIR)/lib/libzpool/.libs/",
 					"$(ZFS_DIR)/lib/libnvpair/.libs/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -752,7 +752,7 @@
 					"$(ZFS_DIR)/lib/libzpool/.libs/",
 					"$(ZFS_DIR)/lib/libnvpair/.libs/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
