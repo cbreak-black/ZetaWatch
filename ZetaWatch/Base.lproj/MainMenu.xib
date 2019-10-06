@@ -17,8 +17,9 @@
             <connections>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
                 <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
-                <outlet property="zetaKeyLoaderDelegate" destination="R7D-cp-kuE" id="KCZ-sp-kdc"/>
+                <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="Uml-Lc-GeC"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
+                <outlet property="zetaQueryDialog" destination="TB2-7Z-kJ2" id="d4N-Ym-SU3"/>
             </connections>
         </customObject>
         <customObject id="8rf-zp-5r9" userLabel="ZetaMainMenu" customClass="ZetaMainMenu">
@@ -27,6 +28,7 @@
                 <outlet property="notificationCenter" destination="ZZj-pd-85j" id="DDy-Za-7rV"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="Sat-ah-3Qq"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
+                <outlet property="zetaQueryDialog" destination="TB2-7Z-kJ2" id="F0s-lJ-1nh"/>
             </connections>
         </customObject>
         <customObject id="geo-tu-CMM" userLabel="ZetaImportMenu" customClass="ZetaImportMenu">
@@ -47,6 +49,13 @@
                 <outlet property="queryField" destination="vtC-BP-wc5" id="cQa-7q-bCw"/>
                 <outlet property="statusField" destination="egb-Mb-iyZ" id="FbE-63-Kfl"/>
                 <outlet property="useKeychainCheckbox" destination="2s9-7L-bQq" id="6dw-gL-9v1"/>
+            </connections>
+        </customObject>
+        <customObject id="TB2-7Z-kJ2" userLabel="ZetaQueryDialog" customClass="ZetaQueryDialog">
+            <connections>
+                <outlet property="popover" destination="BNT-uI-e5Z" id="Yz7-Dw-vEz"/>
+                <outlet property="queryField" destination="VwX-rR-NXB" id="dK5-xq-IgY"/>
+                <outlet property="replyField" destination="aF4-gD-hTY" id="8bG-cA-Ey2"/>
             </connections>
         </customObject>
         <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher"/>
@@ -893,90 +902,94 @@ Gw
                 <outlet property="delegate" destination="R7D-cp-kuE" id="4kg-JY-FmY"/>
             </connections>
         </popover>
-        <viewController id="cvg-uB-4z4" userLabel="Import Popover View Controller">
+        <viewController id="cvg-uB-4z4" userLabel="Query Popover View Controller">
             <connections>
-                <outlet property="view" destination="GMb-WG-gt7" id="KTw-JK-BeN"/>
+                <outlet property="view" destination="xBy-DS-Zxq" id="boV-oP-ybM"/>
             </connections>
         </viewController>
-        <popover behavior="semitransient" id="BNT-uI-e5Z" userLabel="Import Popover">
+        <popover behavior="semitransient" id="BNT-uI-e5Z" userLabel="Query Popover">
             <connections>
                 <outlet property="contentViewController" destination="cvg-uB-4z4" id="ihh-qg-O93"/>
             </connections>
         </popover>
         <userDefaultsController representsSharedInstance="YES" id="oMO-Og-s5N"/>
-        <customView id="GMb-WG-gt7" userLabel="ImportPoolDialog">
-            <rect key="frame" x="0.0" y="0.0" width="554" height="104"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+        <customObject id="7Va-uZ-m1K" customClass="SUUpdater"/>
+        <customView id="xBy-DS-Zxq" userLabel="QueryDialog">
+            <rect key="frame" x="0.0" y="0.0" width="555" height="116"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0d-S0-6AV">
-                    <rect key="frame" x="20" y="20" width="64" height="64"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VwX-rR-NXB" userLabel="QueryTextField">
+                    <rect key="frame" x="90" y="79" width="447" height="17"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="64" id="VoR-wq-Bxg"/>
-                        <constraint firstAttribute="width" constant="64" id="ei1-h6-Rbe"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="17" id="bI6-0C-vUT"/>
                     </constraints>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="Xec-xx-hpk"/>
-                </imageView>
-                <textField horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="aT3-Yv-LDt">
-                    <rect key="frame" x="90" y="67" width="446" height="17"/>
-                    <textFieldCell key="cell" refusesFirstResponder="YES" title="Import Pool..." id="C30-70-5xn">
+                    <textFieldCell key="cell" refusesFirstResponder="YES" title="Query" id="qSb-DF-62v">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="e5J-pY-Cpg">
-                    <rect key="frame" x="460" y="13" width="80" height="32"/>
-                    <buttonCell key="cell" type="push" title="Import" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hzh-0J-CU1">
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="975-gg-tbR">
+                    <rect key="frame" x="484" y="13" width="57" height="32"/>
+                    <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4cM-PF-O9d">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                         <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
                     </buttonCell>
+                    <connections>
+                        <action selector="ok:" target="TB2-7Z-kJ2" id="rNC-zb-KEI"/>
+                    </connections>
                 </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B1t-jC-NZP">
-                    <rect key="frame" x="381" y="13" width="79" height="32"/>
-                    <buttonCell key="cell" type="push" title="Ignore" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="h9q-I4-Kc9">
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7YP-fB-fKc">
+                    <rect key="frame" x="402" y="13" width="82" height="32"/>
+                    <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fsa-Sc-vN6">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                         <string key="keyEquivalent" base64-UTF8="YES">
 Gw
 </string>
                     </buttonCell>
+                    <connections>
+                        <action selector="cancel:" target="TB2-7Z-kJ2" id="MnW-9i-IFa"/>
+                    </connections>
                 </button>
-                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="gpB-aJ-ubI">
-                    <rect key="frame" x="92" y="20" width="16" height="16"/>
-                </progressIndicator>
-                <textField hidden="YES" horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="y44-cd-qJ2">
-                    <rect key="frame" x="114" y="20" width="267" height="17"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" title="Status" id="lQA-Xl-Jcg">
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="flA-4i-OSt">
+                    <rect key="frame" x="20" y="32" width="64" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="64" id="Wbu-ja-J2J"/>
+                        <constraint firstAttribute="height" constant="64" id="hnI-ca-3jH"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="mfz-8D-mnE"/>
+                </imageView>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aF4-gD-hTY">
+                    <rect key="frame" x="92" y="49" width="443" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="ztY-kw-Z07">
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="X0d-S0-6AV" firstAttribute="leading" secondItem="GMb-WG-gt7" secondAttribute="leading" constant="20" symbolic="YES" id="8Uv-al-p8n"/>
-                <constraint firstItem="aT3-Yv-LDt" firstAttribute="leading" secondItem="X0d-S0-6AV" secondAttribute="trailing" constant="8" symbolic="YES" id="DHP-fX-zVC"/>
-                <constraint firstItem="e5J-pY-Cpg" firstAttribute="leading" secondItem="B1t-jC-NZP" secondAttribute="trailing" constant="12" symbolic="YES" id="DvM-6B-iow"/>
-                <constraint firstAttribute="bottom" secondItem="y44-cd-qJ2" secondAttribute="bottom" constant="20" symbolic="YES" id="FbR-5E-UCm"/>
-                <constraint firstItem="gpB-aJ-ubI" firstAttribute="leading" secondItem="X0d-S0-6AV" secondAttribute="trailing" constant="8" symbolic="YES" id="G95-FG-hvy"/>
-                <constraint firstItem="y44-cd-qJ2" firstAttribute="leading" secondItem="gpB-aJ-ubI" secondAttribute="trailing" constant="8" symbolic="YES" id="VjO-vd-IPa"/>
-                <constraint firstItem="aT3-Yv-LDt" firstAttribute="top" secondItem="GMb-WG-gt7" secondAttribute="top" constant="20" symbolic="YES" id="Vlh-zN-vM8"/>
-                <constraint firstAttribute="bottom" secondItem="gpB-aJ-ubI" secondAttribute="bottom" constant="20" symbolic="YES" id="a2d-gR-Gmi"/>
-                <constraint firstItem="B1t-jC-NZP" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aT3-Yv-LDt" secondAttribute="bottom" constant="8" symbolic="YES" id="b68-Y0-TD7"/>
-                <constraint firstItem="X0d-S0-6AV" firstAttribute="top" secondItem="GMb-WG-gt7" secondAttribute="top" constant="20" symbolic="YES" id="cYD-6Z-ucF"/>
-                <constraint firstItem="B1t-jC-NZP" firstAttribute="leading" secondItem="y44-cd-qJ2" secondAttribute="trailing" constant="8" symbolic="YES" id="cmM-Ra-48g"/>
-                <constraint firstAttribute="trailing" secondItem="e5J-pY-Cpg" secondAttribute="trailing" constant="20" symbolic="YES" id="dcP-0J-LWI"/>
-                <constraint firstAttribute="trailing" secondItem="aT3-Yv-LDt" secondAttribute="trailing" constant="20" symbolic="YES" id="dwi-Kr-Hgc"/>
-                <constraint firstAttribute="bottom" secondItem="B1t-jC-NZP" secondAttribute="bottom" constant="20" symbolic="YES" id="ejc-vS-Kh8"/>
-                <constraint firstItem="e5J-pY-Cpg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="aT3-Yv-LDt" secondAttribute="bottom" constant="8" symbolic="YES" id="kWu-90-ql9"/>
-                <constraint firstAttribute="bottom" secondItem="e5J-pY-Cpg" secondAttribute="bottom" constant="20" symbolic="YES" id="rtl-mI-44v"/>
+                <constraint firstItem="flA-4i-OSt" firstAttribute="leading" secondItem="xBy-DS-Zxq" secondAttribute="leading" constant="20" symbolic="YES" id="5Y2-Cs-uzD"/>
+                <constraint firstItem="975-gg-tbR" firstAttribute="top" secondItem="aF4-gD-hTY" secondAttribute="bottom" constant="8" symbolic="YES" id="6bj-Ds-15S"/>
+                <constraint firstItem="7YP-fB-fKc" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="aF4-gD-hTY" secondAttribute="leading" id="C7M-q4-fHe"/>
+                <constraint firstAttribute="bottom" secondItem="975-gg-tbR" secondAttribute="bottom" constant="20" symbolic="YES" id="GqB-xX-tBM"/>
+                <constraint firstItem="flA-4i-OSt" firstAttribute="top" secondItem="xBy-DS-Zxq" secondAttribute="top" constant="20" symbolic="YES" id="L38-PC-unr"/>
+                <constraint firstAttribute="trailing" secondItem="aF4-gD-hTY" secondAttribute="trailing" constant="20" symbolic="YES" id="Q90-Fo-k83"/>
+                <constraint firstAttribute="trailing" secondItem="975-gg-tbR" secondAttribute="trailing" constant="20" symbolic="YES" id="ViS-af-HY5"/>
+                <constraint firstAttribute="trailing" secondItem="VwX-rR-NXB" secondAttribute="trailing" constant="20" symbolic="YES" id="a5q-sl-5GT"/>
+                <constraint firstItem="975-gg-tbR" firstAttribute="leading" secondItem="7YP-fB-fKc" secondAttribute="trailing" constant="12" symbolic="YES" id="aYI-j7-vek"/>
+                <constraint firstItem="aF4-gD-hTY" firstAttribute="leading" secondItem="VwX-rR-NXB" secondAttribute="leading" id="acM-8z-O5p"/>
+                <constraint firstItem="VwX-rR-NXB" firstAttribute="leading" secondItem="flA-4i-OSt" secondAttribute="trailing" constant="8" symbolic="YES" id="hiA-RE-dVE"/>
+                <constraint firstItem="aF4-gD-hTY" firstAttribute="top" secondItem="VwX-rR-NXB" secondAttribute="bottom" constant="8" id="lTK-Kf-8of"/>
+                <constraint firstItem="7YP-fB-fKc" firstAttribute="top" secondItem="aF4-gD-hTY" secondAttribute="bottom" constant="8" symbolic="YES" id="s41-PV-p6O"/>
+                <constraint firstItem="VwX-rR-NXB" firstAttribute="top" secondItem="xBy-DS-Zxq" secondAttribute="top" priority="750" constant="20" symbolic="YES" id="zMj-zA-y4l"/>
             </constraints>
-            <point key="canvasLocation" x="144" y="699"/>
+            <point key="canvasLocation" x="144.5" y="732"/>
         </customView>
-        <customObject id="7Va-uZ-m1K" customClass="SUUpdater"/>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>

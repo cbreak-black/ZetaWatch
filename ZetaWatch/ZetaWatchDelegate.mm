@@ -14,6 +14,7 @@
 
 #import "ZetaMainMenu.h"
 #import "ZetaKeyLoader.h"
+#import "ZetaQueryDialog.h"
 
 #import "ZFSUtils.hpp"
 
@@ -25,7 +26,8 @@
 }
 
 @property (weak) IBOutlet NSMenu * zetaMenu;
-@property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoaderDelegate;
+@property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
+@property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet SUUpdater * updater;
 
@@ -42,7 +44,8 @@
 	[zetaImage setTemplate:YES];
 	_statusItem.button.image = zetaImage;
 	_statusItem.menu = _zetaMenu;
-	_zetaKeyLoaderDelegate.statusItem = _statusItem;
+	_zetaKeyLoader.statusItem = _statusItem;
+	_zetaQueryDialog.statusItem = _statusItem;
 	// User Defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		@"autoUnlock": @YES,

@@ -713,39 +713,56 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
+static NSString * defaultSnapshotName()
+{
+	auto now = [NSDate date];
+	auto formater = [[NSDateFormatter alloc] init];
+	formater.dateFormat = @"'ZetaSnap'-yyyy-MM-dd-HH-mm-ss";
+	auto nowString = [formater stringFromDate:now];
+	return nowString;
+}
+
 - (IBAction)snapshotFilesystem:(id)sender
 {
 	NSString * filesystem = [sender representedObject];
-	NSString * snapshot = @"XXXX";
-	NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot};
-	[_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+	[_zetaQueryDialog addQuery:NSLocalizedString(@"Enter snapshot name", @"Snapshot Query")
+				   withDefault:defaultSnapshotName()
+				  withCallback:^(NSString * snapshot)
 	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Snapshot %@@%@ created", @"Snapshot Success format"),
-				filesystem, snapshot];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
+		 NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot};
+		 [self->_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+		  {
+			  if (!error)
+			  {
+				  NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Snapshot %@@%@ created", @"Snapshot Success format"),
+									  filesystem, snapshot];
+				  [self notifySuccessWithTitle:title text:nil];
+			  }
+			  [self handleFileSystemChangeReply:error];
+		  }];
 	 }];
 }
 
 - (IBAction)snapshotFilesystemRecursive:(id)sender
 {
 	NSString * filesystem = [sender representedObject];
-	NSString * snapshot = @"XXXX";
-	NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot, @"recursive": @YES};
-	[_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+	[_zetaQueryDialog addQuery:NSLocalizedString(@"Enter snapshot name", @"Snapshot Query")
+				   withDefault:defaultSnapshotName()
+				  withCallback:^(NSString * snapshot)
 	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Recursive Snapshot %@@%@ created", @"RecursiveSnapshot Success format"),
-				filesystem, snapshot];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
+		 NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot, @"recursive": @YES};
+		 [self->_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+		  {
+			  if (!error)
+			  {
+				  NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Recursive Snapshot %@@%@ created", @"RecursiveSnapshot Success format"),
+					filesystem, snapshot];
+				  [self notifySuccessWithTitle:title text:nil];
+			  }
+			  [self handleFileSystemChangeReply:error];
+		  }];
 	 }];
 }
 
@@ -785,17 +802,22 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 {
 	NSString * snapshot = [sender representedObject];
 	NSString * newFileSystem = [snapshot stringByReplacingOccurrencesOfString:@"@" withString:@"-"];
-	NSDictionary * opts = @{@"snapshot": snapshot, @"newFilesystem": newFileSystem};
-	[_authorization cloneSnapshot:opts withReply:^(NSError * error)
+	[_zetaQueryDialog addQuery:NSLocalizedString(@"Enter new filesystem name", @"Clone Query")
+				   withDefault:newFileSystem
+				  withCallback:^(NSString * newFileSystem)
 	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Snapshot %@ cloned", @"Clone Success format"),
-				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
+		 NSDictionary * opts = @{@"snapshot": snapshot, @"newFilesystem": newFileSystem};
+		 [self->_authorization cloneSnapshot:opts withReply:^(NSError * error)
+		  {
+			  if (!error)
+			  {
+				  NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Snapshot %@ to %@ cloned", @"Clone Success format"),
+					snapshot, newFileSystem];
+				  [self notifySuccessWithTitle:title text:nil];
+			  }
+			  [self handleFileSystemChangeReply:error];
+		  }];
 	 }];
 }
 
