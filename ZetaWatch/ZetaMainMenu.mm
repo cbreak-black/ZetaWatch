@@ -111,7 +111,13 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	NSMenu * fsMenu = [[NSMenu alloc] init];
 	[fsMenu setAutoenablesItems:NO];
 	NSString * fsName = [NSString stringWithUTF8String:fs.name()];
-	NSMenuItem * item;
+	auto addFSCommand = [&](NSString * title, SEL selector)
+	{
+		auto item = [fsMenu addItemWithTitle:title
+									  action:selector keyEquivalent:@""];
+		item.representedObject = fsName;
+		item.target = delegate;
+	};
 	if (fs.type() == zfs::ZFileSystem::FSType::filesystem)
 	{
 		auto [encRoot, isRoot] = fs.encryptionRoot();
@@ -119,58 +125,30 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 		{
 			if (fs.keyStatus() != zfs::ZFileSystem::KeyStatus::available)
 			{
-				item = [fsMenu addItemWithTitle:NSLocalizedString(@"Load Key", @"Load Key")
-					action:@selector(loadKey:) keyEquivalent:@""];
+				addFSCommand(NSLocalizedString(@"Load Key", @"Load Key"), @selector(loadKey:));
 			}
 			else
 			{
-				item = [fsMenu addItemWithTitle:NSLocalizedString(@"Unoad Key", @"Unload Key")
-					action:@selector(unloadKey:) keyEquivalent:@""];
+				addFSCommand(NSLocalizedString(@"Unoad Key", @"Unoad Key"), @selector(unloadKey:));
 			}
-			item.representedObject = fsName;
-			item.target = delegate;
+			[fsMenu addItem:[NSMenuItem separatorItem]];
 		}
-		item = [fsMenu addItemWithTitle:NSLocalizedString(@"Mount Recursive", @"Mount Recursive")
-								 action:@selector(mountFilesystemRecursive:) keyEquivalent:@""];
-		item.representedObject = fsName;
-		item.target = delegate;
+		addFSCommand(NSLocalizedString(@"Mount Recursive", @"Mount Recursive"), @selector(mountFilesystemRecursive:));
 		if (!fs.mounted())
 		{
-			item = [fsMenu addItemWithTitle:NSLocalizedString(@"Mount", @"Mount")
-									 action:@selector(mountFilesystem:) keyEquivalent:@""];
-			item.representedObject = fsName;
-			item.target = delegate;
+			addFSCommand(NSLocalizedString(@"Mount", @"Mount"), @selector(mountFilesystem:));
 		}
-		item = [fsMenu addItemWithTitle:NSLocalizedString(@"Unmount Recursive", @"Unmount Recursive")
-								 action:@selector(unmountFilesystemRecursive:) keyEquivalent:@""];
-		item.representedObject = fsName;
-		item.target = delegate;
+		addFSCommand(NSLocalizedString(@"Unmount Recursive", @"Unmount Recursive"), @selector(unmountFilesystemRecursive:));
 		if (fs.mounted())
 		{
-			item = [fsMenu addItemWithTitle:NSLocalizedString(@"Unmount", @"Unmount")
-									 action:@selector(unmountFilesystem:) keyEquivalent:@""];
-			item.representedObject = fsName;
-			item.target = delegate;
-			item = [fsMenu addItemWithTitle:NSLocalizedString(@"Unmount (Force)", @"Unmount (Force)")
-									 action:@selector(unmountFilesystemForce:) keyEquivalent:@""];
-			item.representedObject = fsName;
-			item.target = delegate;
+			addFSCommand(NSLocalizedString(@"Unmount", @"Unmount"), @selector(unmountFilesystem:));
+			addFSCommand(NSLocalizedString(@"Unmount (Force)", @"Unmount (Force)"), @selector(unmountFilesystemForce:));
 		}
 	}
-	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Snapshot", @"Snapshot")
-							 action:@selector(snapshotFilesystem:) keyEquivalent:@""];
-	item.representedObject = fsName;
-	item.target = delegate;
-	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive")
-							 action:@selector(snapshotFilesystemRecursive:) keyEquivalent:@""];
-	item.representedObject = fsName;
-	item.target = delegate;
-	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Destroy", @"Destroy")
-							 action:@selector(destroyFilesystem:) keyEquivalent:@""];
-	item.representedObject = fsName;
-	item.target = delegate;
-	[fsMenu addItem:[NSMenuItem separatorItem]];
 	// Snapshots
+	[fsMenu addItem:[NSMenuItem separatorItem]];
+	addFSCommand(NSLocalizedString(@"Snapshot", @"Snapshot"), @selector(snapshotFilesystem:));
+	addFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"), @selector(snapshotFilesystemRecursive:));
 	NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
 	NSMenu * snaps = [[NSMenu alloc] initWithTitle:snapsTitle];
 	ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs) delegate:delegate];
@@ -180,6 +158,9 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	snapsItem.submenu = snaps;
 	snapsItem.representedObject = sd;
 	[fsMenu addItem:snapsItem];
+	// Destroy
+	[fsMenu addItem:[NSMenuItem separatorItem]];
+	addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
 	// Selected Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addMenuItem(fsMenu, delegate,

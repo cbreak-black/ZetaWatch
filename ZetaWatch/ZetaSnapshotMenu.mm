@@ -31,42 +31,29 @@ NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delega
 	NSMenu * sMenu = [[NSMenu alloc] init];
 	[sMenu setAutoenablesItems:NO];
 	NSString * sName = [NSString stringWithUTF8String:snap.name()];
-	NSMenuItem * item;
-	item = [sMenu addItemWithTitle:NSLocalizedString(@"Clone", @"Clone")
-							action:@selector(cloneSnapshot:) keyEquivalent:@""];
-	item.representedObject = sName;
-	item.target = delegate;
-	item = [sMenu addItemWithTitle:NSLocalizedString(@"Rollback", @"Rollback")
-		action:@selector(rollbackFilesystem:) keyEquivalent:@""];
-	item.representedObject = sName;
-	item.target = delegate;
-	item = [sMenu addItemWithTitle:NSLocalizedString(@"Rollback (Force)", @"Rollback (Force)")
-		action:@selector(rollbackFilesystemForce:) keyEquivalent:@""];
-	item.representedObject = sName;
-	item.target = delegate;
-	if (!snap.mounted())
+	auto addSnapCommand = [&](NSString * title, SEL selector)
 	{
-		item = [sMenu addItemWithTitle:NSLocalizedString(@"Mount", @"Mount")
-								action:@selector(mountFilesystem:) keyEquivalent:@""];
+		auto item = [sMenu addItemWithTitle:title
+									 action:selector keyEquivalent:@""];
 		item.representedObject = sName;
 		item.target = delegate;
+	};
+	addSnapCommand(NSLocalizedString(@"Clone", @"Clone"), @selector(cloneSnapshot:));
+	addSnapCommand(NSLocalizedString(@"Rollback", @"Rollback"), @selector(rollbackFilesystem:));
+	addSnapCommand(NSLocalizedString(@"Rollback (Force)", @"Rollback (Force)"), @selector(rollbackFilesystemForce:));
+	[sMenu addItem:[NSMenuItem separatorItem]];
+	if (!snap.mounted())
+	{
+		addSnapCommand(NSLocalizedString(@"Mount", @"Mount"), @selector(mountFilesystem:));
 	}
 	else
 	{
-		item = [sMenu addItemWithTitle:NSLocalizedString(@"Unmount", @"Unmount")
-								action:@selector(unmountFilesystem:) keyEquivalent:@""];
-		item.representedObject = sName;
-		item.target = delegate;
-		item = [sMenu addItemWithTitle:NSLocalizedString(@"Unmount (Force)", @"Unmount (Force)")
-								action:@selector(unmountFilesystemForce:) keyEquivalent:@""];
-		item.representedObject = sName;
-		item.target = delegate;
+		addSnapCommand(NSLocalizedString(@"Unmount", @"Unmount"), @selector(unmountFilesystem:));
+		addSnapCommand(NSLocalizedString(@"Unmount (Force)", @"Unmount (Force)"), @selector(unmountFilesystemForce:));
 	}
-	item = [sMenu addItemWithTitle:NSLocalizedString(@"Destroy", @"Destroy")
-							action:@selector(destroyFilesystem:) keyEquivalent:@""];
-	item.representedObject = sName;
-	item.target = delegate;
-	item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
+	[sMenu addItem:[NSMenuItem separatorItem]];
+	addSnapCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+	auto item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
 	item.representedObject = sName;
 	item.submenu = sMenu;
 	return item;
