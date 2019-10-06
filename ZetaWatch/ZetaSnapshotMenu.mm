@@ -32,6 +32,10 @@ NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delega
 	[sMenu setAutoenablesItems:NO];
 	NSString * sName = [NSString stringWithUTF8String:snap.name()];
 	NSMenuItem * item;
+	item = [sMenu addItemWithTitle:NSLocalizedString(@"Clone", @"Clone")
+							action:@selector(cloneSnapshot:) keyEquivalent:@""];
+	item.representedObject = sName;
+	item.target = delegate;
 	item = [sMenu addItemWithTitle:NSLocalizedString(@"Rollback", @"Rollback")
 		action:@selector(rollbackFilesystem:) keyEquivalent:@""];
 	item.representedObject = sName;
@@ -58,6 +62,10 @@ NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delega
 		item.representedObject = sName;
 		item.target = delegate;
 	}
+	item = [sMenu addItemWithTitle:NSLocalizedString(@"Destroy", @"Destroy")
+							action:@selector(destroyFilesystem:) keyEquivalent:@""];
+	item.representedObject = sName;
+	item.target = delegate;
 	item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
 	item.representedObject = sName;
 	item.submenu = sMenu;

@@ -24,7 +24,11 @@
 
 - (void)unmountFilesystems:(NSDictionary *)mountData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
+- (void)snapshotFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
 - (void)rollbackFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
+- (void)cloneSnapshot:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 - (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 

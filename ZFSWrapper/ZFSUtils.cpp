@@ -203,16 +203,46 @@ namespace zfs
 		return !zfs_unmount(m_handle, nullptr, flags);
 	}
 
+	bool ZFileSystem::snapshot(std::string const & snapName, bool recursive)
+	{
+		std::string fullName = name();
+		fullName += '@';
+		fullName += snapName;
+		auto lib = libHandle();
+		return !zfs_snapshot(lib.handle(), fullName.c_str(), recursive, nullptr);
+	}
+
 	bool ZFileSystem::rollback(bool force)
 	{
 		std::string snapName = name();
 		std::string baseName = snapName.substr(0, snapName.find_last_of('@'));
-		if (type() != snapshot)
+		if (type() != FSType::snapshot)
 		{
 			throw std::runtime_error(snapName + " is not a snapshot");
 		}
 		auto baseFS = libHandle().filesystem(baseName);
 		return !zfs_rollback(baseFS.m_handle, m_handle, force);
+	}
+
+	bool ZFileSystem::clone(std::string const & newFSName)
+	{
+		std::string snapName = name();
+		if (type() != FSType::snapshot)
+		{
+			throw std::runtime_error(snapName + " is not a snapshot");
+		}
+		return !zfs_clone(m_handle, newFSName.c_str(), nullptr);
+	}
+
+	bool ZFileSystem::destroy(bool recursive, bool force)
+	{
+		if (!unmount(force))
+			return false;
+		// This requires that there are no dependents
+		// TODO: Implement recursive
+		if (recursive)
+			throw std::logic_error("Unimplemented");
+		return !zfs_destroy(m_handle, false);
 	}
 
 	struct Pipe
@@ -296,15 +326,15 @@ namespace zfs
 		return res == 0;
 	}
 
-	ZFileSystem::Type ZFileSystem::type() const
+	ZFileSystem::FSType ZFileSystem::type() const
 	{
-		static_assert(filesystem == ZFS_TYPE_FILESYSTEM &&
-					  snapshot == ZFS_TYPE_SNAPSHOT &&
-					  volume == ZFS_TYPE_VOLUME &&
-					  pool == ZFS_TYPE_POOL &&
-					  bookmark == ZFS_TYPE_BOOKMARK,
+		static_assert((zfs_type_t)FSType::filesystem == ZFS_TYPE_FILESYSTEM &&
+					  (zfs_type_t)FSType::snapshot == ZFS_TYPE_SNAPSHOT &&
+					  (zfs_type_t)FSType::volume == ZFS_TYPE_VOLUME &&
+					  (zfs_type_t)FSType::pool == ZFS_TYPE_POOL &&
+					  (zfs_type_t)FSType::bookmark == ZFS_TYPE_BOOKMARK,
 					  "ZFileSystem::Type == zfs_type_t");
-		return static_cast<Type>(zfs_get_type(m_handle));
+		return static_cast<FSType>(zfs_get_type(m_handle));
 	}
 
 	inline void truncateString(std::string & str)

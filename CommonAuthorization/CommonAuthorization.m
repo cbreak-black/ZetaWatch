@@ -77,6 +77,15 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 											   @"prompt shown when user is required to authorize a zfs unmount"
 											   )
 		  };
+		NSDictionary * dictSnapshot =
+		@{
+		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.snapshot",
+		  kKeyAuthRightDefault: @kAuthorizationRuleClassAllow,
+		  kKeyAuthRightDesc: NSLocalizedString(
+											   @"ZetaWatch is trying to snapshot a filesystem.",
+											   @"prompt shown when user is required to authorize a zfs snapshot"
+											   )
+		  };
 		NSDictionary * dictRollback =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.rollback",
@@ -84,6 +93,15 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		  kKeyAuthRightDesc: NSLocalizedString(
 											   @"ZetaWatch is trying to roll back a filesystem.",
 											   @"prompt shown when user is required to authorize a zfs rollback"
+											   )
+		  };
+		NSDictionary * dictClone =
+		@{
+		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.clone",
+		  kKeyAuthRightDefault: @kAuthorizationRuleAuthenticateAsAdmin,
+		  kKeyAuthRightDesc: NSLocalizedString(
+											   @"ZetaWatch is trying to clone a snapshot.",
+											   @"prompt shown when user is required to authorize a zfs clone"
 											   )
 		  };
 		NSDictionary * dictCreate =
@@ -130,8 +148,12 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		  NSStringFromSelector(@selector(exportPools:authorization:withReply:)): dictExport,
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
 		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,
+		  NSStringFromSelector(@selector(snapshotFilesystem:authorization:withReply:)):
+			  dictSnapshot,
 		  NSStringFromSelector(@selector(rollbackFilesystem:authorization:withReply:)):
 			  dictRollback,
+		  NSStringFromSelector(@selector(cloneSnapshot:authorization:withReply:)):
+			  dictClone,
 		  NSStringFromSelector(@selector(createFilesystem:authorization:withReply:)):
 			  dictCreate,
 		  NSStringFromSelector(@selector(destroyFilesystem:authorization:withReply:)):

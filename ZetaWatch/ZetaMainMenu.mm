@@ -110,10 +110,10 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 {
 	NSMenu * fsMenu = [[NSMenu alloc] init];
 	[fsMenu setAutoenablesItems:NO];
-	if (fs.type() == zfs::ZFileSystem::filesystem)
+	NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+	NSMenuItem * item;
+	if (fs.type() == zfs::ZFileSystem::FSType::filesystem)
 	{
-		NSString * fsName = [NSString stringWithUTF8String:fs.name()];
-		NSMenuItem * item;
 		auto [encRoot, isRoot] = fs.encryptionRoot();
 		if (isRoot)
 		{
@@ -157,6 +157,18 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			item.target = delegate;
 		}
 	}
+	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Snapshot", @"Snapshot")
+							 action:@selector(snapshotFilesystem:) keyEquivalent:@""];
+	item.representedObject = fsName;
+	item.target = delegate;
+	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive")
+							 action:@selector(snapshotFilesystemRecursive:) keyEquivalent:@""];
+	item.representedObject = fsName;
+	item.target = delegate;
+	item = [fsMenu addItemWithTitle:NSLocalizedString(@"Destroy", @"Destroy")
+							 action:@selector(destroyFilesystem:) keyEquivalent:@""];
+	item.representedObject = fsName;
+	item.target = delegate;
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	// Snapshots
 	NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
@@ -701,6 +713,42 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
+- (IBAction)snapshotFilesystem:(id)sender
+{
+	NSString * filesystem = [sender representedObject];
+	NSString * snapshot = @"XXXX";
+	NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot};
+	[_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Snapshot %@@%@ created", @"Snapshot Success format"),
+				filesystem, snapshot];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)snapshotFilesystemRecursive:(id)sender
+{
+	NSString * filesystem = [sender representedObject];
+	NSString * snapshot = @"XXXX";
+	NSDictionary * opts = @{@"filesystem": filesystem, @"snapshot": snapshot, @"recursive": @YES};
+	[_authorization snapshotFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Recursive Snapshot %@@%@ created", @"RecursiveSnapshot Success format"),
+				filesystem, snapshot];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
 - (IBAction)rollbackFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"snapshot": [sender representedObject]};
@@ -726,6 +774,40 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		 {
 			 NSString * title = [NSString stringWithFormat:
 				NSLocalizedString(@"Snapshot %@ force rolled back", @"ForceRollback Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)cloneSnapshot:(id)sender
+{
+	NSString * snapshot = [sender representedObject];
+	NSString * newFileSystem = [snapshot stringByReplacingOccurrencesOfString:@"@" withString:@"-"];
+	NSDictionary * opts = @{@"snapshot": snapshot, @"newFilesystem": newFileSystem};
+	[_authorization cloneSnapshot:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Snapshot %@ cloned", @"Clone Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)destroyFilesystem:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
+	[_authorization destroyFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ destroyed", @"Destroy Success format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:nil];
 		 }

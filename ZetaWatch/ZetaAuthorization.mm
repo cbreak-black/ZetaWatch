@@ -284,6 +284,23 @@
 		withNotification:notification];
 }
 
+- (void)snapshotFilesystem:(NSDictionary *)snapshotData
+				 withReply:(void(^)(NSError * error))reply
+{
+	NSString * filesystem = snapshotData[@"filesystem"];
+	if (filesystem == nil)
+		std::logic_error("Missing required parameter \"filesystem\"");
+	NSString * snapshot = snapshotData[@"snapshot"];
+	if (snapshot == nil)
+		std::logic_error("Missing required parameter \"snapshot\"");
+	NSString * target = [NSString stringWithFormat:@"%@@%@", filesystem, snapshot];
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Snapshotting", @"Snapshot Action") withTarget:target];
+	[self executeOnProxy:@selector(snapshotFilesystem:authorization:withReply:)
+				withData:snapshotData withReply:reply
+		withNotification:notification];
+}
+
 - (void)rollbackFilesystem:(NSDictionary *)rollbackData
 				 withReply:(void(^)(NSError * error))reply
 {
@@ -294,6 +311,32 @@
 		NSLocalizedString(@"Rolling back", @"Rollback Action") withTarget:target];
 	[self executeOnProxy:@selector(rollbackFilesystem:authorization:withReply:)
 				withData:rollbackData withReply:reply
+		withNotification:notification];
+}
+
+- (void)cloneSnapshot:(NSDictionary *)fsData
+			withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = fsData[@"snapshot"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"snapshot\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Cloning", @"Cloning Action") withTarget:target];
+	[self executeOnProxy:@selector(cloneSnapshot:authorization:withReply:)
+				withData:fsData withReply:reply
+		withNotification:notification];
+}
+
+- (void)destroyFilesystem:(NSDictionary *)fsData
+				withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = fsData[@"filesystem"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"filesystem\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Destroying", @"Destroy Action") withTarget:target];
+	[self executeOnProxy:@selector(destroyFilesystem:authorization:withReply:)
+				withData:fsData withReply:reply
 		withNotification:notification];
 }
 

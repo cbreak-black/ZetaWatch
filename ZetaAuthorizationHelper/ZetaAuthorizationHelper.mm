@@ -419,6 +419,47 @@
 	}
 }
 
+- (void)snapshotFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * fsName = [fsData objectForKey:@"filesystem"];
+		NSString * snapName = [fsData objectForKey:@"snapshot"];
+		bool recursive = false;
+		if (id o = [fsData objectForKey:@"recursive"])
+			recursive = [o boolValue];
+		if (!fsName || !snapName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			if (fs.snapshot([snapName UTF8String], recursive))
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
 - (void)rollbackFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
 	NSError * error = [self checkAuthorization:authData command:_cmd];
@@ -459,6 +500,47 @@
 	}
 }
 
+- (void)cloneSnapshot:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * snapName = [fsData objectForKey:@"snapshot"];
+		NSString * newFSName = [fsData objectForKey:@"newFilesystem"];
+		if (!snapName || !newFSName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			std::string newFSNameStr = [newFSName UTF8String];
+			auto snap = _zfs.filesystem([snapName UTF8String]);
+			if (snap.clone(newFSNameStr))
+			{
+				auto newFS = _zfs.filesystem(newFSNameStr);
+				if (newFS.mount())
+				{
+					reply(nullptr);
+					return;
+				}
+			}
+			NSDictionary * userInfo = @{
+				NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+			};
+			reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
+}
+
 - (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
 	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
@@ -466,7 +548,45 @@
 
 - (void)destroyFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
-	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * fsName = [fsData objectForKey:@"filesystem"];
+		bool recursive = false;
+		if (id o = [fsData objectForKey:@"recursive"])
+			recursive = [o boolValue];
+		bool force = false;
+		if (id o = [fsData objectForKey:@"force"])
+			force = [o boolValue];
+		if (!fsName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			if (fs.destroy(recursive, force))
+			{
+				reply(nullptr);
+			}
+			else
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+			}
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
 }
 
 - (void)loadKeyForFilesystem:(NSDictionary *)loadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply

@@ -162,7 +162,7 @@ namespace zfs
 			std::string source;
 		};
 
-		enum Type
+		enum class FSType
 		{
 			filesystem	= (1 << 0),
 			snapshot	= (1 << 1),
@@ -200,7 +200,7 @@ namespace zfs
 	public:
 		char const * name() const;
 		bool mounted() const;
-		Type type() const;
+		FSType type() const;
 		std::uint64_t used() const;
 		std::uint64_t available() const;
 		std::uint64_t referenced() const;
@@ -219,7 +219,7 @@ namespace zfs
 		//! \returns all direct and indirect child filesystems
 		std::vector<ZFileSystem> allFileSystems() const;
 
-		//! \returns all direct and indirect child filesystems
+		//! \returns all snapshots
 		std::vector<ZFileSystem> snapshots() const;
 
 		//! Iterates over all direct child filesystems
@@ -240,9 +240,14 @@ namespace zfs
 		bool mount(); //!< Mount the filesystem if possible
 		bool automount(); //!< Only try to mount the filesystem if it can be automounted
 		bool unmount(bool force = false);
-		bool rollback(bool force = false);
 		bool loadKey(std::string const & key);
 		bool unloadKey();
+		bool destroy(bool recursive = false, bool force = false);
+
+	public: // Snapshot related
+		bool snapshot(std::string const & snapName, bool recursive);
+		bool rollback(bool force = false); //!< Roll back to this snapshot
+		bool clone(std::string const & newFSName); //!< Clone the snapshot into a dependent FS
 
 	private:
 		zfs_handle_t * m_handle;
