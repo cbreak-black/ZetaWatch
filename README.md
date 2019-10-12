@@ -11,22 +11,25 @@ OS](https://openzfsonosx.org/), and might not be compatible with other releases.
 
 Currently supported features are:
 
- * Show pool and vdev status including scrub progress
+ * Show pool, vdev, filesystem stats
  * Show pool / filesystem properties
- * Show filesystem and vdev stats
- * Import pools and Export pools
- * Mount / unmount datasets
- * Load encryption keys for encrypted datasets
- * Scrub pools
- * Report errors in notification center
+ * Start, stop, pause scrubs, and monitor their progress.
+ * Import and Export pools manually, or auto-import when they become available
+ * Mount / unmount datasets manually or at pool import automatically
+ * Load/Unload encryption keys for encrypted datasets manually or automatically
+ * Optionally store pass phrases in the Mac OS X Keychain
+ * Create, Display, Delete, Clone Snapshots or roll back to them
+ * Report errors in notification center when they are discovered
 
 
 Installation
 ------------
 
-ZetaWatch does not require manual installation. The bundled helper tool gets installed
-automatically the first time a privileged operation is performed. This requires user-
-authentication. The helper tool is updated as needed.
+ZetaWatch does not require manual installation. Simply copy it into /Application or where
+ever else it fits. The bundled helper tool gets installed automatically the first time the
+program is started. This requires user-authentication.
+
+ZetaWatch supports auto updates, if enabled.
 
 
 For Developers
@@ -74,6 +77,46 @@ for debugging the installation of the helper, or updating the helper without inc
 the bundle version.
 
 
+Authorization
+-------------
+
+The ZetaWatch helper tool uses the Security framework to authorize users before performing
+privileged operations. It currently supports the following permissions.
+
+ * `net.the-color-black.ZetaWatch.import`, allowed by default, required for importing a pool.
+ * `net.the-color-black.ZetaWatch.export`, allowed by default, required for exporting a pool.
+ * `net.the-color-black.ZetaWatch.mount`, allowed by default, required for mounting a dataset.
+ * `net.the-color-black.ZetaWatch.unmount`, allowed by default, required for unmounting a
+ dataset.
+ * `net.the-color-black.ZetaWatch.snapshot`, allowed by default, required for creating a
+ snapshot.
+ * `net.the-color-black.ZetaWatch.rollback`, requires admin authentication by default,
+required for rolling back a filesystem.
+ * `net.the-color-black.ZetaWatch.clone`, requires admin authentication by default,
+required for cloning a filesystem.
+ * `net.the-color-black.ZetaWatch.create`, requires admin authentication by default,
+required for creating a new filesystem.
+ * `net.the-color-black.ZetaWatch.destroy`, requires admin authentication by default,
+required for destroying a filesystem or snapshot.
+ * `net.the-color-black.ZetaWatch.key`, allowed by default, required for loading or
+unloading a key for a dataset. This also includes the ability to auto mount / unmount them.
+ * `net.the-color-black.ZetaWatch.scrub`, allowed by default, required for starting,
+stopping or pausing scrubs.
+
+These permissions can be manipulated via the `security` command line program. To inspect
+the current dataset creation permissions, and switching it to allow this to all users:
+
+```
+security authorizationdb read net.the-color-black.ZetaWatch.create
+security authorizationdb write net.the-color-black.ZetaWatch.create allow
+```
+
+Permissions include `allow`, `deny` or `authenticate-admin`.
+
+More detailed information about this topic can be found in the article apples documentation
+about [AuthorizationServices] and [Managing the Authorization Database in OS X Mavericks].
+
+
 Security & Code Signing
 -----------------------
 
@@ -105,6 +148,21 @@ which saves space. Since ZetaWatch is not localized, this is not a problem.
 To create a working fork, adjust the public key and update url in the Info.plist file.
 
 
+ZFS Binary Compatibility
+------------------------
+
+Since ZetaWatch directly links to the zfs libraries, it only works if those are
+compatible. And while Sparkle has built-in support for OS compatibility checking, it
+doesn't have the same for other dependencies. There is support for custom appcast
+filtering, to select a suitable version, but since the ZFS version and the ZetaWatch
+version are kind of orthogonal, this didn't seem fitting.
+
+The chosen solution was to have a ZFS version specific appcast URL, and make ZetaWatch
+query the appropriate appcast. This allows updating ZetaWatch when the used ZFS version
+changes, but also have several supported parallel builds. Currently, the only supported
+ZFS version is 1.9.
+
+
 License
 =======
 
@@ -118,3 +176,5 @@ details.
 [ZFSImage]: https://raw.githubusercontent.com/cbreak-black/ZetaWatch/master/doc/ZetaWatch.jpg
 [SparkleFramework]: https://sparkle-project.org/
 [SparkleGithub]: https://github.com/sparkle-project/Sparkle
+[AuthorizationServices]: https://developer.apple.com/documentation/security/authorization_services?language=objc
+[Managing the Authorization Database in OS X Mavericks]: https://derflounder.wordpress.com/2014/02/16/managing-the-authorization-database-in-os-x-mavericks/
