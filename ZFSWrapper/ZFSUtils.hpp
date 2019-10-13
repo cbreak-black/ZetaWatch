@@ -212,6 +212,7 @@ namespace zfs
 		bool isEncryptionRoot() const;
 		std::pair<std::string, bool> encryptionRoot() const;
 		KeyStatus keyStatus() const;
+		bool isRoot() const;
 
 	public:
 		//! \returns all direct child filesystems
@@ -249,7 +250,8 @@ namespace zfs
 		bool unmount(bool force = false);
 		bool loadKey(std::string const & key);
 		bool unloadKey();
-		bool destroy(bool recursive = false, bool force = false);
+		bool destroy(bool force = false);
+		bool destroyRecursive(bool force = false);
 
 	public: // Snapshot related
 		bool snapshot(std::string const & snapName, bool recursive);

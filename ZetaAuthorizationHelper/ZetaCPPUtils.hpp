@@ -9,6 +9,8 @@
 #ifndef ZetaCPPUtils_h
 #define ZetaCPPUtils_h
 
+#include "ZFSWrapper/ZFSUtils.hpp"
+
 #include <vector>
 #include <sstream>
 
@@ -22,6 +24,19 @@ inline std::string formatForHumans(std::vector<T> const & things)
 	for (size_t i = 1; i < things.size(); ++i)
 	{
 		ss << ", " << things[i];
+	}
+	return ss.str();
+}
+
+inline std::string formatForHumans(std::vector<zfs::ZFileSystem> const & things)
+{
+	if (things.empty())
+		return std::string();
+	std::stringstream ss;
+	ss << things[0].name();
+	for (size_t i = 1; i < things.size(); ++i)
+	{
+		ss << ", " << things[i].name();
 	}
 	return ss.str();
 }

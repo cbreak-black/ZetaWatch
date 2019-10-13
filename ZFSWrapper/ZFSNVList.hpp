@@ -135,6 +135,11 @@ namespace zfs
 		NVList();
 
 		/*!
+		 Creates an NVList refering to a freshly created nvlist_t that is owned.
+		 */
+		explicit NVList(TakeOwnership);
+
+		/*!
 		 Create an NVList that referrs to an existing nvlist_t without taking ownership.
 		 */
 		NVList(nvlist_t * list);
@@ -155,7 +160,7 @@ namespace zfs
 		NVList & operator=(NVList && other) noexcept;
 
 	public:
-		/*
+		/*!
 		 \returns true if this NVList is valid, and has an associated nvlist, false otherwise.
 		 */
 		bool valid() const;
@@ -195,6 +200,13 @@ namespace zfs
 		 \returns an NVPair representing the queried key, or an invalid NVPair
 		 */
 		NVPair lookupPair(char const * key) const;
+
+	public:
+		/**!
+		 Adds a given key as boolean. This is different from adding a bool value
+		 with a key, closer to adding keys to a set.
+		 */
+		void addBoolean(char const * key);
 
 	public:
 		/*!

@@ -573,7 +573,30 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			if (fs.destroy(recursive, force))
+			bool success = true;
+			if (recursive)
+			{
+				success = fs.destroyRecursive(force);
+			}
+			else
+			{
+				auto dependents = fs.dependents();
+				if (dependents.empty())
+				{
+					success = fs.destroy(force);
+				}
+				else
+				{
+					std::string depStr = formatForHumans(dependents);
+					NSString * err = [NSString stringWithFormat:@"Filesystem has Dependents: %s", depStr.c_str()];
+					NSDictionary * userInfo = @{
+						NSLocalizedDescriptionKey: err
+					};
+					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+					return;
+				}
+			}
+			if (success)
 			{
 				reply(nullptr);
 			}

@@ -36,6 +36,14 @@ namespace zfs
 			os << time.time;
 			return os;
 		}
+
+		static void throwOnNVListError(int errorCode)
+		{
+			if (errorCode)
+			{
+				throw std::system_error(errorCode, std::generic_category());
+			}
+		}
 	}
 
 	// Pair
@@ -276,6 +284,13 @@ namespace zfs
 	{
 	}
 
+	NVList::NVList(TakeOwnership) :
+		m_list(), m_ownsList(true)
+	{
+		auto r = nvlist_alloc(&m_list, NV_UNIQUE_NAME, 0);
+		throwOnNVListError(r);
+	}
+
 	NVList::NVList(nvlist_t * list) :
 		m_list(list), m_ownsList(false)
 	{
@@ -341,6 +356,12 @@ namespace zfs
 		nvpair_t * pair = nullptr;
 		nvlist_lookup_nvpair(m_list, key, &pair);
 		return NVPair(pair);
+	}
+
+	void NVList::addBoolean(const char * name)
+	{
+		auto r = nvlist_add_boolean(m_list, name);
+		throwOnNVListError(r);
 	}
 
 	NVList::Iterator NVList::begin() const

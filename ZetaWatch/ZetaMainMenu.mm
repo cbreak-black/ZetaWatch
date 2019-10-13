@@ -160,7 +160,11 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	[fsMenu addItem:snapsItem];
 	// Destroy
 	[fsMenu addItem:[NSMenuItem separatorItem]];
-	addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+	if (!fs.isRoot())
+	{
+		addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+	}
+	addFSCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyFilesystemRecursive:));
 	// Selected Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addMenuItem(fsMenu, delegate,
@@ -811,6 +815,22 @@ static NSString * defaultSnapshotName()
 		 {
 			 NSString * title = [NSString stringWithFormat:
 				NSLocalizedString(@"Filesystem %@ destroyed", @"Destroy Success format"),
+				[sender representedObject]];
+			 [self notifySuccessWithTitle:title text:nil];
+		 }
+		 [self handleFileSystemChangeReply:error];
+	 }];
+}
+
+- (IBAction)destroyFilesystemRecursive:(id)sender
+{
+	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
+	[_authorization destroyFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (!error)
+		 {
+			 NSString * title = [NSString stringWithFormat:
+				NSLocalizedString(@"Filesystem %@ destroyed recursively", @"Destroy Recursive Success format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:nil];
 		 }

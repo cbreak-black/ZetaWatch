@@ -49,6 +49,7 @@ enum ZetaMenuTags
 - (IBAction)rollbackFilesystemForce:(id)sender;
 - (IBAction)cloneSnapshot:(id)sender;
 - (IBAction)destroyFilesystem:(id)sender;
+- (IBAction)destroyFilesystemRecursive:(id)sender;
 - (IBAction)loadKey:(id)sender;
 - (IBAction)loadAllKeys:(id)sender;
 - (IBAction)unloadKey:(id)sender;

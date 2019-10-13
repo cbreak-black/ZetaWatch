@@ -234,15 +234,53 @@ namespace zfs
 		return !zfs_clone(m_handle, newFSName.c_str(), nullptr);
 	}
 
-	bool ZFileSystem::destroy(bool recursive, bool force)
+	bool ZFileSystem::destroy(bool force)
 	{
 		if (!unmount(force))
 			return false;
-		// This requires that there are no dependents
-		// TODO: Implement recursive
-		if (recursive)
-			throw std::logic_error("Unimplemented");
+		// This requires that there are no dependents left
 		return !zfs_destroy(m_handle, false);
+	}
+
+	static int destroySnapshots(libzfs_handle_t * libHandle, std::vector<ZFileSystem> & snaps)
+	{
+		if (snaps.empty())
+			return 0;
+		NVList snapList(NVList::TakeOwnership{});
+		for (auto const & s : snaps)
+		{
+			snapList.addBoolean(s.name());
+		}
+		snaps.clear();
+		return zfs_destroy_snaps_nvl(libHandle, snapList.toList(), false);
+	}
+
+	bool ZFileSystem::destroyRecursive(bool force)
+	{
+		auto lib = libHandle();
+		std::vector<ZFileSystem> snaps;
+		NVList snapList(NVList::TakeOwnership{});
+		int error = iterDependents([&snaps,&lib](ZFileSystem fs)
+		{
+			// Destroy snapshots in a batch for performance
+			if (fs.type() == FSType::snapshot)
+			{
+				snaps.push_back(std::move(fs));
+			}
+			else
+			{
+				if (auto error = destroySnapshots(lib.handle(), snaps))
+					return error;
+				if (!fs.destroy())
+					return lib.lastErrorCode();
+			}
+			return 0;
+		});
+		if (!error)
+			error = destroySnapshots(lib.handle(), snaps);
+		if (error)
+			return false;
+		return destroy(force);
 	}
 
 	struct Pipe
@@ -462,6 +500,12 @@ namespace zfs
 					  KeyStatus::available == (KeyStatus)ZFS_KEYSTATUS_AVAILABLE,
 					  "ZFileSystem::KeyStatus == zfs_keystatus");
 		return static_cast<KeyStatus>(zfs_prop_get_int(m_handle, ZFS_PROP_KEYSTATUS));
+	}
+
+	bool ZFileSystem::isRoot() const
+	{
+		// There doesn't seem to be a better way
+		return strchr(name(), '/') == nullptr;
 	}
 
 	namespace
