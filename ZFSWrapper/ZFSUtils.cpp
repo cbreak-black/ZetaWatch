@@ -885,6 +885,7 @@ namespace zfs
 	{
 		int allowedTypes = ZFS_TYPE_FILESYSTEM
 			| ZFS_TYPE_SNAPSHOT
+			| ZFS_TYPE_VOLUME
 			| ZFS_TYPE_POOL
 			| ZFS_TYPE_BOOKMARK;
 		auto fs = zfs_open(handle(), name.c_str(), allowedTypes);
