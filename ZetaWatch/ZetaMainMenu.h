@@ -18,6 +18,7 @@
 #import "ZetaAutoImporter.h"
 #import "ZetaKeyLoader.h"
 #import "ZetaQueryDialog.h"
+#import "ZetaConfirmDialog.h"
 
 @class ZetaNotificationCenter;
 
@@ -32,6 +33,7 @@ enum ZetaMenuTags
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
+@property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
 
 

@@ -15,6 +15,7 @@
 #import "ZetaMainMenu.h"
 #import "ZetaKeyLoader.h"
 #import "ZetaQueryDialog.h"
+#import "ZetaConfirmDialog.h"
 
 #import "ZFSUtils.hpp"
 
@@ -28,6 +29,7 @@
 @property (weak) IBOutlet NSMenu * zetaMenu;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
+@property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet SUUpdater * updater;
 
@@ -46,6 +48,7 @@
 	_statusItem.menu = _zetaMenu;
 	_zetaKeyLoader.statusItem = _statusItem;
 	_zetaQueryDialog.statusItem = _statusItem;
+	_zetaConfirmDialog.statusItem = _statusItem;
 	// User Defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		@"autoUnlock": @YES,

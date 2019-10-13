@@ -17,6 +17,7 @@
             <connections>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
                 <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
+                <outlet property="zetaConfirmDialog" destination="YY7-LW-cAD" id="N6U-3T-0X2"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="Uml-Lc-GeC"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
                 <outlet property="zetaQueryDialog" destination="TB2-7Z-kJ2" id="d4N-Ym-SU3"/>
@@ -27,6 +28,7 @@
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="LTt-go-j7Z"/>
                 <outlet property="notificationCenter" destination="ZZj-pd-85j" id="DDy-Za-7rV"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="Sat-ah-3Qq"/>
+                <outlet property="zetaConfirmDialog" destination="YY7-LW-cAD" id="Yck-ti-hMt"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="aMW-DQ-FcT"/>
                 <outlet property="zetaQueryDialog" destination="TB2-7Z-kJ2" id="F0s-lJ-1nh"/>
             </connections>
@@ -56,6 +58,13 @@
                 <outlet property="popover" destination="BNT-uI-e5Z" id="Yz7-Dw-vEz"/>
                 <outlet property="queryField" destination="VwX-rR-NXB" id="dK5-xq-IgY"/>
                 <outlet property="replyField" destination="aF4-gD-hTY" id="8bG-cA-Ey2"/>
+            </connections>
+        </customObject>
+        <customObject id="YY7-LW-cAD" userLabel="ZetaConfirmDialog" customClass="ZetaConfirmDialog">
+            <connections>
+                <outlet property="infoField" destination="KzI-U2-jrx" id="er4-6R-hpv"/>
+                <outlet property="popover" destination="n6f-GT-2V0" id="Qhx-3R-efB"/>
+                <outlet property="queryField" destination="Bjp-t2-sCZ" id="Arh-fc-VT8"/>
             </connections>
         </customObject>
         <customObject id="Gim-eq-VbR" userLabel="ZetaPoolWatcher" customClass="ZetaPoolWatcher"/>
@@ -912,6 +921,16 @@ Gw
                 <outlet property="contentViewController" destination="cvg-uB-4z4" id="ihh-qg-O93"/>
             </connections>
         </popover>
+        <viewController id="6oG-mj-9NA" userLabel="Confirm View Controller">
+            <connections>
+                <outlet property="view" destination="sBQ-2t-b2A" id="1oL-R8-65K"/>
+            </connections>
+        </viewController>
+        <popover id="n6f-GT-2V0" userLabel="Confirm Popover">
+            <connections>
+                <outlet property="contentViewController" destination="6oG-mj-9NA" id="YDZ-xj-0gV"/>
+            </connections>
+        </popover>
         <userDefaultsController representsSharedInstance="YES" id="oMO-Og-s5N"/>
         <customObject id="7Va-uZ-m1K" customClass="SUUpdater"/>
         <customView id="xBy-DS-Zxq" userLabel="QueryDialog">
@@ -989,6 +1008,82 @@ Gw
                 <constraint firstItem="VwX-rR-NXB" firstAttribute="top" secondItem="xBy-DS-Zxq" secondAttribute="top" priority="750" constant="20" symbolic="YES" id="zMj-zA-y4l"/>
             </constraints>
             <point key="canvasLocation" x="144.5" y="732"/>
+        </customView>
+        <customView id="sBQ-2t-b2A" userLabel="ConfirmationDialog">
+            <rect key="frame" x="0.0" y="0.0" width="555" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ksH-SQ-feV">
+                    <rect key="frame" x="20" y="188" width="64" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="64" id="SYz-2n-tdp"/>
+                        <constraint firstAttribute="height" constant="64" id="cbC-aV-dbT"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="jGe-fX-ycL"/>
+                </imageView>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bjp-t2-sCZ" userLabel="QueryTextField">
+                    <rect key="frame" x="90" y="235" width="447" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="17" id="YhE-iC-0mY"/>
+                    </constraints>
+                    <textFieldCell key="cell" refusesFirstResponder="YES" title="Query" id="D6G-X2-Ubq">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KzI-U2-jrx">
+                    <rect key="frame" x="92" y="61" width="443" height="166"/>
+                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="9lS-cc-3KX">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4u-aq-qhY">
+                    <rect key="frame" x="484" y="13" width="57" height="32"/>
+                    <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="CUl-rd-k52">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="ok:" target="YY7-LW-cAD" id="YEn-e2-lYC"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FAa-ai-LRq">
+                    <rect key="frame" x="402" y="13" width="82" height="32"/>
+                    <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ldU-dB-OJf">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="cancel:" target="YY7-LW-cAD" id="yno-up-e0z"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="KzI-U2-jrx" firstAttribute="top" secondItem="Bjp-t2-sCZ" secondAttribute="bottom" constant="8" symbolic="YES" id="0CO-b4-7l4"/>
+                <constraint firstItem="Bjp-t2-sCZ" firstAttribute="top" secondItem="sBQ-2t-b2A" secondAttribute="top" constant="20" symbolic="YES" id="20o-E8-Ue7"/>
+                <constraint firstItem="KzI-U2-jrx" firstAttribute="trailing" secondItem="j4u-aq-qhY" secondAttribute="trailing" id="6Pu-s7-W1c"/>
+                <constraint firstItem="ksH-SQ-feV" firstAttribute="top" secondItem="sBQ-2t-b2A" secondAttribute="top" constant="20" symbolic="YES" id="9yf-4D-dCy"/>
+                <constraint firstAttribute="bottom" secondItem="j4u-aq-qhY" secondAttribute="bottom" constant="20" symbolic="YES" id="FwY-zg-B0k"/>
+                <constraint firstAttribute="trailing" secondItem="Bjp-t2-sCZ" secondAttribute="trailing" constant="20" symbolic="YES" id="LYY-tf-Xcn"/>
+                <constraint firstItem="Bjp-t2-sCZ" firstAttribute="leading" secondItem="ksH-SQ-feV" secondAttribute="trailing" constant="8" symbolic="YES" id="M3d-bq-AkO"/>
+                <constraint firstItem="j4u-aq-qhY" firstAttribute="leading" secondItem="FAa-ai-LRq" secondAttribute="trailing" constant="12" symbolic="YES" id="XcM-SV-Ej8"/>
+                <constraint firstItem="FAa-ai-LRq" firstAttribute="top" secondItem="KzI-U2-jrx" secondAttribute="bottom" constant="20" symbolic="YES" id="am7-vv-7qp"/>
+                <constraint firstItem="j4u-aq-qhY" firstAttribute="top" secondItem="KzI-U2-jrx" secondAttribute="bottom" constant="20" symbolic="YES" id="b04-dC-BUg"/>
+                <constraint firstAttribute="trailing" secondItem="j4u-aq-qhY" secondAttribute="trailing" constant="20" symbolic="YES" id="cXN-99-Ft9"/>
+                <constraint firstItem="ksH-SQ-feV" firstAttribute="leading" secondItem="sBQ-2t-b2A" secondAttribute="leading" constant="20" symbolic="YES" id="veU-Ix-P9F"/>
+                <constraint firstItem="FAa-ai-LRq" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ksH-SQ-feV" secondAttribute="trailing" constant="8" symbolic="YES" id="yiD-9F-pJN"/>
+                <constraint firstItem="KzI-U2-jrx" firstAttribute="leading" secondItem="ksH-SQ-feV" secondAttribute="trailing" constant="8" symbolic="YES" id="zGA-kB-ZnU"/>
+            </constraints>
+            <point key="canvasLocation" x="144.5" y="1063"/>
         </customView>
     </objects>
     <resources>

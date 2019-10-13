@@ -1,42 +1,42 @@
 //
-//  ZetaQueryDialog.mm
+//  ZetaConfirmDialog.mm
 //  ZetaWatch
 //
-//  Created by cbreak on 19.10.06.
+//  Created by cbreak on 19.10.13.
 //  Copyright © 2019 the-color-black.net. All rights reserved.
 //
 
-#import "ZetaQueryDialog.h"
+#import "ZetaConfirmDialog.h"
 
 #include <deque>
 #include <type_traits>
 
 namespace
 {
-	typedef void (^QueryCallback)(NSString *);
+	typedef void (^QueryCallback)(bool);
 
 	struct Query
 	{
 		NSString * query;
-		NSString * defaultReply;
+		NSString * info;
 		QueryCallback reply;
 	};
 }
 
-@interface ZetaQueryDialog ()
+@interface ZetaConfirmDialog ()
 {
 	std::deque<Query> queries;
 }
 
 @end
 
-@implementation ZetaQueryDialog
+@implementation ZetaConfirmDialog
 
 - (void)addQuery:(NSString*)query
-	 withDefault:(NSString*)defaultReply
-	withCallback:(void(^)(NSString*))callback
+ withInformation:(NSString*)info
+	withCallback:(void(^)(bool))callback
 {
-	queries.push_back({query, defaultReply, callback});
+	queries.push_back({query, info, callback});
 	if (queries.size() == 1)
 		[self updateQuery];
 	if (![_popover isShown])
@@ -55,12 +55,14 @@ namespace
 - (IBAction)ok:(id)sender
 {
 	if (!queries.empty())
-		queries.front().reply([_replyField stringValue]);
+		queries.front().reply(true);
 	[self advanceQuery];
 }
 
 - (IBAction)cancel:(id)sender
 {
+	if (!queries.empty())
+		queries.front().reply(false);
 	[self advanceQuery];
 }
 
@@ -84,12 +86,12 @@ namespace
 	if (queries.empty())
 	{
 		[_queryField setStringValue:@""];
-		[_replyField setStringValue:@""];
+		[_infoField setStringValue:@""];
 	}
 	else
 	{
 		[_queryField setStringValue:queries.front().query];
-		[_replyField setStringValue:queries.front().defaultReply];
+		[_infoField setStringValue:queries.front().info];
 	}
 }
 
@@ -97,6 +99,7 @@ namespace
 {
 	if (!queries.empty())
 	{
+		queries.front().reply(false);
 		queries.pop_front();
 		if (queries.empty())
 			return YES;
@@ -115,7 +118,6 @@ namespace
 
 - (void)popoverDidClose:(NSNotification *)notification
 {
-	[_replyField abortEditing];
 }
 
 @end

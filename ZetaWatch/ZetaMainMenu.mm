@@ -806,36 +806,79 @@ static NSString * defaultSnapshotName()
 	 }];
 }
 
+static NSString * toString(std::vector<zfs::ZFileSystem> const & fileSystems)
+{
+	NSMutableString * fileSystemString = [NSMutableString string];
+	for (auto const & d : fileSystems)
+		[fileSystemString appendFormat:@"%s\n", d.name()];
+	return fileSystemString;
+}
+
 - (IBAction)destroyFilesystem:(id)sender
 {
-	NSDictionary * opts = @{@"filesystem": [sender representedObject]};
-	[_authorization destroyFilesystem:opts withReply:^(NSError * error)
-	 {
-		 if (!error)
+	NSString * fsName = [sender representedObject];
+	zfs::LibZFSHandle lib;
+	auto fs = lib.filesystem([fsName UTF8String]);
+	auto dependents = fs.dependents();
+	if (!dependents.empty())
+	{
+		[_zetaConfirmDialog addQuery:NSLocalizedString(@"Unable to destroy, the following dependent file systems would be destroyed", @"Destroy Dep Failure")
+					 withInformation:toString(dependents)
+						withCallback:^(bool ok)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ destroyed", @"Destroy Success format"),
-				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
-	 }];
+		 }];
+	}
+	else
+	{
+		NSDictionary * opts = @{@"filesystem": fsName};
+		[_authorization destroyFilesystem:opts withReply:^(NSError * error)
+		 {
+			 if (!error)
+			 {
+				 NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Filesystem %@ destroyed", @"Destroy Success format"),
+					[sender representedObject]];
+				 [self notifySuccessWithTitle:title text:nil];
+			 }
+			 [self handleFileSystemChangeReply:error];
+		 }];
+	}
 }
 
 - (IBAction)destroyFilesystemRecursive:(id)sender
 {
-	NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
-	[_authorization destroyFilesystem:opts withReply:^(NSError * error)
-	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ destroyed recursively", @"Destroy Recursive Success format"),
-				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
-	 }];
+	NSString * fsName = [sender representedObject];
+	zfs::LibZFSHandle lib;
+	auto fs = lib.filesystem([fsName UTF8String]);
+	auto dependents = fs.dependents();
+	auto destroyBlock = ^(bool ok)
+	{
+		if (ok)
+		{
+			NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
+			[self->_authorization destroyFilesystem:opts withReply:^(NSError * error)
+			 {
+				 if (!error)
+				 {
+					 NSString * title = [NSString stringWithFormat:
+						NSLocalizedString(@"Filesystem %@ destroyed recursively", @"Destroy Recursive Success format"),
+						[sender representedObject]];
+					 [self notifySuccessWithTitle:title text:nil];
+				 }
+				 [self handleFileSystemChangeReply:error];
+			 }];
+		}
+	};
+	if (!dependents.empty())
+	{
+		[_zetaConfirmDialog addQuery:NSLocalizedString(@"The following dependent file systems will be destroyed", @"Destroy Dep Query")
+					 withInformation:toString(dependents)
+						withCallback:destroyBlock];
+	}
+	else
+	{
+		destroyBlock(true);
+	}
 }
 
 - (IBAction)loadKey:(id)sender
