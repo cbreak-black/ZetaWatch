@@ -187,6 +187,7 @@
 				{
 					if (!fs.automount())
 						failures.emplace_back(_zfs.lastError());
+					return 0;
 				});
 			}
 			else
@@ -198,6 +199,7 @@
 					{
 						if (!fs.automount())
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					});
 				}
 			}
@@ -308,6 +310,7 @@
 					{
 						if (!fs.mount())
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					});
 				}
 			}
@@ -319,6 +322,7 @@
 					{
 						if (!fs.mount())
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					});
 				});
 			}
@@ -371,12 +375,14 @@
 					{
 						if (!snap.unmount(force))
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					};
 					auto unmountFS = [self,&failures,force,&unmountSnap](zfs::ZFileSystem fs)
 					{
 						fs.iterSnapshots(unmountSnap);
 						if (!fs.unmount(force))
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					};
 					fs.iterAllFileSystemsReverse(unmountFS);
 					fs.iterSnapshots(unmountSnap);
@@ -392,6 +398,7 @@
 					{
 						if (!fs.unmount(force))
 							failures.emplace_back(_zfs.lastError());
+						return 0;
 					});
 				});
 			}
@@ -616,6 +623,7 @@
 				{
 					if (!fs.automount())
 						failures.emplace_back(_zfs.lastError());
+					return 0;
 				});
 				if (failures.empty())
 				{
@@ -664,6 +672,7 @@
 			{
 				if (!fs.unmount())
 					failures.emplace_back(_zfs.lastError());
+				return 0;
 			});
 			if (!fs.unmount())
 				failures.emplace_back(_zfs.lastError());

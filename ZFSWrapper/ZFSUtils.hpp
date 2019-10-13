@@ -115,6 +115,7 @@ namespace zfs
 		ZPool pool(std::string const & name) const;
 
 	public: // Errors
+		int lastErrorCode() const;
 		std::string lastErrorAction() const;
 		std::string lastErrorDescription() const;
 		std::string lastError() const;
@@ -222,19 +223,25 @@ namespace zfs
 		//! \returns all snapshots
 		std::vector<ZFileSystem> snapshots() const;
 
+		//! \returns all snapshots
+		std::vector<ZFileSystem> dependents() const;
+
 		//! Iterates over all direct child filesystems
-		void iterChildFilesystems(std::function<void(ZFileSystem)> callback) const;
+		int iterChildFilesystems(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively, visiting all parent
 		//! filesystems before the children.
-		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
+		int iterAllFileSystems(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively, visiting all child
 		//! filesystems before the parent filesystem.
-		void iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const;
+		int iterAllFileSystemsReverse(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all snapshots
-		void iterSnapshots(std::function<void(ZFileSystem)> callback) const;
+		int iterSnapshots(std::function<int(ZFileSystem)> callback) const;
+
+		//! Iterates over all dependents (clones, filesystems, snapshots)
+		int iterDependents(std::function<int(ZFileSystem)> callback) const;
 
 	public: // requires root permission
 		bool mount(); //!< Mount the filesystem if possible
@@ -376,12 +383,12 @@ namespace zfs
 
 		//! Iterates over all child filesystems recursively, visiting all parent
 		//! filesystems before the children. This includes the root filesystem
-		void iterAllFileSystems(std::function<void(ZFileSystem)> callback) const;
+		int iterAllFileSystems(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively, visiting all child
 		//! filesystems before the parent filesystem. This includes the root
 		//! filesystem
-		void iterAllFileSystemsReverse(std::function<void(ZFileSystem)> callback) const;
+		int iterAllFileSystemsReverse(std::function<int(ZFileSystem)> callback) const;
 
 	public:
 		//! Unmounts all filesystems and exports the pool
