@@ -28,17 +28,4 @@ inline std::string formatForHumans(std::vector<T> const & things)
 	return ss.str();
 }
 
-inline std::string formatForHumans(std::vector<zfs::ZFileSystem> const & things)
-{
-	if (things.empty())
-		return std::string();
-	std::stringstream ss;
-	ss << things[0].name();
-	for (size_t i = 1; i < things.size(); ++i)
-	{
-		ss << ", " << things[i].name();
-	}
-	return ss.str();
-}
-
 #endif /* ZetaCPPUtils_h */

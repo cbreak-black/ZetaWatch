@@ -587,10 +587,8 @@
 				}
 				else
 				{
-					std::string depStr = formatForHumans(dependents);
-					NSString * err = [NSString stringWithFormat:@"Filesystem has Dependents: %s", depStr.c_str()];
 					NSDictionary * userInfo = @{
-						NSLocalizedDescriptionKey: err
+						NSLocalizedDescriptionKey: @"Filesystem has Dependents"
 					};
 					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 					return;

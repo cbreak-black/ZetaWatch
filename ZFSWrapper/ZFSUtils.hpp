@@ -201,6 +201,8 @@ namespace zfs
 	public:
 		char const * name() const;
 		bool mounted() const;
+		bool mountable() const;
+		bool automountable() const;
 		FSType type() const;
 		std::uint64_t used() const;
 		std::uint64_t available() const;
@@ -213,6 +215,9 @@ namespace zfs
 		std::pair<std::string, bool> encryptionRoot() const;
 		KeyStatus keyStatus() const;
 		bool isRoot() const;
+
+	public:
+		std::uint64_t cloneCount() const;
 
 	public:
 		//! \returns all direct child filesystems

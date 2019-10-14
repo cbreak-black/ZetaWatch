@@ -168,10 +168,30 @@ namespace zfs
 		return zfs_is_mounted(m_handle, nullptr);
 	}
 
-	bool ZFileSystem::mount()
+	bool ZFileSystem::mountable() const
 	{
 		if (zfs_prop_get_int(m_handle, ZFS_PROP_CANMOUNT) == ZFS_CANMOUNT_OFF)
-			return false; // can't be mounted, failure
+			return false;
+		auto mp = mountpoint();
+		if (mp == ZFS_MOUNTPOINT_LEGACY || mp == ZFS_MOUNTPOINT_NONE)
+			return false;
+		auto ks = keyStatus();
+		if (ks == KeyStatus::unavailable)
+			return false;
+		return true;
+	}
+
+	bool ZFileSystem::automountable() const
+	{
+		if (zfs_prop_get_int(m_handle, ZFS_PROP_CANMOUNT) != ZFS_CANMOUNT_ON)
+			return false;
+		return mountable();
+	}
+
+	bool ZFileSystem::mount()
+	{
+		if (!mountable())
+			return true; // no need to do anything, success
 		if (mounted())
 			return true; // already mounted, success
 		return !zfs_mount(m_handle, nullptr, 0);
@@ -179,17 +199,8 @@ namespace zfs
 
 	bool ZFileSystem::automount()
 	{
-		if (zfs_prop_get_int(m_handle, ZFS_PROP_CANMOUNT) != ZFS_CANMOUNT_ON)
+		if (!automountable())
 			return true; // no need to do anything, success
-		std::string mountpoint(ZFS_MAXPROPLEN+1, '\0');
-		zfs_prop_get(m_handle, ZFS_PROP_MOUNTPOINT, mountpoint.data(), mountpoint.size(),
-					 nullptr, nullptr, 0, B_FALSE);
-		mountpoint.resize(mountpoint.find('\0'));
-		if (mountpoint == ZFS_MOUNTPOINT_LEGACY || mountpoint == ZFS_MOUNTPOINT_NONE)
-			return true; // no need to do anything, success
-		auto ks = keyStatus();
-		if (ks == KeyStatus::unavailable)
-			return true; // can't mount without key, "success"
 		return mount();
 	}
 
@@ -392,7 +403,7 @@ namespace zfs
 	std::string getPropString(zfs_handle_t * handle, zfs_prop_t prop)
 	{
 		std::string s;
-		s.resize(128);
+		s.resize(ZFS_MAXPROPLEN);
 		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, false);
 		if (ec != 0)
 			s.clear(); // Maybe report error in some form?
@@ -506,6 +517,13 @@ namespace zfs
 	{
 		// There doesn't seem to be a better way
 		return strchr(name(), '/') == nullptr;
+	}
+
+	std::uint64_t ZFileSystem::cloneCount() const
+	{
+		if (type() != FSType::snapshot)
+			return 0;
+		return zfs_prop_get_int(m_handle, ZFS_PROP_NUMCLONES);
 	}
 
 	namespace

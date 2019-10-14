@@ -134,7 +134,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			[fsMenu addItem:[NSMenuItem separatorItem]];
 		}
 		addFSCommand(NSLocalizedString(@"Mount Recursive", @"Mount Recursive"), @selector(mountFilesystemRecursive:));
-		if (!fs.mounted())
+		if (!fs.mounted() && fs.mountable())
 		{
 			addFSCommand(NSLocalizedString(@"Mount", @"Mount"), @selector(mountFilesystem:));
 		}
