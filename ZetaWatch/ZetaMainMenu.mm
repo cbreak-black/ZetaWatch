@@ -604,20 +604,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 }];
 }
 
-- (IBAction)mountAllFilesystems:(id)sender
-{
-	[_authorization mountFilesystems:@{} withReply:^(NSError * error)
-	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"All filesystems mounted", @"FS Mount Success all")];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
-	 }];
-}
-
 - (IBAction)mountFilesystem:(id)sender
 {
 	NSDictionary * opts = @{@"filesystem": [sender representedObject]};

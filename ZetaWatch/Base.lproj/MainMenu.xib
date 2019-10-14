@@ -101,12 +101,6 @@
                         </connections>
                     </menu>
                 </menuItem>
-                <menuItem title="Mount all Filesystems" id="Gk5-sm-R9o">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="mountAllFilesystems:" target="8rf-zp-5r9" id="bPj-lW-Dmo"/>
-                    </connections>
-                </menuItem>
                 <menuItem isSeparatorItem="YES" id="Ttd-8u-p8d"/>
                 <menuItem title="Settings" id="abZ-nP-vC5">
                     <modifierMask key="keyEquivalentModifierMask"/>

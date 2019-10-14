@@ -268,6 +268,11 @@
 		bool force = false;
 		if (id o = [exportData objectForKey:@"force"])
 			force = [o boolValue];
+		if (!poolName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
 		try
 		{
 			auto pool = _zfs.pool(std::string(poolName.UTF8String));
@@ -296,34 +301,24 @@
 		bool recursive = false;
 		if (id o = [mountData objectForKey:@"recursive"])
 			recursive = [o boolValue];
+		if (!fsName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
 		try
 		{
 			std::vector<std::string> failures;
-			if (fsName)
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			if (!fs.mount())
+				failures.emplace_back(_zfs.lastError());
+			if (recursive)
 			{
-				auto fs = _zfs.filesystem([fsName UTF8String]);
-				if (!fs.mount())
-					failures.emplace_back(_zfs.lastError());
-				if (recursive)
+				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 				{
-					fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-					{
-						if (!fs.mount())
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					});
-				}
-			}
-			else
-			{
-				_zfs.iterPools([self,&failures](zfs::ZPool pool)
-				{
-					pool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-					{
-						if (!fs.mount())
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					});
+					if (!fs.mount())
+						failures.emplace_back(_zfs.lastError());
+					return 0;
 				});
 			}
 			if (failures.empty())
@@ -363,45 +358,35 @@
 		bool recursive = false;
 		if (id o = [mountData objectForKey:@"recursive"])
 			recursive = [o boolValue];
+		if (!fsName)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
 		try
 		{
 			std::vector<std::string> failures;
-			if (fsName)
+			auto fs = _zfs.filesystem([fsName UTF8String]);
+			if (recursive)
 			{
-				auto fs = _zfs.filesystem([fsName UTF8String]);
-				if (recursive)
+				auto unmountSnap = [self,&failures,force](zfs::ZFileSystem snap)
 				{
-					auto unmountSnap = [self,&failures,force](zfs::ZFileSystem snap)
-					{
-						if (!snap.unmount(force))
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					};
-					auto unmountFS = [self,&failures,force,&unmountSnap](zfs::ZFileSystem fs)
-					{
-						fs.iterSnapshots(unmountSnap);
-						if (!fs.unmount(force))
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					};
-					fs.iterAllFileSystemsReverse(unmountFS);
+					if (!snap.unmount(force))
+						failures.emplace_back(_zfs.lastError());
+					return 0;
+				};
+				auto unmountFS = [self,&failures,force,&unmountSnap](zfs::ZFileSystem fs)
+				{
 					fs.iterSnapshots(unmountSnap);
-				}
-				if (!fs.unmount(force))
-					failures.emplace_back(_zfs.lastError());
+					if (!fs.unmount(force))
+						failures.emplace_back(_zfs.lastError());
+					return 0;
+				};
+				fs.iterAllFileSystemsReverse(unmountFS);
+				fs.iterSnapshots(unmountSnap);
 			}
-			else
-			{
-				_zfs.iterPools([self,&failures,force](zfs::ZPool pool)
-				{
-					pool.iterAllFileSystemsReverse([self,&failures,force](zfs::ZFileSystem fs)
-					{
-						if (!fs.unmount(force))
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					});
-				});
-			}
+			if (!fs.unmount(force))
+				failures.emplace_back(_zfs.lastError());
 			if (failures.empty())
 			{
 				reply(nullptr);

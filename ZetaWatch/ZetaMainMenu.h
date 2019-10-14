@@ -39,7 +39,6 @@ enum ZetaMenuTags
 
 - (IBAction)exportPool:(id)sender;
 - (IBAction)exportPoolForce:(id)sender;
-- (IBAction)mountAllFilesystems:(id)sender;
 - (IBAction)mountFilesystem:(id)sender;
 - (IBAction)mountFilesystemRecursive:(id)sender;
 - (IBAction)unmountFilesystem:(id)sender;
