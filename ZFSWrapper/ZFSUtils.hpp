@@ -259,19 +259,24 @@ namespace zfs
 		int iterDependents(std::function<int(ZFileSystem)> callback) const;
 
 	public: // requires root permission
-		bool mount(); //!< Mount the filesystem if possible
-		bool automount(); //!< Only try to mount the filesystem if it can be automounted
-		bool unmount(bool force = false);
-		bool loadKeyFile(); //!< Load key from file if the key location is uri, or returns false
-		bool loadKey(std::string const & key); //!< Load the given key
-		bool unloadKey();
-		bool destroy(bool force = false);
-		bool destroyRecursive(bool force = false);
+		int mount(); //!< Mount the filesystem if possible
+		int automount(); //!< Only try to mount the filesystem if it can be automounted
+		int unmount(bool force = false); //!< Unmounts the filesystem
+		int loadKeyFile(); //!< Load key from file if the key location is uri, or returns false
+		int loadKey(std::string const & key); //!< Load the given key
+		int unloadKey();
+		int destroy(bool force = false);
+
+	public: // recursive
+		int mountRecursive();
+		int automountRecursive();
+		int unmountRecursive(bool force = false);
+		int destroyRecursive(bool force = false);
 
 	public: // Snapshot related
-		bool snapshot(std::string const & snapName, bool recursive);
-		bool rollback(bool force = false); //!< Roll back to this snapshot
-		bool clone(std::string const & newFSName); //!< Clone the snapshot into a dependent FS
+		int snapshot(std::string const & snapName, bool recursive);
+		int rollback(bool force = false); //!< Roll back to this snapshot
+		int clone(std::string const & newFSName); //!< Clone the snapshot into a dependent FS
 
 	private:
 		zfs_handle_t * m_handle;

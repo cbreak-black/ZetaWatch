@@ -124,27 +124,23 @@
 		try
 		{
 			NSNumber * pool = [importData objectForKey:@"poolGUID"];
+			std::vector<zfs::ZPool> importedPools;
 			if (pool != nil)
 			{
-				auto importedPool = _zfs.import([pool unsignedLongLongValue]);
-				importedPool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-				{
-					if (!fs.automount())
-						failures.emplace_back(_zfs.lastError());
-					return 0;
-				});
+				importedPools.emplace_back(_zfs.import([pool unsignedLongLongValue]));
 			}
 			else
 			{
-				auto pools = _zfs.importAllPools();
-				for (auto const & pool : pools)
+				importedPools = _zfs.importAllPools();
+			}
+			for (auto const & importedPool : importedPools)
+			{
+				if (importedPool.rootFileSystem().automountRecursive())
 				{
-					pool.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-					{
-						if (!fs.automount())
-							failures.emplace_back(_zfs.lastError());
-						return 0;
-					});
+					std::string errString = importedPool.name();
+					errString += ": ";
+					errString += _zfs.lastError();
+					failures.push_back(std::move(errString));
 				}
 			}
 			if (failures.empty())
@@ -252,23 +248,13 @@
 		}
 		try
 		{
-			std::vector<std::string> failures;
 			auto fs = _zfs.filesystem([fsName UTF8String]);
+			int ret = 0;
 			if (recursive)
-			{
-				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-				{
-					if (!fs.mount())
-						failures.emplace_back(_zfs.lastError());
-					return 0;
-				});
-			}
+				ret = fs.mountRecursive();
 			else
-			{
-				if (!fs.mount())
-					failures.emplace_back(_zfs.lastError());
-			}
-			if (failures.empty())
+				ret = fs.mount();
+			if (ret == 0)
 			{
 				reply(nullptr);
 			}
@@ -276,7 +262,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						formatForHumans(failures).c_str()]
+						_zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -312,31 +298,13 @@
 		}
 		try
 		{
-			std::vector<std::string> failures;
 			auto fs = _zfs.filesystem([fsName UTF8String]);
+			int ret = 0;
 			if (recursive)
-			{
-				auto unmountSnap = [self,&failures,force](zfs::ZFileSystem snap)
-				{
-					if (!snap.unmount(force))
-						failures.emplace_back(_zfs.lastError());
-					return 0;
-				};
-				auto unmountFS = [self,&failures,force,&unmountSnap](zfs::ZFileSystem fs)
-				{
-					fs.iterSnapshots(unmountSnap);
-					if (!fs.unmount(force))
-						failures.emplace_back(_zfs.lastError());
-					return 0;
-				};
-				fs.iterAllFileSystemsReverse(unmountFS);
-			}
+				ret = fs.unmountRecursive(force);
 			else
-			{
-				if (!fs.unmount(force))
-					failures.emplace_back(_zfs.lastError());
-			}
-			if (failures.empty())
+				ret = fs.unmount();
+			if (ret == 0)
 			{
 				reply(nullptr);
 			}
@@ -344,7 +312,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						formatForHumans(failures).c_str()]
+						_zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -378,7 +346,8 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			if (fs.snapshot([snapName UTF8String], recursive))
+			auto ret = fs.snapshot([snapName UTF8String], recursive);
+			if (ret == 0)
 			{
 				reply(nullptr);
 			}
@@ -418,7 +387,8 @@
 		try
 		{
 			auto snap = _zfs.filesystem([snapName UTF8String]);
-			if (snap.rollback(force))
+			auto res = snap.rollback(force);
+			if (res == 0)
 			{
 				reply(nullptr);
 			}
@@ -457,10 +427,10 @@
 		{
 			std::string newFSNameStr = [newFSName UTF8String];
 			auto snap = _zfs.filesystem([snapName UTF8String]);
-			if (snap.clone(newFSNameStr))
+			if (snap.clone(newFSNameStr) == 0)
 			{
 				auto newFS = _zfs.filesystem(newFSNameStr);
-				if (newFS.mount())
+				if (newFS.mount() == 0)
 				{
 					reply(nullptr);
 					return;
@@ -507,17 +477,17 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			bool success = true;
+			int ret = 0;
 			if (recursive)
 			{
-				success = fs.destroyRecursive(force);
+				ret = fs.destroyRecursive(force);
 			}
 			else
 			{
 				auto dependents = fs.dependents();
 				if (dependents.empty())
 				{
-					success = fs.destroy(force);
+					ret = fs.destroy(force);
 				}
 				else
 				{
@@ -528,7 +498,7 @@
 					return;
 				}
 			}
-			if (success)
+			if (ret == 0)
 			{
 				reply(nullptr);
 			}
@@ -566,49 +536,38 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			bool success = true;
+			int ret = 0;
 			if (key)
 			{
-				success = fs.loadKey([key UTF8String]);
+				ret = fs.loadKey([key UTF8String]);
 			}
 			else if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
 			{
-				success = fs.loadKeyFile();
+				ret = fs.loadKeyFile();
 			}
 			else
 			{
 				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Key"}]);
 				return;
 			}
-			if (success)
-			{
-				std::vector<std::string> failures;
-				// Encryption Root Filesystem and contained filesystems recursively
-				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
-				{
-					if (!fs.automount())
-						failures.emplace_back(_zfs.lastError());
-					return 0;
-				});
-				if (failures.empty())
-				{
-					reply(nullptr);
-				}
-				else
-				{
-					NSDictionary * userInfo = @{
-						NSLocalizedDescriptionKey: [NSString stringWithUTF8String:formatForHumans(failures).c_str()]
-					};
-					reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
-				}
-			}
-			else
+			if (ret)
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:userInfo]);
+				return;
 			}
+			// Encryption Root Filesystem and contained filesystems recursively
+			ret = fs.automountRecursive();
+			if (ret)
+			{
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+			}
+			reply(nullptr);
 		}
 		catch (std::exception const & e)
 		{
@@ -634,20 +593,9 @@
 		}
 		try
 		{
-			std::vector<std::string> failures;
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			fs.iterAllFileSystemsReverse([self,&failures](zfs::ZFileSystem fs)
-			{
-				if (!fs.unmount())
-					failures.emplace_back(_zfs.lastError());
-				return 0;
-			});
-			if (failures.empty())
-			{
-				if (!fs.unloadKey())
-					failures.emplace_back("Unload Key failed");
-			}
-			if (failures.empty())
+			auto ret = fs.unloadKey();
+			if (ret == 0)
 			{
 				reply(nullptr);
 			}
@@ -655,7 +603,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						formatForHumans(failures).c_str()]
+						_zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}

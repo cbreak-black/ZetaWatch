@@ -273,42 +273,72 @@ namespace zfs
 		return mountable();
 	}
 
-	bool ZFileSystem::mount()
+	int ZFileSystem::mount()
 	{
 		if (!mountable())
-			return true; // no need to do anything, success
+			return 0; // no need to do anything, success
 		if (mounted())
-			return true; // already mounted, success
-		return !zfs_mount(m_handle, nullptr, 0);
+			return 0; // already mounted, success
+		return zfs_mount(m_handle, nullptr, 0);
 	}
 
-	bool ZFileSystem::automount()
+	int ZFileSystem::mountRecursive()
+	{
+		return iterAllFileSystems([](ZFileSystem fs)
+		{
+			return fs.mount();
+		});
+	}
+
+	int ZFileSystem::automount()
 	{
 		if (!automountable())
-			return true; // no need to do anything, success
+			return 0; // no need to do anything, success
 		return mount();
 	}
 
-	bool ZFileSystem::unmount(bool force)
+	int ZFileSystem::automountRecursive()
+	{
+		return iterAllFileSystems([](ZFileSystem fs)
+		{
+			return fs.automount();
+		});
+	}
+
+	int ZFileSystem::unmount(bool force)
 	{
 		if (!mounted())
-			return true; // already unmounted, success
+			return 0; // already unmounted, success
 		int flags = 0;
 		if (force)
 			flags |= MS_FORCE;
-		return !zfs_unmount(m_handle, nullptr, flags);
+		return zfs_unmount(m_handle, nullptr, flags);
 	}
 
-	bool ZFileSystem::snapshot(std::string const & snapName, bool recursive)
+	int ZFileSystem::unmountRecursive(bool force)
+	{
+		return iterAllFileSystemsReverse([force](ZFileSystem fs)
+		{
+			auto res = fs.iterSnapshots([force](ZFileSystem snap)
+			{
+				return snap.unmount(force);
+			});
+			if (res != 0)
+				return res;
+			return fs.unmount(force);
+		});
+	}
+
+	int ZFileSystem::snapshot(std::string const & snapName, bool recursive)
 	{
 		std::string fullName = name();
 		fullName += '@';
 		fullName += snapName;
 		auto lib = libHandle();
-		return !zfs_snapshot(lib.handle(), fullName.c_str(), recursive, nullptr);
+		return zfs_snapshot(lib.handle(), fullName.c_str(), recursive, nullptr);
 	}
 
-	bool ZFileSystem::rollback(bool force)
+	int ZFileSystem::rollback(bool force)
 	{
 		std::string snapName = name();
 		std::string baseName = snapName.substr(0, snapName.find_last_of('@'));
@@ -317,25 +347,25 @@ namespace zfs
 			throw std::runtime_error(snapName + " is not a snapshot");
 		}
 		auto baseFS = libHandle().filesystem(baseName);
-		return !zfs_rollback(baseFS.m_handle, m_handle, force);
+		return zfs_rollback(baseFS.m_handle, m_handle, force);
 	}
 
-	bool ZFileSystem::clone(std::string const & newFSName)
+	int ZFileSystem::clone(std::string const & newFSName)
 	{
 		std::string snapName = name();
 		if (type() != FSType::snapshot)
 		{
 			throw std::runtime_error(snapName + " is not a snapshot");
 		}
-		return !zfs_clone(m_handle, newFSName.c_str(), nullptr);
+		return zfs_clone(m_handle, newFSName.c_str(), nullptr);
 	}
 
-	bool ZFileSystem::destroy(bool force)
+	int ZFileSystem::destroy(bool force)
 	{
-		if (!unmount(force))
-			return false;
+		if (auto error = unmount(force))
+			return error;
 		// This requires that there are no dependents left
-		return !zfs_destroy(m_handle, false);
+		return zfs_destroy(m_handle, false);
 	}
 
 	static int destroySnapshots(libzfs_handle_t * libHandle, std::vector<ZFileSystem> & snaps)
@@ -351,7 +381,7 @@ namespace zfs
 		return zfs_destroy_snaps_nvl(libHandle, snapList.toList(), false);
 	}
 
-	bool ZFileSystem::destroyRecursive(bool force)
+	int ZFileSystem::destroyRecursive(bool force)
 	{
 		auto lib = libHandle();
 		std::vector<ZFileSystem> snaps;
@@ -362,20 +392,20 @@ namespace zfs
 			if (fs.type() == FSType::snapshot)
 			{
 				snaps.push_back(std::move(fs));
+				return 0;
 			}
 			else
 			{
 				if (auto error = destroySnapshots(lib.handle(), snaps))
 					return error;
-				if (!fs.destroy())
-					return lib.lastErrorCode();
+				return fs.destroy();
 			}
-			return 0;
 		});
-		if (!error)
-			error = destroySnapshots(lib.handle(), snaps);
 		if (error)
-			return false;
+			return error;
+		error = destroySnapshots(lib.handle(), snaps);
+		if (error)
+			return error;
 		return destroy(force);
 	}
 
@@ -425,23 +455,17 @@ namespace zfs
 		}
 	};
 
-	bool ZFileSystem::loadKeyFile()
+	int ZFileSystem::loadKeyFile()
 	{
 		if (keyLocation() != KeyLocation::uri)
-			return false;
+			return EINVAL;
 		auto res = zfs_crypto_load_key(m_handle, B_FALSE, nullptr);
 		if (res == 0)
-		{
 			zfs_refresh_properties(m_handle);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return res;
 	}
 
-	bool ZFileSystem::loadKey(std::string const & key)
+	int ZFileSystem::loadKey(std::string const & key)
 	{
 		// Hackery needed because libzfs wants to read the password from the
 		// standard input instead of accepting it as argument.
@@ -450,30 +474,32 @@ namespace zfs
 			size_t r = 0;
 			r = write(p.fd[1], key.data(), key.size());
 			if (r == -1)
-				return false;
+				return r;
 			r = write(p.fd[1], "\n", 1);
 			if (r == -1)
-				return false;
-			return true;
+				return r;
+			return size_t();
 		});
 		char prompt[] = "prompt";
 		auto res = zfs_crypto_load_key(m_handle, B_FALSE, prompt);
 		bool writeRes = future.get();
-		if (res == 0 && writeRes)
-		{
+		if (res == 0 && writeRes == 0)
 			zfs_refresh_properties(m_handle);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return res | writeRes;
 	}
 
-	bool ZFileSystem::unloadKey()
+	int ZFileSystem::unloadKey()
 	{
-		auto res = zfs_crypto_unload_key(m_handle);
-		return res == 0;
+		auto res = iterDependents([](zfs::ZFileSystem fs)
+		{
+			return fs.unmount();
+		});
+		if (res != 0)
+			return res;
+		res = unmount();
+		if (res != 0)
+			return res;
+		return zfs_crypto_unload_key(m_handle);
 	}
 
 	ZFileSystem::FSType ZFileSystem::type() const
@@ -675,7 +701,9 @@ namespace zfs
 		ZFileSystemCallback<std::function<int(ZFileSystem)>> cb([&](ZFileSystem fs)
 		{
 			ZFileSystem fsc(zfs_handle_dup(fs.m_handle));
-			callback(std::move(fs));
+			auto r = callback(std::move(fs));
+			if (r != 0)
+				return r;
 			return zfs_iter_filesystems(fsc.m_handle, &cb.handle_s, &cb);
 		});
 		return cb.handle(zfs_handle_dup(m_handle));
@@ -686,9 +714,9 @@ namespace zfs
 		ZFileSystemCallback<std::function<int(ZFileSystem)>> cb([&](ZFileSystem fs)
 		{
 			auto r = zfs_iter_filesystems(fs.m_handle, &cb.handle_s, &cb);
-			if (r == 0)
-				callback(std::move(fs));
-			return r;
+			if (r != 0)
+				return r;
+			return callback(std::move(fs));
 		});
 		return cb.handle(zfs_handle_dup(m_handle));
 	}
@@ -1058,7 +1086,7 @@ namespace zfs
 			}
 			else
 			{
-				throw std::runtime_error("Error opening pool " + pair.name());
+				throw std::runtime_error("Error importing pool " + pair.name());
 			}
 		}
 		return pools;
