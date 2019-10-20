@@ -20,6 +20,8 @@
 @property (weak) IBOutlet NSTextField * statusField;
 @property (weak) IBOutlet NSButton * useKeychainCheckbox;
 @property (weak) IBOutlet NSProgressIndicator * progressIndicator;
+@property (weak) IBOutlet NSButton * loadButton;
+@property (weak) IBOutlet NSButton * skipButton;
 
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 

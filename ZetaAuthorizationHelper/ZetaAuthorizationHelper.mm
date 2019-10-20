@@ -609,7 +609,7 @@
 	{
 		NSString * fsName = [loadData objectForKey:@"filesystem"];
 		NSString * key = [loadData objectForKey:@"key"];
-		if (!fsName || !key)
+		if (!fsName)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
 			return;
@@ -617,7 +617,20 @@
 		try
 		{
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			auto success = fs.loadKey([key UTF8String]);
+			bool success = true;
+			if (key)
+			{
+				success = fs.loadKey([key UTF8String]);
+			}
+			else if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
+			{
+				success = fs.loadKeyFile();
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Key"}]);
+				return;
+			}
 			if (success)
 			{
 				std::vector<std::string> failures;
@@ -645,7 +658,10 @@
 			}
 			else
 			{
-				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Password"}]);
+				NSDictionary * userInfo = @{
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				};
+				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:userInfo]);
 			}
 		}
 		catch (std::exception const & e)

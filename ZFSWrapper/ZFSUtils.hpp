@@ -179,6 +179,13 @@ namespace zfs
 			available = 2
 		};
 
+		enum class KeyLocation
+		{
+			none = 0,
+			prompt = 1,
+			uri = 2,
+		};
+
 	public:
 		ZFileSystem();
 
@@ -214,6 +221,7 @@ namespace zfs
 		bool isEncryptionRoot() const;
 		std::pair<std::string, bool> encryptionRoot() const;
 		KeyStatus keyStatus() const;
+		KeyLocation keyLocation() const;
 		bool isRoot() const;
 
 	public:
@@ -253,7 +261,8 @@ namespace zfs
 		bool mount(); //!< Mount the filesystem if possible
 		bool automount(); //!< Only try to mount the filesystem if it can be automounted
 		bool unmount(bool force = false);
-		bool loadKey(std::string const & key);
+		bool loadKeyFile(); //!< Load key from file if the key location is uri, or returns false
+		bool loadKey(std::string const & key); //!< Load the given key
 		bool unloadKey();
 		bool destroy(bool force = false);
 		bool destroyRecursive(bool force = false);

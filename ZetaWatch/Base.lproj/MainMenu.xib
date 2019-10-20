@@ -44,11 +44,13 @@
         <customObject id="R7D-cp-kuE" userLabel="ZetaKeyLoader" customClass="ZetaKeyLoader">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="j1a-fu-F0a"/>
+                <outlet property="loadButton" destination="Xth-17-Uyp" id="ShD-Rm-nkI"/>
                 <outlet property="passwordField" destination="JpZ-yq-Swt" id="wki-ew-pno"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="hdd-tK-37f"/>
                 <outlet property="popover" destination="5Lh-hG-dv8" id="bFc-sJ-D7x"/>
                 <outlet property="progressIndicator" destination="IW2-QV-nuy" id="1wo-S0-51q"/>
                 <outlet property="queryField" destination="vtC-BP-wc5" id="cQa-7q-bCw"/>
+                <outlet property="skipButton" destination="sXs-lU-vuw" id="jjX-d7-NRy"/>
                 <outlet property="statusField" destination="egb-Mb-iyZ" id="FbE-63-Kfl"/>
                 <outlet property="useKeychainCheckbox" destination="2s9-7L-bQq" id="6dw-gL-9v1"/>
             </connections>

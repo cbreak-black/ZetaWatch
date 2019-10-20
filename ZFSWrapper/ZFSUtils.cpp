@@ -425,6 +425,22 @@ namespace zfs
 		}
 	};
 
+	bool ZFileSystem::loadKeyFile()
+	{
+		if (keyLocation() != KeyLocation::uri)
+			return false;
+		auto res = zfs_crypto_load_key(m_handle, B_FALSE, nullptr);
+		if (res == 0)
+		{
+			zfs_refresh_properties(m_handle);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	bool ZFileSystem::loadKey(std::string const & key)
 	{
 		// Hackery needed because libzfs wants to read the password from the
@@ -544,6 +560,20 @@ namespace zfs
 					  KeyStatus::available == (KeyStatus)ZFS_KEYSTATUS_AVAILABLE,
 					  "ZFileSystem::KeyStatus == zfs_keystatus");
 		return static_cast<KeyStatus>(zfs_prop_get_int(m_handle, ZFS_PROP_KEYSTATUS));
+	}
+
+	ZFileSystem::KeyLocation ZFileSystem::keyLocation() const
+	{
+		static_assert(KeyLocation::none == (KeyLocation)ZFS_KEYLOCATION_NONE &&
+					  KeyLocation::prompt == (KeyLocation)ZFS_KEYLOCATION_PROMPT &&
+					  KeyLocation::uri == (KeyLocation)ZFS_KEYLOCATION_URI,
+					  "ZFileSystem::KeyLocation == zfs_keylocation");
+		auto loc = getPropString(m_handle, ZFS_PROP_KEYLOCATION);
+		if (loc == "prompt")
+			return KeyLocation::prompt;
+		else if (loc.compare(0, 7, "file://") == 0)
+			return KeyLocation::uri;
+		return KeyLocation::none;
 	}
 
 	bool ZFileSystem::isRoot() const

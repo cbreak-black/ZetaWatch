@@ -10,12 +10,16 @@
 
 #import <Security/Security.h>
 
+#include "ZFSWrapper/ZFSUtils.hpp"
+
 #include <deque>
 #include <type_traits>
 
 @interface ZetaKeyLoader ()
 {
 	std::deque<NSString*> filesystems;
+	bool unlockInProgress;
+	zfs::LibZFSHandle libZFS;
 }
 
 @end
@@ -24,6 +28,7 @@
 
 - (void)awakeFromNib
 {
+	unlockInProgress = false;
 	if (self.poolWatcher)
 	{
 		[self.poolWatcher.delegates addObject:self];
@@ -48,11 +53,14 @@
 
 - (IBAction)loadKey:(id)sender
 {
-	NSString * pass = [_passwordField stringValue];
-	NSString * filesystem = [self representedFilesystem];
-	bool storeInKeychain = [_useKeychainCheckbox state] == NSControlStateValueOn;
-	[self clearPassword];
-	[self loadKey:pass forFilesystem:filesystem storeInKeychain:storeInKeychain];
+	if (!unlockInProgress)
+	{
+		NSString * pass = [_passwordField stringValue];
+		NSString * filesystem = [self representedFilesystem];
+		bool storeInKeychain = [_useKeychainCheckbox state] == NSControlStateValueOn;
+		[self clearPassword];
+		[self loadKey:pass forFilesystem:filesystem storeInKeychain:storeInKeychain];
+	}
 }
 
 - (void)loadKey:(NSString*)password forFilesystem:(NSString*)filesystem
@@ -62,20 +70,34 @@
 	NSDictionary * opts = @{@"filesystem": filesystem, @"key": password};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
-		 if (!error && storeInKeychain)
+		 if ([self handleLoadKeyReply:error] && storeInKeychain)
 		 {
 			 [self storePassword:password forFilesystem:filesystem];
 		 }
-		 [self handleLoadKeyReply:error];
+	 }];
+}
+
+- (void)loadKeyFileForFilesystem:(NSString*)filesystem
+{
+	[self showActionInProgress:NSLocalizedString(@"Loading Keyfile...", @"LoadingKeyFileStatus")];
+	NSDictionary * opts = @{@"filesystem": filesystem};
+	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
+	 {
+		 if (![self handleLoadKeyReply:error])
+		 {
+			 // Try stored key next
+			 [self tryUnlockFromStoredPassword:filesystem];
+		 }
 	 }];
 }
 
 - (IBAction)skipFileSystem:(id)sender
 {
-	[self advanceFileSystem];
+	if (!unlockInProgress)
+		[self advanceFileSystem];
 }
 
-- (void)handleLoadKeyReply:(NSError*)error
+- (bool)handleLoadKeyReply:(NSError*)error
 {
 	[self completeAction];
 	if (error)
@@ -88,12 +110,15 @@
 		{
 			[self notifyErrorFromHelper:error];
 			[self advanceFileSystem];
+			return true;
 		}
 	}
 	else
 	{
 		[self advanceFileSystem];
+		return true;
 	}
+	return false;
 }
 
 - (void)showActionInProgress:(NSString*)action
@@ -102,12 +127,18 @@
 	[_statusField setTextColor:[NSColor textColor]];
 	[_statusField setHidden:NO];
 	[_progressIndicator startAnimation:self];
+	[_loadButton setEnabled:NO];
+	[_skipButton setEnabled:NO];
+	unlockInProgress = true;
 }
 
 - (void)completeAction
 {
 	[_progressIndicator stopAnimation:self];
 	[self hideStatus];
+	[_loadButton setEnabled:YES];
+	[_skipButton setEnabled:YES];
+	unlockInProgress = false;
 }
 
 - (void)showError:(NSString*)error
@@ -134,15 +165,34 @@
 	return YES;
 }
 
-- (bool)tryUnlockFromStoredPassword:(NSString*)filesystem
+- (void)tryUnlock:(NSString*)filesystem
 {
-	NSString * password = [self retrievePasswordForFilesystem:filesystem];
-	if (password)
+	auto fs = libZFS.filesystem([filesystem UTF8String]);
+	if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
 	{
-		[self loadKey:password forFilesystem:filesystem storeInKeychain:false];
-		return true;
+		[self loadKeyFileForFilesystem:filesystem];
 	}
-	return false;
+	else
+	{
+		[self tryUnlockFromStoredPassword:filesystem];
+	}
+}
+
+- (void)tryUnlockFromStoredPassword:(NSString*)filesystem
+{
+	auto fs = libZFS.filesystem([filesystem UTF8String]);
+	if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
+	{
+		[self loadKeyFileForFilesystem:filesystem];
+	}
+	else
+	{
+		NSString * password = [self retrievePasswordForFilesystem:filesystem];
+		if (password)
+		{
+			[self loadKey:password forFilesystem:filesystem storeInKeychain:false];
+		}
+	}
 }
 
 - (NSString*)retrievePasswordForFilesystem:(NSString*)filesystem
@@ -246,7 +296,7 @@ encoding:NSUTF8StringEncoding];
 	if (filesystems.size() == 1)
 	{
 		[self updateFileSystem];
-		[self tryUnlockFromStoredPassword:filesystem];
+		[self tryUnlock:filesystem];
 	}
 }
 
@@ -267,7 +317,7 @@ encoding:NSUTF8StringEncoding];
 	}
 	else
 	{
-		[self tryUnlockFromStoredPassword:filesystems.front()];
+		[self tryUnlock:filesystems.front()];
 	}
 }
 
