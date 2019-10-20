@@ -244,11 +244,12 @@ namespace zfs
 		int iterChildFilesystems(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively, visiting all parent
-		//! filesystems before the children.
+		//! filesystems before the children, including the filesystem itself.
 		int iterAllFileSystems(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all child filesystems recursively, visiting all child
-		//! filesystems before the parent filesystem.
+		//! filesystems before the parent filesystem. Also visits the filesystem
+		//! itself.
 		int iterAllFileSystemsReverse(std::function<int(ZFileSystem)> callback) const;
 
 		//! Iterates over all snapshots

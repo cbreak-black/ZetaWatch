@@ -591,10 +591,13 @@ namespace zfs
 
 	namespace
 	{
+		template<typename CB>
 		struct ZFileSystemCallback
 		{
-			ZFileSystemCallback(std::function<int(ZFileSystem)> callback) :
-				m_callback(callback)
+			using Callback = CB;
+
+			ZFileSystemCallback(Callback callback) :
+				m_callback(std::move(callback))
 			{
 			}
 
@@ -608,7 +611,7 @@ namespace zfs
 				return static_cast<ZFileSystemCallback*>(stored_this)->handle(fs);
 			}
 
-			std::function<int(ZFileSystem)> m_callback;
+			Callback m_callback;
 		};
 	}
 
@@ -620,20 +623,20 @@ namespace zfs
 			children.push_back(std::move(fs));
 			return 0;
 		});
-		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		zfs_iter_filesystems(m_handle, &cb.handle_s, &cb);
 		return children;
 	}
 
 	std::vector<ZFileSystem> ZFileSystem::allFileSystems() const
 	{
 		std::vector<ZFileSystem> children;
-		ZFileSystemCallback cb([&](ZFileSystem fs)
+		ZFileSystemCallback<std::function<int(ZFileSystem)>> cb([&](ZFileSystem fs)
 		{
 			children.push_back(std::move(fs));
-			zfs_iter_filesystems(children.back().m_handle, ZFileSystemCallback::handle_s, &cb);
+			zfs_iter_filesystems(children.back().m_handle, cb.handle_s, &cb);
 			return 0;
 		});
-		zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		cb.handle(zfs_handle_dup(m_handle));
 		return children;
 	}
 
@@ -645,7 +648,7 @@ namespace zfs
 			snapshots.push_back(std::move(fs));
 			return 0;
 		});
-		zfs_iter_snapshots_sorted(m_handle, ZFileSystemCallback::handle_s, &cb, 0, 0);
+		zfs_iter_snapshots_sorted(m_handle, &cb.handle_s, &cb, 0, 0);
 		return snapshots;
 	}
 
@@ -657,49 +660,49 @@ namespace zfs
 			dependents.push_back(std::move(fs));
 			return 0;
 		});
-		zfs_iter_dependents(m_handle, false, ZFileSystemCallback::handle_s, &cb);
+		zfs_iter_dependents(m_handle, false, &cb.handle_s, &cb);
 		return dependents;
 	}
 
 	int ZFileSystem::iterChildFilesystems(std::function<int(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
-		return zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		return zfs_iter_filesystems(m_handle, &cb.handle_s, &cb);
 	}
 
 	int ZFileSystem::iterAllFileSystems(std::function<int(ZFileSystem)> callback) const
 	{
-		ZFileSystemCallback cb([&](ZFileSystem fs)
+		ZFileSystemCallback<std::function<int(ZFileSystem)>> cb([&](ZFileSystem fs)
 		{
 			ZFileSystem fsc(zfs_handle_dup(fs.m_handle));
 			callback(std::move(fs));
-			return zfs_iter_filesystems(fsc.m_handle, ZFileSystemCallback::handle_s, &cb);
+			return zfs_iter_filesystems(fsc.m_handle, &cb.handle_s, &cb);
 		});
-		return zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		return cb.handle(zfs_handle_dup(m_handle));
 	}
 
 	int ZFileSystem::iterAllFileSystemsReverse(std::function<int(ZFileSystem)> callback) const
 	{
-		ZFileSystemCallback cb([&](ZFileSystem fs)
+		ZFileSystemCallback<std::function<int(ZFileSystem)>> cb([&](ZFileSystem fs)
 		{
-			auto r = zfs_iter_filesystems(fs.m_handle, ZFileSystemCallback::handle_s, &cb);
+			auto r = zfs_iter_filesystems(fs.m_handle, &cb.handle_s, &cb);
 			if (r == 0)
 				callback(std::move(fs));
 			return r;
 		});
-		return zfs_iter_filesystems(m_handle, ZFileSystemCallback::handle_s, &cb);
+		return cb.handle(zfs_handle_dup(m_handle));
 	}
 
 	int ZFileSystem::iterSnapshots(std::function<int(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
-		return zfs_iter_snapshots_sorted(m_handle, ZFileSystemCallback::handle_s, &cb, 0, 0);
+		return zfs_iter_snapshots_sorted(m_handle, &cb.handle_s, &cb, 0, 0);
 	}
 
 	int ZFileSystem::iterDependents(std::function<int(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
-		return zfs_iter_dependents(m_handle, false, ZFileSystemCallback::handle_s, &cb);
+		return zfs_iter_dependents(m_handle, false, &cb.handle_s, &cb);
 	}
 
 	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :
@@ -846,7 +849,6 @@ namespace zfs
 		{
 			auto root = rootFileSystem();
 			std::vector<ZFileSystem> fileSystems = root.allFileSystems();
-			fileSystems.insert(fileSystems.begin(), std::move(root));
 			return fileSystems;
 		}
 		catch (std::runtime_error const & e)
@@ -858,19 +860,12 @@ namespace zfs
 
 	int ZPool::iterAllFileSystems(std::function<int(ZFileSystem)> callback) const
 	{
-		int r = callback(rootFileSystem());
-		if (r != 0)
-			return r;
 		return rootFileSystem().iterAllFileSystems(callback);
 	}
 
 	int ZPool::iterAllFileSystemsReverse(std::function<int(ZFileSystem)> callback) const
 	{
-		auto root = rootFileSystem();
-		int r = root.iterAllFileSystemsReverse(callback);
-		if (r != 0)
-			return r;
-		return callback(std::move(root));
+		return rootFileSystem().iterAllFileSystemsReverse(callback);
 	}
 
 	void ZPool::exportPool(bool force)

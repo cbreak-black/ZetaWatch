@@ -310,8 +310,6 @@
 		{
 			std::vector<std::string> failures;
 			auto fs = _zfs.filesystem([fsName UTF8String]);
-			if (!fs.mount())
-				failures.emplace_back(_zfs.lastError());
 			if (recursive)
 			{
 				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
@@ -320,6 +318,11 @@
 						failures.emplace_back(_zfs.lastError());
 					return 0;
 				});
+			}
+			else
+			{
+				if (!fs.mount())
+					failures.emplace_back(_zfs.lastError());
 			}
 			if (failures.empty())
 			{
@@ -383,10 +386,12 @@
 					return 0;
 				};
 				fs.iterAllFileSystemsReverse(unmountFS);
-				fs.iterSnapshots(unmountSnap);
 			}
-			if (!fs.unmount(force))
-				failures.emplace_back(_zfs.lastError());
+			else
+			{
+				if (!fs.unmount(force))
+					failures.emplace_back(_zfs.lastError());
+			}
 			if (failures.empty())
 			{
 				reply(nullptr);
@@ -634,10 +639,7 @@
 			if (success)
 			{
 				std::vector<std::string> failures;
-				// Encryption Root Filesystem itself
-				if (!fs.automount())
-					failures.emplace_back(_zfs.lastError());
-				// All contained filesystems recursively
+				// Encryption Root Filesystem and contained filesystems recursively
 				fs.iterAllFileSystems([self,&failures](zfs::ZFileSystem fs)
 				{
 					if (!fs.automount())
@@ -696,8 +698,6 @@
 					failures.emplace_back(_zfs.lastError());
 				return 0;
 			});
-			if (!fs.unmount())
-				failures.emplace_back(_zfs.lastError());
 			if (failures.empty())
 			{
 				if (!fs.unloadKey())
