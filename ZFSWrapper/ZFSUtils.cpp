@@ -122,6 +122,91 @@ namespace zfs
 		return vk;
 	}
 
+	inline void truncateString(std::string & str)
+	{
+		str.resize(std::strlen(str.data()));
+	}
+
+	using PropList = std::unique_ptr<zprop_list_t, void(*)(zprop_list_t*)>;
+
+	static PropList zfsProplist(zfs_handle_t * handle)
+	{
+		PropList pl(nullptr, &zprop_free_list);
+		zprop_list_t * plRaw = nullptr;
+		int ec = zfs_expand_proplist(handle, &plRaw, true, false);
+		if (ec == 0)
+			pl.reset(plRaw);
+		return pl;
+	}
+
+	static PropList zpoolProplist(zpool_handle_t * handle)
+	{
+		PropList pl(nullptr, &zprop_free_list);
+		zprop_list_t * plRaw = nullptr;
+		int ec = zpool_expand_proplist(handle, &plRaw);
+		if (ec == 0)
+			pl.reset(plRaw);
+		return pl;
+	}
+
+	static std::uint64_t getPropNumeric(zfs_handle_t * handle, zfs_prop_t prop)
+	{
+		std::uint64_t v = {};
+		int ec = zfs_prop_get_numeric(handle, prop, &v, nullptr, nullptr, 0);
+		if (ec != 0)
+			return 0; // Maybe report error in some form?
+		return v;
+	}
+
+	static std::string getPropString(zfs_handle_t * handle, zfs_prop_t prop)
+	{
+		std::string s;
+		s.resize(ZFS_MAXPROPLEN);
+		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, false);
+		if (ec != 0)
+			s.clear(); // Maybe report error in some form?
+		else
+			truncateString(s);
+		return s;
+	}
+
+	static bool getProperty(zfs_handle_t * handle, zfs_prop_t prop, ZFileSystem::Property & p)
+	{
+		p.name.assign(zfs_prop_to_name(prop));
+		p.value.resize(64);
+		p.source.resize(128);
+		zprop_source_t source = {};
+		int ec = zfs_prop_get(handle, prop,
+							  p.value.data(), p.value.size(), &source,
+							  p.source.data(), p.source.size(), false);
+		truncateString(p.value);
+		truncateString(p.source);
+		return ec == 0;
+	}
+
+	static bool getProperty(zpool_handle_t * handle, zpool_prop_t prop, ZPool::Property & p)
+	{
+		auto name = zpool_prop_to_name(prop);
+		if (!name)
+			return false;
+		p.name.assign(name);
+		p.value.resize(64);
+		zprop_source_t source = {};
+		int ec = zpool_get_prop(handle, prop,
+								p.value.data(), p.value.size(), &source, false);
+		truncateString(p.value);
+		return ec == 0;
+	}
+
+	static bool getProperty(zpool_handle_t * handle, char const * feature, ZPool::Property & p)
+	{
+		p.name.assign(feature);
+		p.value.resize(64);
+		int ec = zpool_prop_get_feature(handle, feature, p.value.data(), p.value.size());
+		truncateString(p.value);
+		return ec == 0;
+	}
+
 	ZFileSystem::ZFileSystem() : m_handle(nullptr)
 	{
 	}
@@ -386,32 +471,6 @@ namespace zfs
 		return static_cast<FSType>(zfs_get_type(m_handle));
 	}
 
-	inline void truncateString(std::string & str)
-	{
-		str.resize(std::strlen(str.data()));
-	}
-
-	std::uint64_t getPropNumeric(zfs_handle_t * handle, zfs_prop_t prop)
-	{
-		std::uint64_t v = {};
-		int ec = zfs_prop_get_numeric(handle, prop, &v, nullptr, nullptr, 0);
-		if (ec != 0)
-			return 0; // Maybe report error in some form?
-		return v;
-	}
-
-	std::string getPropString(zfs_handle_t * handle, zfs_prop_t prop)
-	{
-		std::string s;
-		s.resize(ZFS_MAXPROPLEN);
-		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, false);
-		if (ec != 0)
-			s.clear(); // Maybe report error in some form?
-		else
-			truncateString(s);
-		return s;
-	}
-
 	std::uint64_t ZFileSystem::used() const
 	{
 		return getPropNumeric(m_handle, ZFS_PROP_USED);
@@ -440,32 +499,6 @@ namespace zfs
 	std::string ZFileSystem::mountpoint() const
 	{
 		return getPropString(m_handle, ZFS_PROP_MOUNTPOINT);
-	}
-
-	using PropList = std::unique_ptr<zprop_list_t, void(*)(zprop_list_t*)>;
-
-	static PropList zfsProplist(zfs_handle_t * handle)
-	{
-		PropList pl(nullptr, &zprop_free_list);
-		zprop_list_t * plRaw = nullptr;
-		int ec = zfs_expand_proplist(handle, &plRaw, true, false);
-		if (ec == 0)
-			pl.reset(plRaw);
-		return pl;
-	}
-
-	static bool getProperty(zfs_handle_t * handle, zfs_prop_t prop, ZFileSystem::Property & p)
-	{
-		p.name.assign(zfs_prop_to_name(prop));
-		p.value.resize(64);
-		p.source.resize(128);
-		zprop_source_t source = {};
-		int ec = zfs_prop_get(handle, prop,
-					 p.value.data(), p.value.size(), &source,
-					 p.source.data(), p.source.size(), false);
-		truncateString(p.value);
-		truncateString(p.source);
-		return ec == 0;
 	}
 
 	std::vector<ZFileSystem::Property> ZFileSystem::properties() const
@@ -744,39 +777,6 @@ namespace zfs
 			zpool_get_handle(m_handle), m_handle, vdev.toList(),
 			VDEV_NAME_PATH | VDEV_NAME_FOLLOW_LINKS | VDEV_NAME_TYPE_ID);
 		return name;
-	}
-
-	static PropList zpoolProplist(zpool_handle_t * handle)
-	{
-		PropList pl(nullptr, &zprop_free_list);
-		zprop_list_t * plRaw = nullptr;
-		int ec = zpool_expand_proplist(handle, &plRaw);
-		if (ec == 0)
-			pl.reset(plRaw);
-		return pl;
-	}
-
-	static bool getProperty(zpool_handle_t * handle, zpool_prop_t prop, ZPool::Property & p)
-	{
-		auto name = zpool_prop_to_name(prop);
-		if (!name)
-			return false;
-		p.name.assign(name);
-		p.value.resize(64);
-		zprop_source_t source = {};
-		int ec = zpool_get_prop(handle, prop,
-							  p.value.data(), p.value.size(), &source, false);
-		truncateString(p.value);
-		return ec == 0;
-	}
-
-	static bool getProperty(zpool_handle_t * handle, char const * feature, ZPool::Property & p)
-	{
-		p.name.assign(feature);
-		p.value.resize(64);
-		int ec = zpool_prop_get_feature(handle, feature, p.value.data(), p.value.size());
-		truncateString(p.value);
-		return ec == 0;
 	}
 
 	std::vector<ZPool::Property> ZPool::properties() const
