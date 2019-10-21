@@ -25,21 +25,6 @@
 
 @implementation ZetaAuthorizationHelper
 
-- (NSString *)findCommand:(NSString*)command
-{
-	NSFileManager * manager = [NSFileManager defaultManager];
-	for (NSString * prefix in self.prefixPaths)
-	{
-		NSString * commandPath = [prefix stringByAppendingString:command];
-		if ([manager fileExistsAtPath:commandPath])
-		{
-			return commandPath;
-		}
-	}
-	@throw [NSException exceptionWithName:@"CommandNotFound"
-								   reason:@"Command not Found" userInfo:nil];
-}
-
 - (id)init
 {
 	self = [super init];
@@ -48,7 +33,6 @@
 		// Set up our XPC listener to handle requests on our Mach service.
 		self->_listener = [[NSXPCListener alloc] initWithMachServiceName:kHelperToolMachServiceName];
 		self->_listener.delegate = self;
-		self.prefixPaths = @[@"/usr/local/bin/", @"/usr/local/sbin/"];
 	}
 	return self;
 }
@@ -128,46 +112,6 @@
 - (void)getVersionWithReply:(void (^)(NSError * error, NSString *))reply
 {
 	reply(nil, [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]);
-}
-
-- (NSTask*)runCommand:(NSString *)command withArguments:(NSArray<NSString*>*)arguments
-		 withReply:(void (^)(NSError *))reply
-{
-	@try
-	{
-		NSTask * task = [[NSTask alloc] init];
-		task.launchPath = [self findCommand:command];;
-		task.arguments = arguments;
-		task.terminationHandler = ^(NSTask * task)
-		{
-			if (task.terminationStatus == 0)
-			{
-				reply(nil);
-			}
-			else
-			{
-				reply([NSError errorWithDomain:@"ZFSCLIError" code:task.terminationStatus userInfo:nil]);
-			}
-		};
-		NSPipe * pipe = [NSPipe pipe];
-		task.standardInput = pipe;
-		[task launch];
-		NSLog(@"runCommand: %@ %@", command, arguments);
-		return task;
-	}
-	@catch(NSException * ex)
-	{
-		NSMutableDictionary * info = [NSMutableDictionary dictionary];
-		[info setValue:ex.name forKey:@"ExceptionName"];
-		[info setValue:ex.reason forKey:@"ExceptionReason"];
-		[info setValue:ex.callStackReturnAddresses forKey:@"ExceptionCallStackReturnAddresses"];
-		[info setValue:ex.callStackSymbols forKey:@"ExceptionCallStackSymbols"];
-		[info setValue:ex.userInfo forKey:@"ExceptionUserInfo"];
-
-		NSError * error = [[NSError alloc] initWithDomain:@"ZFSCLIError" code:-1 userInfo:info];
-		reply(error);
-	}
-	return nil;
 }
 
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData
