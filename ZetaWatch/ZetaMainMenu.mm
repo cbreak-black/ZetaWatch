@@ -406,6 +406,30 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 				item.submenu = createFSMenu(std::move(fs), delegate);
 			}
 		}
+		// Command helper
+		auto addRootFSCommand = [&](NSString * title, SEL selector)
+		{
+			auto item = [vdevMenu addItemWithTitle:title
+				action:selector keyEquivalent:@""];
+			item.representedObject = poolName;
+			item.target = delegate;
+		};
+		// Mount Recursive
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		addRootFSCommand(NSLocalizedString(@"Mount Recursive", @"Mount Recursive"),
+						 @selector(mountFilesystemRecursive:));
+		addRootFSCommand(NSLocalizedString(@"Unmount Recursive", @"Unmount Recursive"),
+						 @selector(unmountFilesystemRecursive:));
+		// Snapshot
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		addRootFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"),
+						 @selector(snapshotFilesystemRecursive:));
+		// Export Actions
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		addRootFSCommand(NSLocalizedString(@"Export", @"Export"),
+						 @selector(exportPool:));
+		addRootFSCommand(NSLocalizedString(@"Export (Force)", @"Export (Force)"),
+						 @selector(exportPoolForce:));
 		// All Properties
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		NSMenu * allProps = [[NSMenu alloc] initWithTitle:@"All Properties"];
@@ -415,21 +439,6 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		allPropsItem.submenu = allProps;
 		allPropsItem.representedObject = pd;
 		[vdevMenu addItem:allPropsItem];
-		// Export Actions
-		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		{
-			auto item = [vdevMenu addItemWithTitle:@"Export"
-				action:@selector(exportPool:) keyEquivalent:@""];
-			item.representedObject = poolName;
-			item.target = delegate;
-		}
-		{
-			auto item = [vdevMenu addItemWithTitle:@"Export (Force)"
-				action:@selector(exportPoolForce:) keyEquivalent:@""];
-			item.representedObject = poolName;
-			item.target = delegate;
-		}
-
 	}
 	catch (std::exception const & e)
 	{
