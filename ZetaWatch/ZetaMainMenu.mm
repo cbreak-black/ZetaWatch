@@ -66,7 +66,7 @@
 
 NSString * formatErrorStat(zfs::VDevStat stat)
 {
-	NSString * status = zfs::localized_describe_vdev_state_t(stat.state, stat.aux);
+	NSString * status = zfs::emojistring_vdev_state_t(stat.state, stat.aux);
 	NSString * errors = nil;
 	if (stat.errorRead == 0 && stat.errorWrite == 0 && stat.errorChecksum == 0)
 	{

@@ -113,11 +113,11 @@ namespace zfs
 			case ZPOOL_STATUS_HOSTID_REQUIRED:
 				return u8"⚠️";
 			case ZPOOL_STATUS_IO_FAILURE_WAIT:
-				return u8"❌";
+				return u8"⛔️";
 			case ZPOOL_STATUS_IO_FAILURE_CONTINUE:
-				return u8"❌";
+				return u8"🛑";
 			case ZPOOL_STATUS_IO_FAILURE_MMP:
-				return u8"❌";
+				return u8"📛";
 			case ZPOOL_STATUS_BAD_LOG:
 				return u8"⚠️";
 			case ZPOOL_STATUS_ERRATA:
@@ -137,9 +137,9 @@ namespace zfs
 			case ZPOOL_STATUS_RESILVERING:
 				return u8"♻️";
 			case ZPOOL_STATUS_OFFLINE_DEV:
-				return u8"🚫";
+				return u8"⭕️";
 			case ZPOOL_STATUS_REMOVED_DEV:
-				return u8"🚫";
+				return u8"❌";
 			case ZPOOL_STATUS_OK:
 				return u8"✅";
 		}
@@ -166,5 +166,37 @@ namespace zfs
 	{
 		return NSLocalizedString([NSString stringWithUTF8String:describe_vdev_state_t(stat, aux)],
 								 @"vdev_state_t");
+	}
+
+	char const * emoji_vdev_state_t(uint64_t state, uint64_t aux)
+	{
+		switch (state) {
+			default:
+				break;
+			case VDEV_STATE_CLOSED:
+			case VDEV_STATE_OFFLINE:
+				return u8"⭕️";
+			case VDEV_STATE_REMOVED:
+				return u8"❌";
+			case VDEV_STATE_CANT_OPEN:
+				if (aux == VDEV_AUX_CORRUPT_DATA || aux == VDEV_AUX_BAD_LOG)
+					return u8"💀";
+				else if (aux == VDEV_AUX_SPLIT_POOL)
+					return u8"✂️";
+				else
+					return u8"🔍";
+			case VDEV_STATE_FAULTED:
+				return u8"💀";
+			case VDEV_STATE_DEGRADED:
+				return u8"⚠️";
+			case VDEV_STATE_HEALTHY:
+				return u8"✅";
+		}
+		return u8"⁉️";
+	}
+
+	NSString * emojistring_vdev_state_t(uint64_t state, uint64_t aux)
+	{
+		return [NSString stringWithUTF8String:emoji_vdev_state_t(state, aux)];
 	}
 }

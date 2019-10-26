@@ -40,12 +40,22 @@ namespace zfs
 	/*!
 	 Returns a string with english human-facing description of the vdev status.
 	 */
-	char const * describe_vdev_state_t(uint64_t stat, uint64_t aux);
+	char const * describe_vdev_state_t(uint64_t state, uint64_t aux);
 
 	/*!
 	 Returns a localized string description of the vdev status.
 	 */
 	NSString * localized_describe_vdev_state_t(uint64_t stat, uint64_t aux);
+
+	/*!
+	 Returns an emoji for the vdev status.
+	 */
+	char const * emoji_vdev_state_t(uint64_t state, uint64_t aux);
+
+	/*!
+	 Returns an emoji for the vdev status.
+	 */
+	NSString * emojistring_vdev_state_t(uint64_t state, uint64_t aux);
 
 }
 
