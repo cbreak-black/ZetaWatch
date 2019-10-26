@@ -64,9 +64,11 @@
 
 #pragma mark Formating
 
-NSString * formatErrorStat(zfs::VDevStat stat)
+NSString * formatErrorStat(zfs::VDevStat stat, bool emoji)
 {
-	NSString * status = zfs::emojistring_vdev_state_t(stat.state, stat.aux);
+	NSString * status = emoji ?
+		zfs::emojistring_vdev_state_t(stat.state, stat.aux) :
+		zfs::localized_describe_vdev_state_t(stat.state, stat.aux);
 	NSString * errors = nil;
 	if (stat.errorRead == 0 && stat.errorWrite == 0 && stat.errorChecksum == 0)
 	{
@@ -226,11 +228,11 @@ NSMenuItem * addVdev(zfs::ZPool const & pool, zfs::NVList const & device,
 	// Menu Item
 	auto stat = zfs::vdevStat(device);
 	auto item = addMenuItem(menu, delegate, NSLocalizedString(@"%s (%@)", @"Device Menu Entry"),
-							pool.vdevName(device), formatErrorStat(stat));
+							pool.vdevName(device), formatErrorStat(stat, true));
 	// Submenu
 	// ZFS Info
 	NSMenu * subMenu = [[NSMenu alloc] init];
-	addMenuItem(subMenu, delegate, formatErrorStat(stat));
+	addMenuItem(subMenu, delegate, formatErrorStat(stat, false));
 	addMenuItem(subMenu, delegate,
 				NSLocalizedString(@"Space:          \t %s used / %s total", @"VDev Space Menu Entry"),
 				formatBytes(stat.alloc), formatBytes(stat.space));
