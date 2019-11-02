@@ -20,6 +20,7 @@
 #import "ZFSUtils.hpp"
 
 #import <Sparkle/Sparkle.h>
+#import <ServiceManagement/SMLoginItem.h>
 
 @interface ZetaWatchDelegate ()
 {
@@ -54,11 +55,16 @@
 		@"autoUnlock": @YES,
 		@"autoImport": @YES,
 		@"useKeychain": @NO,
+		@"startAtLogin": @YES,
 	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];
 	// User Notification Center Delegate
 	[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+	// Login Item
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"startAtLogin"
+											   options:NSKeyValueObservingOptionInitial
+											   context:nullptr];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
@@ -86,12 +92,25 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
+	[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"startAtLogin"];
 }
 
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
 	 shouldPresentNotification:(NSUserNotification *)notification
 {
 	return YES;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+					  ofObject:(id)object
+						change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+					   context:(void *)context
+{
+	if ([keyPath isEqualToString:@"startAtLogin"])
+	{
+		bool startAtLogin = [object boolForKey:@"startAtLogin"];
+		SMLoginItemSetEnabled(CFSTR("net.the-color-black.ZetaLoginItemHelper"), startAtLogin);
+	}
 }
 
 @end

@@ -128,6 +128,13 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="k2v-Lw-Y2t"/>
+                            <menuItem title="Start at Login" id="WkG-Hl-jeI">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="oMO-Og-s5N" name="value" keyPath="values.startAtLogin" id="Vwc-yO-K6u"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="wz1-YY-4Wk"/>
                             <menuItem title="Auto Update" id="PuO-P5-LRP">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
