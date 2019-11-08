@@ -33,6 +33,7 @@
 @property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet SUUpdater * updater;
+@property (weak) IBOutlet NSPopover * settings;
 
 @end
 
@@ -56,6 +57,8 @@
 		@"autoImport": @YES,
 		@"useKeychain": @NO,
 		@"startAtLogin": @YES,
+		@"defaultAltroot": @"/Volumes",
+		@"useAltroot": @NO,
 	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];
@@ -111,6 +114,13 @@
 		bool startAtLogin = [object boolForKey:@"startAtLogin"];
 		SMLoginItemSetEnabled(CFSTR("net.the-color-black.ZetaLoginItemHelper"), startAtLogin);
 	}
+}
+
+- (IBAction)showSettings:(id)sender
+{
+	NSView * positioningView = [_statusItem button];
+	[_settings showRelativeToRect:NSMakeRect(0, 0, 0, 0)
+						   ofView:positioningView preferredEdge:NSRectEdgeMinY];
 }
 
 @end

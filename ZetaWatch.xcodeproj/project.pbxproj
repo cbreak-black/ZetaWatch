@@ -53,6 +53,7 @@
 		70BF211023539130002C760A /* ZetaConfirmDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70BF210F23539130002C760A /* ZetaConfirmDialog.mm */; };
 		70C930D822122CBD00BA39B8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70C930D622122CBD00BA39B8 /* Localizable.strings */; };
 		70CE283D2348B0D4002C760A /* ZetaSnapshotMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70CE283C2348B0D4002C760A /* ZetaSnapshotMenu.mm */; };
+		70D118B72375FE28002C760A /* PathValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 70D118B62375FE28002C760A /* PathValueTransformer.m */; };
 		70D85FE51C316E8F00929DAE /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		70D85FF01C316F3100929DAE /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
@@ -177,6 +178,7 @@
 		70C930D722122CBD00BA39B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		70CE283B2348B0D4002C760A /* ZetaSnapshotMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaSnapshotMenu.h; sourceTree = "<group>"; };
 		70CE283C2348B0D4002C760A /* ZetaSnapshotMenu.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaSnapshotMenu.mm; sourceTree = "<group>"; };
+		70D118B62375FE28002C760A /* PathValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PathValueTransformer.m; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
 		70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSUtils.hpp; sourceTree = "<group>"; };
 		70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs_core.1.dylib; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				703811A02312A2CB002C760A /* ZetaNotificationCenter.mm */,
 				70EA5F5122BEC6BC002C760A /* ZetaFormatHelpers.hpp */,
 				70EA5F5222BEC7B1002C760A /* ZetaFormatHelpers.cpp */,
+				70D118B62375FE28002C760A /* PathValueTransformer.m */,
 				70A60A4622AD7A5F002C760A /* IDDiskArbitrationUtils.hpp */,
 				70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */,
 				70B4E4C722F45E7C002C760A /* IDDiskArbitrationDispatcher.hpp */,
@@ -649,6 +652,7 @@
 				70B4E4C922F45E7C002C760A /* IDDiskArbitrationDispatcher.cpp in Sources */,
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
 				70EA5F5622BED079002C760A /* ZetaPoolPropertyMenu.mm in Sources */,
+				70D118B72375FE28002C760A /* PathValueTransformer.m in Sources */,
 				7006C4801C26CA1500929DAE /* ZetaWatchDelegate.mm in Sources */,
 				7006C4AC1C26D3E700929DAE /* ZetaMainMenu.mm in Sources */,
 				70AE5AB222A3DBAA002C760A /* ZetaImportMenu.mm in Sources */,

@@ -16,6 +16,7 @@
         <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
+                <outlet property="settings" destination="h6V-8x-hYX" id="nvs-pP-koq"/>
                 <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
                 <outlet property="zetaConfirmDialog" destination="YY7-LW-cAD" id="N6U-3T-0X2"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="Uml-Lc-GeC"/>
@@ -145,6 +146,13 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="checkForUpdates:" target="7Va-uZ-m1K" id="yj1-Ju-zDX"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="438-n3-d29"/>
+                            <menuItem title="More Settings..." id="2HR-5O-7CX">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showSettings:" target="Voe-Tx-rLC" id="5H4-tn-qq1"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -1088,6 +1096,58 @@ Gw
             </constraints>
             <point key="canvasLocation" x="144.5" y="1063"/>
         </customView>
+        <viewController id="wow-Hy-QXj" userLabel="Settings View Controller">
+            <connections>
+                <outlet property="view" destination="lzX-XA-XzO" id="QzI-Ao-jyd"/>
+            </connections>
+        </viewController>
+        <popover behavior="t" id="h6V-8x-hYX" userLabel="Settings">
+            <connections>
+                <outlet property="contentViewController" destination="wow-Hy-QXj" id="Iba-Pd-Csq"/>
+            </connections>
+        </popover>
+        <view id="lzX-XA-XzO" userLabel="SettingsView">
+            <rect key="frame" x="0.0" y="0.0" width="555" height="54"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3QB-P7-si2">
+                    <rect key="frame" x="116" y="14" width="422" height="26"/>
+                    <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Default Mountpoint" pathStyle="popUp" id="tfh-lb-I0Y">
+                        <font key="font" metaFont="system"/>
+                        <url key="url" string="file:///Volumes/"/>
+                        <allowedTypes>
+                            <string>public.folder</string>
+                        </allowedTypes>
+                        <connections>
+                            <binding destination="oMO-Og-s5N" name="value" keyPath="values.defaultAltroot" id="O5x-Zo-nGc">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">PathValueTransformer</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </pathCell>
+                </pathControl>
+                <button horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O5K-Z7-VRD">
+                    <rect key="frame" x="18" y="18" width="95" height="18"/>
+                    <buttonCell key="cell" type="check" title="Use Altroot:" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cbb-cy-BJO">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <binding destination="oMO-Og-s5N" name="value" keyPath="values.useAltroot" id="xMN-cB-aSW"/>
+                        </connections>
+                    </buttonCell>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="O5K-Z7-VRD" firstAttribute="top" secondItem="lzX-XA-XzO" secondAttribute="top" constant="20" symbolic="YES" id="2x0-Zx-C8u"/>
+                <constraint firstItem="O5K-Z7-VRD" firstAttribute="firstBaseline" secondItem="3QB-P7-si2" secondAttribute="firstBaseline" id="Efb-6g-85A"/>
+                <constraint firstAttribute="bottom" secondItem="O5K-Z7-VRD" secondAttribute="bottom" constant="20" symbolic="YES" id="Hnz-mF-mJe"/>
+                <constraint firstAttribute="trailing" secondItem="3QB-P7-si2" secondAttribute="trailing" constant="20" symbolic="YES" id="gfc-LA-sD4"/>
+                <constraint firstItem="O5K-Z7-VRD" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="sgU-s5-PES"/>
+                <constraint firstItem="3QB-P7-si2" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="trailing" constant="8" symbolic="YES" id="vR5-O7-bI4"/>
+            </constraints>
+            <point key="canvasLocation" x="144.5" y="1363"/>
+        </view>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="128" height="128"/>

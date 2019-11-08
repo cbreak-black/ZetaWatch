@@ -124,14 +124,17 @@
 		try
 		{
 			NSNumber * pool = [importData objectForKey:@"poolGUID"];
+			std::string altroot;
+			if (id ar = [importData objectForKey:@"altroot"])
+				altroot.assign([ar UTF8String]);
 			std::vector<zfs::ZPool> importedPools;
 			if (pool != nil)
 			{
-				importedPools.emplace_back(_zfs.import([pool unsignedLongLongValue]));
+				importedPools.emplace_back(_zfs.import([pool unsignedLongLongValue], altroot));
 			}
 			else
 			{
-				importedPools = _zfs.importAllPools();
+				importedPools = _zfs.importAllPools(altroot);
 			}
 			for (auto const & importedPool : importedPools)
 			{

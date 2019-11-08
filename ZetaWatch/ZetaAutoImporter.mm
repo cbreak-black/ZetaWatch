@@ -167,7 +167,8 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 
 - (void)handleNewImportablePools:(std::vector<zfs::ImportablePool> const &)importableNew
 {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"autoImport"])
+	auto defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults boolForKey:@"autoImport"])
 	{
 		for (auto const & pool : importableNew)
 		{
@@ -183,7 +184,12 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 								name, guid];
 			[self notifySuccessWithTitle:title text:text];
 			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name};
-			[_authorization importPools:poolDict withReply:^(NSError * error)
+			NSMutableDictionary * mutablePool = [poolDict mutableCopy];
+			if ([defaults boolForKey:@"useAltroot"])
+			{
+				[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
+			}
+			[_authorization importPools:mutablePool withReply:^(NSError * error)
 			 {
 				 [self handlePoolImportReply:error forPool:poolDict];
 			 }];

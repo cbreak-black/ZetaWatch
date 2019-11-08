@@ -131,17 +131,17 @@ namespace zfs
 		/*!
 		 Imports all pools.
 		 */
-		std::vector<ZPool> importAllPools() const;
+		std::vector<ZPool> importAllPools(std::string const & altroot = std::string()) const;
 
 		/*!
 		 Imports a pool by name
 		 */
-		ZPool import(std::string const & name) const;
+		ZPool import(std::string const & name, std::string const & altroot = std::string()) const;
 
 		/*!
 		 Imports a pool by guid
 		 */
-		ZPool import(uint64_t guid) const;
+		ZPool import(uint64_t guid, std::string const & altroot = std::string()) const;
 
 	public:
 		libzfs_handle_t * handle() const;

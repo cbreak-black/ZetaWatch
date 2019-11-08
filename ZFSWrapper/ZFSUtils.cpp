@@ -1061,8 +1061,8 @@ namespace zfs
 		return pools;
 	}
 
-	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle, importargs_t * args,
-											   bool allowUnhealthy)
+	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle,
+		importargs_t * args, bool allowUnhealthy, std::string altroot)
 	{
 		thread_init();
 		auto list = NVList(zpool_search_import(handle, args), zfs::NVList::TakeOwnership());
@@ -1079,7 +1079,10 @@ namespace zfs
 			zpool_status_t status = zpool_import_status(l.toList(), &msg, &errata);
 			if (!allowUnhealthy && !healthy(status))
 				continue; // Ignore pools that aren't healthy
-			auto r = zpool_import(handle, l.toList(), nullptr, nullptr);
+			char * ar = nullptr;
+			if (!altroot.empty())
+				ar = altroot.data();
+			auto r = zpool_import(handle, l.toList(), nullptr, ar);
 			if (r == 0)
 			{
 				pools.push_back(ZPool(handle, pair.name()));
@@ -1092,27 +1095,27 @@ namespace zfs
 		return pools;
 	}
 
-	std::vector<ZPool> LibZFSHandle::importAllPools() const
+	std::vector<ZPool> LibZFSHandle::importAllPools(std::string const & altroot) const
 	{
 		importargs_t args = {};
-		return import_with_args(handle(), &args, false);
+		return import_with_args(handle(), &args, false, "");
 	}
 
-	ZPool LibZFSHandle::import(std::string const & name) const
+	ZPool LibZFSHandle::import(std::string const & name, std::string const & altroot) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		auto pools = import_with_args(handle(), &args, true);
+		auto pools = import_with_args(handle(), &args, true, "");
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
 	}
 
-	ZPool LibZFSHandle::import(uint64_t guid) const
+	ZPool LibZFSHandle::import(uint64_t guid, std::string const & altroot) const
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		auto pools = import_with_args(handle(), &args, true);
+		auto pools = import_with_args(handle(), &args, true, altroot);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());

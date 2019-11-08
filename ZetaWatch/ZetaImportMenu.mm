@@ -60,7 +60,13 @@
 - (IBAction)importPool:(id)sender
 {
 	NSDictionary * pool = [sender representedObject];
-	[_authorization importPools:pool withReply:^(NSError * error)
+	NSMutableDictionary * mutablePool = [pool mutableCopy];
+	auto defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults boolForKey:@"useAltroot"])
+	{
+		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
+	}
+	[_authorization importPools:mutablePool withReply:^(NSError * error)
 	 {
 		 if (!error)
 		 {
@@ -76,7 +82,13 @@
 
 - (IBAction)importAllPools:(id)sender
 {
-	[_authorization importPools:@{} withReply:^(NSError * error)
+	NSMutableDictionary * mutablePool = [NSMutableDictionary dictionary];
+	auto defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults boolForKey:@"useAltroot"])
+	{
+		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
+	}
+	[_authorization importPools:mutablePool withReply:^(NSError * error)
 	 {
 		 if (!error)
 		 {
