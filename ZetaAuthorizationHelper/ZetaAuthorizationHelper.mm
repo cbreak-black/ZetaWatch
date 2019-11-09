@@ -136,16 +136,6 @@
 			{
 				importedPools = zfs.importAllPools(altroot);
 			}
-			for (auto const & importedPool : importedPools)
-			{
-				if (importedPool.rootFileSystem().automountRecursive())
-				{
-					std::string errString = importedPool.name();
-					errString += ": ";
-					errString += zfs.lastError();
-					failures.push_back(std::move(errString));
-				}
-			}
 			if (failures.empty())
 			{
 				reply(nullptr);

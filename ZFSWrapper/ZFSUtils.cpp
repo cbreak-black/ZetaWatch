@@ -746,7 +746,7 @@ namespace zfs
 	}
 
 	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :
-		m_handle(zpool_open(zfsHandle, name.c_str()))
+		m_handle(zpool_open_canfail(zfsHandle, name.c_str()))
 	{
 		if (m_handle == nullptr)
 			throw std::runtime_error("Unable to open pool " + name);
@@ -1073,11 +1073,11 @@ namespace zfs
 		return pools;
 	}
 
-	static std::vector<ZPool> import_with_args(libzfs_handle_t * handle,
+	static std::vector<ZPool> import_with_args(LibZFSHandle const & lib,
 		importargs_t * args, bool allowUnhealthy, std::string altroot)
 	{
 		thread_init();
-		auto list = NVList(zpool_search_import(handle, args), zfs::NVList::TakeOwnership());
+		auto list = NVList(zpool_search_import(lib.handle(), args), zfs::NVList::TakeOwnership());
 		thread_fini();
 		std::vector<ZPool> pools;
 		for (auto pair : list)
@@ -1094,14 +1094,17 @@ namespace zfs
 			char * ar = nullptr;
 			if (!altroot.empty())
 				ar = altroot.data();
-			auto r = zpool_import(handle, l.toList(), nullptr, ar);
-			if (r == 0)
+			auto r = zpool_import(lib.handle(), l.toList(), nullptr, ar);
+			if (r)
 			{
-				pools.push_back(ZPool(handle, pair.name()));
+				throw std::runtime_error("Error importing pool " + pair.name() + ": " + lib.lastError());
 			}
-			else
+			ZPool importedPool = lib.pool(pair.name());
+			r = zpool_enable_datasets(importedPool.handle(), nullptr, 0);
+			pools.push_back(std::move(importedPool));
+			if (r)
 			{
-				throw std::runtime_error("Error importing pool " + pair.name());
+				throw std::runtime_error("Error enabling datasets: " + lib.lastError());
 			}
 		}
 		return pools;
@@ -1110,14 +1113,14 @@ namespace zfs
 	std::vector<ZPool> LibZFSHandle::importAllPools(std::string const & altroot) const
 	{
 		importargs_t args = {};
-		return import_with_args(handle(), &args, false, "");
+		return import_with_args(*this, &args, false, "");
 	}
 
 	ZPool LibZFSHandle::import(std::string const & name, std::string const & altroot) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		auto pools = import_with_args(handle(), &args, true, "");
+		auto pools = import_with_args(*this, &args, true, "");
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
@@ -1127,7 +1130,7 @@ namespace zfs
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		auto pools = import_with_args(handle(), &args, true, altroot);
+		auto pools = import_with_args(*this, &args, true, altroot);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
