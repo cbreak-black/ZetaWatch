@@ -33,6 +33,7 @@
 {
 	NSMutableArray * _dynamicMenus;
 	DASessionRef _diskArbitrationSession;
+	zfs::LibZFSHandle _zfs;
 }
 
 @end
@@ -57,6 +58,7 @@
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
 	[self clearDynamicMenu:menu];
+	[self resetLibZFS];
 	[self createNotificationMenu:menu];
 	[self createPoolMenu:menu];
 	[self createActionMenu:menu];
@@ -481,16 +483,26 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		return;
 	NSInteger poolItemRootIdx = poolMenuIdx + 1;
 	NSUInteger poolIdx = 0;
-	for (auto && pool: [[self poolWatcher] pools])
+	try
 	{
-		NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
-			pool.name(), zfs::emojistring_pool_status_t(pool.status())];
-		NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
-		NSMenu * vdevMenu = createVdevMenu(std::move(pool), self, _diskArbitrationSession);
-		[poolItem setSubmenu:vdevMenu];
-		[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
-		[_dynamicMenus addObject:poolItem];
-		++poolIdx;
+		for (auto && pool: _zfs.pools())
+		{
+			NSString * poolLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@)", @"Pool Menu Entry"),
+								   pool.name(), zfs::emojistring_pool_status_t(pool.status())];
+			NSMenuItem * poolItem = [[NSMenuItem alloc] initWithTitle:poolLine action:NULL keyEquivalent:@""];
+			NSMenu * vdevMenu = createVdevMenu(std::move(pool), self, _diskArbitrationSession);
+			[poolItem setSubmenu:vdevMenu];
+			[menu insertItem:poolItem atIndex:poolItemRootIdx + poolIdx];
+			[_dynamicMenus addObject:poolItem];
+			++poolIdx;
+		}
+	}
+	catch (std::exception const & e)
+	{
+		NSString * error = [NSString stringWithFormat:@"Exception during pool iteration: %s", e.what()];
+		NSMenuItem * errorItem = [[NSMenuItem alloc] initWithTitle:error action:nullptr keyEquivalent:@""];
+		[menu insertItem:errorItem atIndex:poolItemRootIdx];
+		[_dynamicMenus addObject:errorItem];
 	}
 }
 
@@ -556,6 +568,16 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
 		[_dynamicMenus addObject:unlockItem];
 	}
+}
+
+- (void)resetLibZFS
+{
+	// Reset library to get fresh property state. This seems to be essential
+	// for getting up-to-date altroot of pools that have been imported after
+	// being known to the previous libzfs state. Calling zfs_refresh_properties
+	// is insufficient for refreshing this state.
+	// This also invalidates all filesystem and pool handles that still exist.
+	_zfs.reset();
 }
 
 - (void)clearDynamicMenu:(NSMenu*)menu

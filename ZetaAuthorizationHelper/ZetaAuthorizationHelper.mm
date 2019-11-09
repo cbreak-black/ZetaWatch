@@ -16,7 +16,6 @@
 
 @interface ZetaAuthorizationHelper () <NSXPCListenerDelegate, ZetaAuthorizationHelperProtocol>
 {
-	zfs::LibZFSHandle _zfs;
 }
 
 @property (atomic, strong, readwrite) NSXPCListener * listener;
@@ -128,13 +127,14 @@
 			if (id ar = [importData objectForKey:@"altroot"])
 				altroot.assign([ar UTF8String]);
 			std::vector<zfs::ZPool> importedPools;
+			zfs::LibZFSHandle zfs;
 			if (pool != nil)
 			{
-				importedPools.emplace_back(_zfs.import([pool unsignedLongLongValue], altroot));
+				importedPools.emplace_back(zfs.import([pool unsignedLongLongValue], altroot));
 			}
 			else
 			{
-				importedPools = _zfs.importAllPools(altroot);
+				importedPools = zfs.importAllPools(altroot);
 			}
 			for (auto const & importedPool : importedPools)
 			{
@@ -142,7 +142,7 @@
 				{
 					std::string errString = importedPool.name();
 					errString += ": ";
-					errString += _zfs.lastError();
+					errString += zfs.lastError();
 					failures.push_back(std::move(errString));
 				}
 			}
@@ -178,7 +178,8 @@
 	{
 		try
 		{
-			auto pools = _zfs.importablePools();
+			zfs::LibZFSHandle zfs;
+			auto pools = zfs.importablePools();
 			NSMutableArray * poolsArray = [[NSMutableArray alloc] initWithCapacity:pools.size()];
 			for (auto const & pool : pools)
 			{
@@ -218,7 +219,8 @@
 		}
 		try
 		{
-			auto pool = _zfs.pool(std::string(poolName.UTF8String));
+			zfs::LibZFSHandle zfs;
+			auto pool = zfs.pool(std::string(poolName.UTF8String));
 			// Export Pool
 			pool.exportPool(force);
 			reply(nullptr);
@@ -251,7 +253,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			int ret = 0;
 			if (recursive)
 				ret = fs.mountRecursive();
@@ -265,7 +268,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						_zfs.lastError().c_str()]
+						zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -301,7 +304,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			int ret = 0;
 			if (recursive)
 				ret = fs.unmountRecursive(force);
@@ -315,7 +319,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						_zfs.lastError().c_str()]
+						zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -348,7 +352,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			auto ret = fs.snapshot([snapName UTF8String], recursive);
 			if (ret == 0)
 			{
@@ -357,7 +362,7 @@
 			else
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -389,7 +394,8 @@
 		}
 		try
 		{
-			auto snap = _zfs.filesystem([snapName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto snap = zfs.filesystem([snapName UTF8String]);
 			auto res = snap.rollback(force);
 			if (res == 0)
 			{
@@ -398,7 +404,7 @@
 			else
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -428,11 +434,12 @@
 		}
 		try
 		{
+			zfs::LibZFSHandle zfs;
 			std::string newFSNameStr = [newFSName UTF8String];
-			auto snap = _zfs.filesystem([snapName UTF8String]);
+			auto snap = zfs.filesystem([snapName UTF8String]);
 			if (snap.clone(newFSNameStr) == 0)
 			{
-				auto newFS = _zfs.filesystem(newFSNameStr);
+				auto newFS = zfs.filesystem(newFSNameStr);
 				if (newFS.mount() == 0)
 				{
 					reply(nullptr);
@@ -440,7 +447,7 @@
 				}
 			}
 			NSDictionary * userInfo = @{
-				NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+				NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 			};
 			reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 		}
@@ -479,7 +486,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			int ret = 0;
 			if (recursive)
 			{
@@ -508,7 +516,7 @@
 			else
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -538,7 +546,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			int ret = 0;
 			if (key)
 			{
@@ -556,7 +565,7 @@
 			if (ret)
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSKeyError" code:-1 userInfo:userInfo]);
 				return;
@@ -566,7 +575,7 @@
 			if (ret)
 			{
 				NSDictionary * userInfo = @{
-					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:_zfs.lastError().c_str()]
+					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -596,7 +605,8 @@
 		}
 		try
 		{
-			auto fs = _zfs.filesystem([fsName UTF8String]);
+			zfs::LibZFSHandle zfs;
+			auto fs = zfs.filesystem([fsName UTF8String]);
 			auto ret = fs.unloadKey();
 			if (ret == 0)
 			{
@@ -606,7 +616,7 @@
 			{
 				NSDictionary * userInfo = @{
 					NSLocalizedDescriptionKey: [NSString stringWithUTF8String:
-						_zfs.lastError().c_str()]
+						zfs.lastError().c_str()]
 				};
 				reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
 			}
@@ -637,7 +647,8 @@
 		}
 		try
 		{
-			auto pool = _zfs.pool(std::string(poolName.UTF8String));
+			zfs::LibZFSHandle zfs;
+			auto pool = zfs.pool(std::string(poolName.UTF8String));
 			if (command)
 			{
 				if ([command isEqualToString:@"stop"])

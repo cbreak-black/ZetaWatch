@@ -68,6 +68,18 @@ namespace zfs
 		return *this;
 	}
 
+	void LibZFSHandle::reset()
+	{
+		if (m_handle && m_owned)
+			libzfs_fini(m_handle);
+		m_owned = true;
+		m_handle = libzfs_init();
+		if (m_handle == nullptr)
+		{
+			throw std::runtime_error(libzfs_error_init(errno));
+		}
+	}
+
 	libzfs_handle_t * LibZFSHandle::handle() const
 	{
 		return m_handle;

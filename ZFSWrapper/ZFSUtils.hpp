@@ -37,7 +37,8 @@ namespace zfs
 	};
 
 	/*!
-	 \brief Represents libzfs initialization
+	 \brief Represents libzfs state, used to create pool and file system
+	 handles.
 	 */
 	class LibZFSHandle
 	{
@@ -60,6 +61,15 @@ namespace zfs
 	public:
 		LibZFSHandle(LibZFSHandle && other) noexcept;
 		LibZFSHandle & operator=(LibZFSHandle && other) noexcept;
+
+	public:
+		/*!
+		 Closes the library and opens a new handle. All pools and other associated
+		 handles are invalidated. This is similar to assigning a new library,
+		 but destroys the old library before creating the new one. Since the
+		 library could have global state, this might be safer.
+		 */
+		void reset();
 
 	public:
 		struct Version
