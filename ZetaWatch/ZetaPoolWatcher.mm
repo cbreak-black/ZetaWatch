@@ -80,7 +80,8 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 		[self checkForNewPools:p];
 		[self checkForNewErrors:p];
 		auto scrubCounter = [self countScrubsInProgress:p];
-		if (scrubCounter > 0)
+		auto sd = [NSUserDefaults standardUserDefaults];
+		if (scrubCounter > 0 && [sd boolForKey:@"keepAwakeDuringScrub"])
 			[self keepAwake];
 		else
 			[self stopKeepingAwake];

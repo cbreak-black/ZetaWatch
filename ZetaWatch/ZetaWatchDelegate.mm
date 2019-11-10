@@ -51,15 +51,6 @@
 	_zetaKeyLoader.statusItem = _statusItem;
 	_zetaQueryDialog.statusItem = _statusItem;
 	_zetaConfirmDialog.statusItem = _statusItem;
-	// User Defaults
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
-		@"autoUnlock": @YES,
-		@"autoImport": @YES,
-		@"useKeychain": @NO,
-		@"startAtLogin": @YES,
-		@"defaultAltroot": @"/Volumes",
-		@"useAltroot": @NO,
-	}];
 	// Watcher
 	[[self poolWatcher] checkForChanges];
 	// User Notification Center Delegate
@@ -72,6 +63,16 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
+	// User Defaults
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
+		@"autoUnlock": @YES,
+		@"autoImport": @YES,
+		@"useKeychain": @NO,
+		@"startAtLogin": @YES,
+		@"keepAwakeDuringScrub": @YES,
+		@"defaultAltroot": @"/Volumes",
+		@"useAltroot": @NO,
+	}];
 	try
 	{
 		// Update Feed URL to the one matching the current ZFS version, even if

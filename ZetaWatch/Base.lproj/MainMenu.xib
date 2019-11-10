@@ -1107,7 +1107,7 @@ Gw
             </connections>
         </popover>
         <view id="lzX-XA-XzO" userLabel="SettingsView">
-            <rect key="frame" x="0.0" y="0.0" width="555" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="555" height="74"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3QB-P7-si2">
@@ -1137,16 +1137,29 @@ Gw
                         </connections>
                     </buttonCell>
                 </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="owe-My-lsx">
+                    <rect key="frame" x="18" y="38" width="519" height="18"/>
+                    <buttonCell key="cell" type="check" title="Keep awake during Scrub" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dX7-Wx-70H">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <binding destination="oMO-Og-s5N" name="value" keyPath="values.keepAwakeDuringScrub" id="mgD-hN-TIk"/>
+                        </connections>
+                    </buttonCell>
+                </button>
             </subviews>
             <constraints>
-                <constraint firstItem="O5K-Z7-VRD" firstAttribute="top" secondItem="lzX-XA-XzO" secondAttribute="top" constant="20" symbolic="YES" id="2x0-Zx-C8u"/>
-                <constraint firstItem="O5K-Z7-VRD" firstAttribute="firstBaseline" secondItem="3QB-P7-si2" secondAttribute="firstBaseline" id="Efb-6g-85A"/>
-                <constraint firstAttribute="bottom" secondItem="O5K-Z7-VRD" secondAttribute="bottom" constant="20" symbolic="YES" id="Hnz-mF-mJe"/>
-                <constraint firstAttribute="trailing" secondItem="3QB-P7-si2" secondAttribute="trailing" constant="20" symbolic="YES" id="gfc-LA-sD4"/>
-                <constraint firstItem="O5K-Z7-VRD" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="sgU-s5-PES"/>
-                <constraint firstItem="3QB-P7-si2" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="trailing" constant="8" symbolic="YES" id="vR5-O7-bI4"/>
+                <constraint firstAttribute="bottom" secondItem="O5K-Z7-VRD" secondAttribute="bottom" constant="20" symbolic="YES" id="CHT-u3-7ne"/>
+                <constraint firstItem="owe-My-lsx" firstAttribute="top" secondItem="lzX-XA-XzO" secondAttribute="top" constant="20" symbolic="YES" id="DSj-Vu-7cs"/>
+                <constraint firstItem="owe-My-lsx" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="leading" id="FYT-Pg-8s0"/>
+                <constraint firstAttribute="trailing" secondItem="owe-My-lsx" secondAttribute="trailing" constant="20" symbolic="YES" id="SFA-sa-jNk"/>
+                <constraint firstItem="O5K-Z7-VRD" firstAttribute="top" secondItem="owe-My-lsx" secondAttribute="bottom" constant="6" symbolic="YES" id="T5M-wM-ZpK"/>
+                <constraint firstItem="3QB-P7-si2" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="trailing" constant="8" symbolic="YES" id="csk-OS-mva"/>
+                <constraint firstItem="3QB-P7-si2" firstAttribute="firstBaseline" secondItem="O5K-Z7-VRD" secondAttribute="firstBaseline" id="j1W-kM-lY5"/>
+                <constraint firstItem="owe-My-lsx" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="mhR-Hz-n9N"/>
+                <constraint firstAttribute="trailing" secondItem="3QB-P7-si2" secondAttribute="trailing" constant="20" symbolic="YES" id="x30-HK-XS1"/>
             </constraints>
-            <point key="canvasLocation" x="144.5" y="1363"/>
+            <point key="canvasLocation" x="144.5" y="1374"/>
         </view>
     </objects>
     <resources>
