@@ -30,7 +30,6 @@
 - (id)init;
 
 - (void)checkForChanges;
-- (std::vector<zfs::ZPool>)pools;
 
 - (void)keepAwake;
 - (void)stopKeepingAwake;

@@ -23,7 +23,6 @@ CFStringRef powerAssertionReason = CFSTR("ZFS Scrub in progress");
 {
 	// ZFS
 	zfs::LibZFSHandle _zfsHandle;
-	std::vector<zfs::ZPool> _pools;
 	std::vector<uint64_t> _knownPools;
 
 	// Statistics
@@ -77,7 +76,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	try
 	{
-		auto p = [self pools];
+		auto p = _zfsHandle.pools();
 		[self checkForNewPools:p];
 		[self checkForNewErrors:p];
 		auto scrubCounter = [self countScrubsInProgress:p];
@@ -88,7 +87,7 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 	}
 	catch (std::exception const & e)
 	{
-		NSLog(@"Update Error: %s", e.what());
+		[self notifyError:e.what()];
 	}
 }
 
@@ -215,20 +214,6 @@ std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 		[self notifyError:e.what()];
 	}
 	return scrubsInProgress;
-}
-
-- (std::vector<zfs::ZPool>)pools
-{
-	std::vector<zfs::ZPool> pools;
-	try
-	{
-		pools = _zfsHandle.pools();
-	}
-	catch (std::exception const & e)
-	{
-		[self notifyError:e.what()];
-	}
-	return pools;
 }
 
 - (void)keepAwake

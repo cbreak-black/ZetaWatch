@@ -530,43 +530,53 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	lockAllItem.representedObject = unlockedEncryptionRoots;
 	[lockMenu addItem:[NSMenuItem separatorItem]];
 	// Individual entries
-	for (auto && pool: [[self poolWatcher] pools])
+	try
 	{
-		for (auto & fs : pool.allFileSystems())
+		for (auto && pool: _zfs.pools())
 		{
-			auto [encRoot, isRoot] = fs.encryptionRoot();
-			auto keyStatus = fs.keyStatus();
-			if (isRoot)
+			for (auto & fs : pool.allFileSystems())
 			{
-				NSString * fsName = [NSString stringWithUTF8String:fs.name()];
-				if (keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+				auto [encRoot, isRoot] = fs.encryptionRoot();
+				auto keyStatus = fs.keyStatus();
+				if (isRoot)
 				{
-					NSMenuItem * item = [unlockMenu addItemWithTitle:fsName
-						action:@selector(loadKey:) keyEquivalent:@""];
-					item.representedObject = fsName;
-					item.target = self;
-					[lockedEncryptionRoots addObject:fsName];
-				}
-				else
-				{
-					NSMenuItem * item = [lockMenu addItemWithTitle:fsName
-						action:@selector(unloadKey:) keyEquivalent:@""];
-					item.representedObject = fsName;
-					item.target = self;
-					[unlockedEncryptionRoots addObject:fsName];
+					NSString * fsName = [NSString stringWithUTF8String:fs.name()];
+					if (keyStatus == zfs::ZFileSystem::KeyStatus::unavailable)
+					{
+						NSMenuItem * item = [unlockMenu addItemWithTitle:fsName
+																  action:@selector(loadKey:) keyEquivalent:@""];
+						item.representedObject = fsName;
+						item.target = self;
+						[lockedEncryptionRoots addObject:fsName];
+					}
+					else
+					{
+						NSMenuItem * item = [lockMenu addItemWithTitle:fsName
+																action:@selector(unloadKey:) keyEquivalent:@""];
+						item.representedObject = fsName;
+						item.target = self;
+						[unlockedEncryptionRoots addObject:fsName];
+					}
 				}
 			}
 		}
+		if ([unlockedEncryptionRoots count] > 0)
+		{
+			[menu insertItem:lockItem atIndex:actionMenuIdx + 1];
+			[_dynamicMenus addObject:lockItem];
+		}
+		if ([lockedEncryptionRoots count] > 0)
+		{
+			[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
+			[_dynamicMenus addObject:unlockItem];
+		}
 	}
-	if ([unlockedEncryptionRoots count] > 0)
+	catch (std::exception const & e)
 	{
-		[menu insertItem:lockItem atIndex:actionMenuIdx + 1];
+		NSString * error = [NSString stringWithFormat:@"Exception during pool iteration: %s", e.what()];
+		NSMenuItem * errorItem = [[NSMenuItem alloc] initWithTitle:error action:nullptr keyEquivalent:@""];
+		[menu insertItem:errorItem atIndex:actionMenuIdx + 1];
 		[_dynamicMenus addObject:lockItem];
-	}
-	if ([lockedEncryptionRoots count] > 0)
-	{
-		[menu insertItem:unlockItem atIndex:actionMenuIdx + 1];
-		[_dynamicMenus addObject:unlockItem];
 	}
 }
 
