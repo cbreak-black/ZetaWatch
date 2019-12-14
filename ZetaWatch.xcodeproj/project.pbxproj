@@ -817,6 +817,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				ZETA_VERSION = 37;
 				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Debug;
@@ -873,6 +874,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				ZETA_VERSION = 37;
 				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Release;
@@ -1084,13 +1086,10 @@
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
 				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					ZetaAuthorizationHelper/Info.plist,
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
@@ -1118,13 +1117,10 @@
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
 				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					ZetaAuthorizationHelper/Info.plist,
 					"-sectcreate",
 					__TEXT,
 					__launchd_plist,
