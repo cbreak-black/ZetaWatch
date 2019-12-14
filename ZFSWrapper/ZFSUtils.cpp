@@ -620,6 +620,11 @@ namespace zfs
 		return strchr(name(), '/') == nullptr;
 	}
 
+	std::uint64_t ZFileSystem::createTXG() const
+	{
+		return getPropNumeric(m_handle, ZFS_PROP_CREATETXG);
+	}
+
 	std::uint64_t ZFileSystem::cloneCount() const
 	{
 		if (type() != FSType::snapshot)
@@ -688,6 +693,46 @@ namespace zfs
 		});
 		zfs_iter_snapshots_sorted(m_handle, &cb.handle_s, &cb, 0, 0);
 		return snapshots;
+	}
+
+	std::vector<ZFileSystem> ZFileSystem::snapshotsSince(ZFileSystem const & snap) const
+	{
+		auto min = snap.createTXG();
+		std::vector<ZFileSystem> snapshots;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			snapshots.push_back(std::move(fs));
+			return 0;
+		});
+		// Don't include the given snapshot itself
+		zfs_iter_snapshots_sorted(m_handle, &cb.handle_s, &cb, min + 1, 0);
+		return snapshots;
+	}
+
+	std::vector<ZFileSystem> ZFileSystem::bookmarks() const
+	{
+		std::vector<ZFileSystem> bookmarks;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			bookmarks.push_back(std::move(fs));
+			return 0;
+		});
+		zfs_iter_bookmarks(m_handle, &cb.handle_s, &cb);
+		return bookmarks;
+	}
+
+	std::vector<ZFileSystem> ZFileSystem::bookmarksSince(ZFileSystem const & snap) const
+	{
+		auto min = snap.createTXG();
+		std::vector<ZFileSystem> bookmarks;
+		ZFileSystemCallback cb([&](ZFileSystem fs)
+		{
+			if (fs.createTXG() > min)
+				bookmarks.push_back(std::move(fs));
+			return 0;
+		});
+		zfs_iter_bookmarks(m_handle, &cb.handle_s, &cb);
+		return bookmarks;
 	}
 
 	std::vector<ZFileSystem> ZFileSystem::dependents() const

@@ -786,36 +786,104 @@ static NSString * defaultSnapshotName()
 	 }];
 }
 
+static NSMutableString * appendAsString(NSMutableString * fileSystemString, std::vector<zfs::ZFileSystem> const & fileSystems)
+{
+	for (auto const & d : fileSystems)
+		[fileSystemString appendFormat:@"%s\n", d.name()];
+	return fileSystemString;
+}
+
+static NSMutableString * toString(std::vector<zfs::ZFileSystem> const & fileSystems)
+{
+	NSMutableString * fileSystemString = [NSMutableString string];
+	return appendAsString(fileSystemString, fileSystems);
+}
+
+static NSString * formatRollbackDependents(
+	std::vector<zfs::ZFileSystem> const & clones,
+	std::vector<zfs::ZFileSystem> const & snap,
+	std::vector<zfs::ZFileSystem> const & bookmarks)
+{
+	NSMutableString * depString = [NSMutableString string];
+	if (!clones.empty())
+	{
+		[depString appendString:@"# Clones\n"];
+		appendAsString(depString, clones);
+	}
+	if (!snap.empty())
+	{
+		[depString appendString:@"# Snapshots\n"];
+		appendAsString(depString, snap);
+	}
+	if (!bookmarks.empty())
+	{
+		[depString appendString:@"# Bookmarks\n"];
+		appendAsString(depString, bookmarks);
+	}
+	return depString;
+}
+
+- (IBAction)rollbackFilesystem:(NSString*)snapNameStr Force:(bool)force
+{
+	std::string snapName([snapNameStr UTF8String]);
+	std::string baseName = snapName.substr(0, snapName.find_last_of('@'));
+	zfs::LibZFSHandle lib;
+	auto snap = lib.filesystem(snapName);
+	auto fs = lib.filesystem(baseName);
+	std::vector<zfs::ZFileSystem> clones;
+	auto snapshots = fs.snapshotsSince(snap);
+	for (auto && snap : snapshots)
+	{
+		if (snap.cloneCount() > 0)
+		{
+			auto dep = snap.dependents();
+			std::move(dep.begin(), dep.end(),
+					  std::back_inserter(clones));
+		}
+	}
+	auto bookmarks = fs.bookmarksSince(snap);
+
+	auto rollBackBlock = ^(bool ok)
+	{
+		if (ok)
+		{
+			NSDictionary * opts = @{
+				@"snapshot": snapNameStr,
+				@"force": [NSNumber numberWithBool:force]
+			};
+			[self->_authorization rollbackFilesystem:opts withReply:^(NSError * error)
+			 {
+				 if (!error)
+				 {
+					 NSString * title = [NSString stringWithFormat:
+						NSLocalizedString(@"Snapshot %@ rolled back", @"Rollback Success format"),
+										 snapNameStr];
+					 [self notifySuccessWithTitle:title text:nil];
+				 }
+				 [self handleFileSystemChangeReply:error];
+			 }];
+		}
+	};
+	if (!snapshots.empty() || !clones.empty() || !bookmarks.empty())
+	{
+		[_zetaConfirmDialog addQuery:NSLocalizedString(@"The following will be destroyed by the rollback", @"Rollback Snapshot Query")
+					 withInformation:formatRollbackDependents(clones, snapshots, bookmarks)
+						withCallback:rollBackBlock];
+	}
+	else
+	{
+		rollBackBlock(true);
+	}
+}
+
 - (IBAction)rollbackFilesystem:(id)sender
 {
-	NSDictionary * opts = @{@"snapshot": [sender representedObject]};
-	[_authorization rollbackFilesystem:opts withReply:^(NSError * error)
-	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Snapshot %@ rolled back", @"Rollback Success format"),
-				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
-	 }];
+	[self rollbackFilesystem:[sender representedObject] Force:false];
 }
 
 - (IBAction)rollbackFilesystemForce:(id)sender
 {
-	NSDictionary * opts = @{@"snapshot": [sender representedObject], @"force": @YES};
-	[_authorization rollbackFilesystem:opts withReply:^(NSError * error)
-	 {
-		 if (!error)
-		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Snapshot %@ force rolled back", @"ForceRollback Success format"),
-				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
-		 }
-		 [self handleFileSystemChangeReply:error];
-	 }];
+	[self rollbackFilesystem:[sender representedObject] Force:true];
 }
 
 - (IBAction)cloneSnapshot:(id)sender
@@ -839,14 +907,6 @@ static NSString * defaultSnapshotName()
 			  [self handleFileSystemChangeReply:error];
 		  }];
 	 }];
-}
-
-static NSString * toString(std::vector<zfs::ZFileSystem> const & fileSystems)
-{
-	NSMutableString * fileSystemString = [NSMutableString string];
-	for (auto const & d : fileSystems)
-		[fileSystemString appendFormat:@"%s\n", d.name()];
-	return fileSystemString;
 }
 
 - (IBAction)destroyFilesystem:(id)sender

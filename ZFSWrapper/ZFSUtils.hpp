@@ -233,6 +233,7 @@ namespace zfs
 		KeyStatus keyStatus() const;
 		KeyLocation keyLocation() const;
 		bool isRoot() const;
+		std::uint64_t createTXG() const;
 
 	public:
 		std::uint64_t cloneCount() const;
@@ -246,6 +247,15 @@ namespace zfs
 
 		//! \returns all snapshots
 		std::vector<ZFileSystem> snapshots() const;
+
+		//! \returns all snapshots since the given snapshot/bookmark
+		std::vector<ZFileSystem> snapshotsSince(ZFileSystem const & snap) const;
+
+		//! \returns all bookmarks
+		std::vector<ZFileSystem> bookmarks() const;
+
+		//! \returns all bookmarks since the given snapshot/bookmark
+		std::vector<ZFileSystem> bookmarksSince(ZFileSystem const & snap) const;
 
 		//! \returns all snapshots
 		std::vector<ZFileSystem> dependents() const;
