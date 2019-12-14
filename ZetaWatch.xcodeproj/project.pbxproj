@@ -927,6 +927,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				ZETA_VERSION = 39;
 			};
 			name = Debug;
 		};
@@ -944,6 +945,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				ZETA_VERSION = 39;
 			};
 			name = Release;
 		};
