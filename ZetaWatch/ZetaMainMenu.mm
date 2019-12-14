@@ -15,6 +15,7 @@
 #import "ZetaPoolWatcher.h"
 #import "ZetaAuthorization.h"
 #import "ZetaSnapshotMenu.h"
+#import "ZetaBookmarkMenu.h"
 #import "ZetaFileSystemPropertyMenu.h"
 #import "ZetaPoolPropertyMenu.h"
 #import "ZetaNotificationCenter.h"
@@ -153,15 +154,30 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addFSCommand(NSLocalizedString(@"Snapshot", @"Snapshot"), @selector(snapshotFilesystem:));
 	addFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"), @selector(snapshotFilesystemRecursive:));
-	NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
-	NSMenu * snaps = [[NSMenu alloc] initWithTitle:snapsTitle];
-	ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs) delegate:delegate];
-	snaps.delegate = sd;
-	NSMenuItem * snapsItem = [[NSMenuItem alloc] initWithTitle:snapsTitle
-		action:nullptr keyEquivalent:@""];
-	snapsItem.submenu = snaps;
-	snapsItem.representedObject = sd;
-	[fsMenu addItem:snapsItem];
+	{
+		// Snapshots submenu
+		NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
+		NSMenu * snaps = [[NSMenu alloc] initWithTitle:snapsTitle];
+		ZetaSnapshotMenu * sd = [[ZetaSnapshotMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs) delegate:delegate];
+		snaps.delegate = sd;
+		NSMenuItem * snapsItem = [[NSMenuItem alloc] initWithTitle:snapsTitle
+			action:nullptr keyEquivalent:@""];
+		snapsItem.submenu = snaps;
+		snapsItem.representedObject = sd;
+		[fsMenu addItem:snapsItem];
+	}
+	{
+		// Bookmarks Submenu
+		NSString * bookmarksTitle = NSLocalizedString(@"Bookmarks", @"Bookmarks");
+		NSMenu * bookmarks = [[NSMenu alloc] initWithTitle:bookmarksTitle];
+		ZetaBookmarkMenu * bd = [[ZetaBookmarkMenu alloc] initWithFileSystem:zfs::ZFileSystem(fs) delegate:delegate];
+		bookmarks.delegate = bd;
+		NSMenuItem * bookmarksItem = [[NSMenuItem alloc] initWithTitle:bookmarksTitle
+			action:nullptr keyEquivalent:@""];
+		bookmarksItem.submenu = bookmarks;
+		bookmarksItem.representedObject = bd;
+		[fsMenu addItem:bookmarksItem];
+	}
 	// Destroy
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	if (!fs.isRoot())
