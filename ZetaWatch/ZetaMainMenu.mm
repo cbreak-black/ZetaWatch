@@ -178,6 +178,10 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 		bookmarksItem.representedObject = bd;
 		[fsMenu addItem:bookmarksItem];
 	}
+	// Create
+	[fsMenu addItem:[NSMenuItem separatorItem]];
+	addFSCommand(NSLocalizedString(@"Create Filesystem...", @"Create Filesystem..."),
+		@selector(createFilesystem:));
 	// Destroy
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	if (!fs.isRoot())
@@ -450,6 +454,10 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		addRootFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"),
 						 @selector(snapshotFilesystemRecursive:));
+		// Create
+		[vdevMenu addItem:[NSMenuItem separatorItem]];
+		addRootFSCommand(NSLocalizedString(@"Create Filesystem...", @"Create Filesystem..."),
+						 @selector(createFilesystem:));
 		// Export Actions
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		addRootFSCommand(NSLocalizedString(@"Export", @"Export"),
@@ -918,6 +926,31 @@ static NSString * formatRollbackDependents(
 				  NSString * title = [NSString stringWithFormat:
 					NSLocalizedString(@"Snapshot %@ to %@ cloned", @"Clone Success format"),
 					snapshot, newFileSystem];
+				  [self notifySuccessWithTitle:title text:nil];
+			  }
+			  [self handleFileSystemChangeReply:error];
+		  }];
+	 }];
+}
+
+- (IBAction)createFilesystem:(id)sender
+{
+	NSString * parentFilesyStem = [sender representedObject];
+	// TODO:
+	// - Add custom mountpoint support
+	// - Add support for other options
+	[_zetaQueryDialog addQuery:NSLocalizedString(@"Enter new filesystem name", @"NewFS Query")
+				   withDefault:[NSString stringWithFormat:@"%@/", parentFilesyStem]
+				  withCallback:^(NSString * newFileSystem)
+	 {
+		 NSDictionary * opts = @{@"filesystem": newFileSystem, @"type": @"filesystem"};
+		 [self->_authorization createFilesystem:opts withReply:^(NSError * error)
+		  {
+			  if (!error)
+			  {
+				  NSString * title = [NSString stringWithFormat:
+									  NSLocalizedString(@"Dataset %@/%@ created", @"NewFS Success format"),
+									  parentFilesyStem, newFileSystem];
 				  [self notifySuccessWithTitle:title text:nil];
 			  }
 			  [self handleFileSystemChangeReply:error];

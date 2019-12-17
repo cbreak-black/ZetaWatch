@@ -327,6 +327,19 @@
 		withNotification:notification];
 }
 
+- (void)createFilesystem:(NSDictionary *)fsData
+			   withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = fsData[@"filesystem"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"filesystem\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Creating", @"Destroy Action") withTarget:target];
+	[self executeOnProxy:@selector(createFilesystem:authorization:withReply:)
+				withData:fsData withReply:reply
+		withNotification:notification];
+}
+
 - (void)destroyFilesystem:(NSDictionary *)fsData
 				withReply:(void(^)(NSError * error))reply
 {

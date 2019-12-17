@@ -454,7 +454,60 @@
 
 - (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
-	reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Unimplemented"}]);
+	NSError * error = [self checkAuthorization:authData command:_cmd];
+	if (error == nil)
+	{
+		NSString * newFSName = [fsData objectForKey:@"filesystem"];
+		NSString * type = [fsData objectForKey:@"type"];
+		NSNumber * size = [fsData objectForKey:@"size"]; // only for volumes
+		if (!newFSName || !type)
+		{
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		try
+		{
+			zfs::LibZFSHandle zfs;
+			std::string newFSNameStr = [newFSName UTF8String];
+			if ([type isEqualToString:@"filesystem"])
+			{
+				if (zfs.createFilesystem(newFSNameStr) == 0)
+				{
+					auto newFS = zfs.filesystem(newFSNameStr);
+					if (newFS.mount() == 0)
+					{
+						reply(nullptr);
+						return;
+					}
+				}
+			}
+			else if ([type isEqualToString:@"volume"])
+			{
+				if (zfs.createVolume(newFSNameStr, [size unsignedLongLongValue]) == 0)
+				{
+					reply(nullptr);
+					return;
+				}
+			}
+			else
+			{
+				reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Type Argument"}]);
+				return;
+			}
+			NSDictionary * userInfo = @{
+				NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
+			};
+			reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+		}
+		catch (std::exception const & e)
+		{
+			reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
+		}
+	}
+	else
+	{
+		reply(error);
+	}
 }
 
 - (void)destroyFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply

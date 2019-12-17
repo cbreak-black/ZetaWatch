@@ -47,6 +47,9 @@
 - (void)cloneSnapshot:(NSDictionary *)fsData
 			withReply:(void(^)(NSError * error))reply;
 
+- (void)createFilesystem:(NSDictionary *)fsData
+			   withReply:(void(^)(NSError * error))reply;
+
 - (void)destroyFilesystem:(NSDictionary *)fsData
 				withReply:(void(^)(NSError * error))reply;
 
