@@ -369,6 +369,8 @@ namespace zfs
 		{
 			throw std::runtime_error(snapName + " is not a snapshot");
 		}
+		if (auto r = zfs_create_ancestors(libHandle().handle(), newFSName.c_str()))
+			return r;
 		return zfs_clone(m_handle, newFSName.c_str(), nullptr);
 	}
 
@@ -1020,6 +1022,26 @@ namespace zfs
 		if (fs == nullptr)
 			throw std::runtime_error("Filesystem " + name + " does not exist");
 		return ZFileSystem(fs);
+	}
+
+	int LibZFSHandle::createFilesystem(std::string const & name)
+	{
+		NVList options(NVList::TakeOwnership{});
+		if (auto r = zfs_create_ancestors(m_handle, name.c_str()))
+			return r;
+		return zfs_create(m_handle, name.c_str(), ZFS_TYPE_FILESYSTEM, options.toList());
+	}
+
+	int LibZFSHandle::createVolume(std::string const & name,
+		std::uint64_t volumeSize, std::uint64_t blockSize)
+	{
+		NVList options(NVList::TakeOwnership{});
+		options.add(zfs_prop_to_name(ZFS_PROP_VOLSIZE), volumeSize);
+		if (blockSize)
+			options.add(zfs_prop_to_name(ZFS_PROP_VOLBLOCKSIZE), blockSize);
+		if (auto r = zfs_create_ancestors(m_handle, name.c_str()))
+			return r;
+		return zfs_create(m_handle, name.c_str(), ZFS_TYPE_VOLUME, options.toList());
 	}
 
 	namespace

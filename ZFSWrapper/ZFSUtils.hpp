@@ -18,6 +18,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <cstdint>
 
 // libzfs.h forward declarations
 typedef struct zfs_handle zfs_handle_t;
@@ -107,6 +108,30 @@ namespace zfs
 		 Returns a filesystem loaded by name.
 		 */
 		ZFileSystem filesystem(std::string const & name) const;
+
+	public:
+		/*!
+		 Creates a new Filesystem
+		 \param name The full name of the new filesystem, including target pool
+		 \return An error code, or 0 on success
+		 \note This function is part of the library and not the pool or dataset
+		 object because the underlying API has the same structure, and this way
+		 is very flexible.
+		 */
+		int createFilesystem(std::string const & name);
+
+		/*!
+		 Creates a new Volume
+		 \param name The full name of the new filesystem, including target pool
+		 \param volumeSize the size of the volume in bytes
+		 \param blockSize the block size of the volume
+		 \return An error code, or 0 on success
+		 \note This function is part of the library and not the pool or dataset
+		 object because the underlying API has the same structure, and this way
+		 is very flexible.
+		 */
+		int createVolume(std::string const & name, std::uint64_t volumeSize,
+						 std::uint64_t blockSize = 0);
 
 	public:
 		/*!
