@@ -33,8 +33,7 @@ namespace zfs
 
 		std::ostream & operator<<(std::ostream & os, HighResTime const & time)
 		{
-			os << time.time;
-			return os;
+			return os << time.time;
 		}
 
 		static void throwOnNVListError(int errorCode)
@@ -120,6 +119,8 @@ namespace zfs
 
 #undef NVPAIRCONVERTTOSIMPLE
 #undef NVPAIRCONVERTTO
+#undef NVPAIRCONVERTTOP
+#undef NVPAIRCONVERTTOV
 
 	int NVPair::type() const
 	{
@@ -361,6 +362,89 @@ namespace zfs
 	void NVList::addBoolean(const char * name)
 	{
 		auto r = nvlist_add_boolean(m_list, name);
+		throwOnNVListError(r);
+	}
+
+	namespace
+	{
+		template<typename D, typename S>
+		D convert_input_value(S const & value)
+		{
+			return static_cast<D>(value);
+		}
+
+		template<>
+		char const * convert_input_value<char const *, std::string>(std::string const & value)
+		{
+			return value.c_str();
+		}
+
+		template<>
+		char * convert_input_value<char *, std::string>(std::string const & value)
+		{
+			// The API has weird const placement, but is not expected to modify anything
+			return const_cast<char*>(value.c_str());
+		}
+
+		template<>
+		nvlist_t * convert_input_value<nvlist_t *, NVList>(NVList const & value)
+		{
+			return value.toList();
+		}
+	}
+
+#define NVLIST_ADDP(externaltype, internaltype, funcsuffix) \
+	template<> \
+	void NVList::add<externaltype>(char const * key, externaltype const & value) \
+	{ \
+		auto r = nvlist_add_##funcsuffix(m_list, key, \
+			convert_input_value<internaltype>(value)); \
+		throwOnNVListError(r); \
+	}
+
+	// Transform data since the function wants non-const pointer
+#define NVLIST_ADDV(externaltype, internaltype, funcsuffix) \
+	template<> \
+	void NVList::add<std::vector<externaltype>>(char const * key, std::vector<externaltype> const & value) \
+	{ \
+		std::vector<internaltype> internal(value.size()); \
+		std::transform(value.begin(), value.end(), internal.begin(), \
+			convert_input_value<internaltype,externaltype>); \
+		auto r = nvlist_add_##funcsuffix##_array(m_list, key, internal.data(), \
+			static_cast<uint_t>(internal.size())); \
+		throwOnNVListError(r); \
+	}
+
+#define NVLIST_ADD(externaltype, internaltype, funcsuffix) \
+NVLIST_ADDP(externaltype, internaltype, funcsuffix) \
+NVLIST_ADDV(externaltype, internaltype, funcsuffix)
+
+#define NVLIST_ADD_SIMPLE(suffix) NVLIST_ADD(suffix##_t, suffix##_t, suffix)
+
+	NVLIST_ADDP(bool, boolean_t, boolean_value)
+	NVLIST_ADDV(bool, boolean_t, boolean)
+	NVLIST_ADDP(double, double, double)
+	NVLIST_ADD(char, uchar_t, byte)
+	NVLIST_ADDP(std::string, char const*, string)
+	NVLIST_ADDV(std::string, char*, string)
+	NVLIST_ADD(NVList, nvlist_t*, nvlist)
+	NVLIST_ADD_SIMPLE(int8)
+	NVLIST_ADD_SIMPLE(uint8)
+	NVLIST_ADD_SIMPLE(int16)
+	NVLIST_ADD_SIMPLE(uint16)
+	NVLIST_ADD_SIMPLE(int32)
+	NVLIST_ADD_SIMPLE(uint32)
+	NVLIST_ADD_SIMPLE(int64)
+	NVLIST_ADD_SIMPLE(uint64)
+
+#undef NVLIST_ADD_SIMPLE
+#undef NVLIST_ADD
+#undef NVLIST_ADDP
+#undef NVLIST_ADDV
+
+	void NVList::remove(char const * key)
+	{
+		auto r = nvlist_remove_all(m_list, key);
 		throwOnNVListError(r);
 	}
 

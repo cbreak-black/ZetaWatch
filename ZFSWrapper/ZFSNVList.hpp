@@ -208,6 +208,23 @@ namespace zfs
 		 */
 		void addBoolean(char const * key);
 
+		/*!
+		 Adds a value with the given key.
+		 Only the types `bool`, `char`, `std::string`, `NVList`, `int8_t`,
+		 `uint8_t`, `int16_t`, `uint16_t`, `int32_t`, `uint32_t`, `int64_t`,
+		 `uint64_t` and vectors of them, as well as double are supported.
+		 \param key The key string
+		 \param value A value of a supported type
+		 */
+		template<typename T>
+		void add(char const * key, T const & value);
+
+		/*!
+		 Removes the value with the given key.
+		 \param key The key string to remove
+		 */
+		void remove(char const * key);
+
 	public:
 		/*!
 		 NVList::Iterator iterates over all direct members as NVPair.
