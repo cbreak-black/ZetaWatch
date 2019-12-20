@@ -35,9 +35,9 @@ enum ZetaMenuTags
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
 @property (weak) IBOutlet ZetaDictQueryDialog * zetaNewFSDialog;
+@property (weak) IBOutlet ZetaDictQueryDialog * zetaNewVolDialog;
 @property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaNotificationCenter * notificationCenter;
-
 
 - (IBAction)exportPool:(id)sender;
 - (IBAction)exportPoolForce:(id)sender;

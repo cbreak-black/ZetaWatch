@@ -182,6 +182,8 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addFSCommand(NSLocalizedString(@"Create Filesystem...", @"Create Filesystem..."),
 		@selector(createFilesystem:));
+	addFSCommand(NSLocalizedString(@"Create Volume...", @"Create Volume..."),
+		@selector(createVolume:));
 	// Destroy
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	if (!fs.isRoot())
@@ -458,6 +460,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		addRootFSCommand(NSLocalizedString(@"Create Filesystem...", @"Create Filesystem..."),
 						 @selector(createFilesystem:));
+		addRootFSCommand(NSLocalizedString(@"Create Volume...", @"Create Volume..."),
+						 @selector(createVolume:));
 		// Export Actions
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
 		addRootFSCommand(NSLocalizedString(@"Export", @"Export"),
@@ -948,6 +952,30 @@ static NSString * formatRollbackDependents(
 			  {
 				  NSString * title = [NSString stringWithFormat:
 					NSLocalizedString(@"Dataset %@ created", @"NewFS Success format"),
+					opts[@"filesystem"]];
+				  [self notifySuccessWithTitle:title text:nil];
+			  }
+			  [self handleFileSystemChangeReply:error];
+		  }];
+	 }];
+}
+
+- (IBAction)createVolume:(id)sender
+{
+	NSString * parentFilesyStem = [sender representedObject];
+	NSMutableDictionary * query = [NSMutableDictionary dictionary];
+	query[@"filesystem"] = [NSString stringWithFormat:@"%@/NewVolume", parentFilesyStem];
+	query[@"type"] = @"volume";
+	query[@"size"] = [NSNumber numberWithUnsignedLongLong:(1 << 30)];
+	[_zetaNewVolDialog addQuery:query
+				   withCallback:^(NSDictionary * opts)
+	 {
+		 [self->_authorization createFilesystem:opts withReply:^(NSError * error)
+		  {
+			  if (!error)
+			  {
+				  NSString * title = [NSString stringWithFormat:
+					NSLocalizedString(@"Volume %@ created", @"NewFS Success format"),
 					opts[@"filesystem"]];
 				  [self notifySuccessWithTitle:title text:nil];
 			  }

@@ -38,6 +38,7 @@
 @property (weak) IBOutlet NSPopover * settings;
 
 @property (strong) ZetaDictQueryDialog * zetaNewFSDialog;
+@property (strong) ZetaDictQueryDialog * zetaNewVolDialog;
 
 @end
 
@@ -59,6 +60,9 @@
 	_zetaNewFSDialog = [[ZetaDictQueryDialog alloc] initWithDialog:@"NewFS"];
 	_zetaNewFSDialog.statusItem = _statusItem;
 	_zetaMainMenu.zetaNewFSDialog = _zetaNewFSDialog;
+	_zetaNewVolDialog = [[ZetaDictQueryDialog alloc] initWithDialog:@"NewVol"];
+	_zetaNewVolDialog.statusItem = _statusItem;
+	_zetaMainMenu.zetaNewVolDialog = _zetaNewVolDialog;
 	// Watcher
 	[[self poolWatcher] checkForChanges];
 	// User Notification Center Delegate

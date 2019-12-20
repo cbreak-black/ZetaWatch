@@ -461,6 +461,7 @@
 		NSString * type = [fsData objectForKey:@"type"];
 		NSString * mountpoint = [fsData objectForKey:@"mountpoint"]; // only for datasets
 		NSNumber * size = [fsData objectForKey:@"size"]; // only for volumes
+		NSNumber * blocksize = [fsData objectForKey:@"blocksize"]; // only for volumes
 		if (!newFSName || !type)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
@@ -485,7 +486,9 @@
 			}
 			else if ([type isEqualToString:@"volume"])
 			{
-				if (zfs.createVolume(newFSNameStr, [size unsignedLongLongValue]) == 0)
+				auto s = [size unsignedLongLongValue];
+				auto bs = [blocksize unsignedLongLongValue];
+				if (zfs.createVolume(newFSNameStr, s, bs) == 0)
 				{
 					reply(nullptr);
 					return;
