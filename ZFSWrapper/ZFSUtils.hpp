@@ -113,12 +113,14 @@ namespace zfs
 		/*!
 		 Creates a new Filesystem
 		 \param name The full name of the new filesystem, including target pool
+		 \param mountpoint The desired mountpoint, inherited by default
 		 \return An error code, or 0 on success
 		 \note This function is part of the library and not the pool or dataset
 		 object because the underlying API has the same structure, and this way
 		 is very flexible.
 		 */
-		int createFilesystem(std::string const & name);
+		int createFilesystem(std::string const & name,
+							 std::string const & mountpoint = std::string());
 
 		/*!
 		 Creates a new Volume

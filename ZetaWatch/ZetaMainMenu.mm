@@ -936,21 +936,19 @@ static NSString * formatRollbackDependents(
 - (IBAction)createFilesystem:(id)sender
 {
 	NSString * parentFilesyStem = [sender representedObject];
-	// TODO:
-	// - Add custom mountpoint support
-	// - Add support for other options
-	[_zetaQueryDialog addQuery:NSLocalizedString(@"Enter new filesystem name", @"NewFS Query")
-				   withDefault:[NSString stringWithFormat:@"%@/", parentFilesyStem]
-				  withCallback:^(NSString * newFileSystem)
+	NSMutableDictionary * query = [NSMutableDictionary dictionary];
+	query[@"filesystem"] = [NSString stringWithFormat:@"%@/NewFilesystem", parentFilesyStem];
+	query[@"type"] = @"filesystem";
+	[_zetaNewFSDialog addQuery:query
+				  withCallback:^(NSDictionary * opts)
 	 {
-		 NSDictionary * opts = @{@"filesystem": newFileSystem, @"type": @"filesystem"};
 		 [self->_authorization createFilesystem:opts withReply:^(NSError * error)
 		  {
 			  if (!error)
 			  {
 				  NSString * title = [NSString stringWithFormat:
-									  NSLocalizedString(@"Dataset %@/%@ created", @"NewFS Success format"),
-									  parentFilesyStem, newFileSystem];
+					NSLocalizedString(@"Dataset %@ created", @"NewFS Success format"),
+					opts[@"filesystem"]];
 				  [self notifySuccessWithTitle:title text:nil];
 			  }
 			  [self handleFileSystemChangeReply:error];

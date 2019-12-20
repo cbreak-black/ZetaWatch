@@ -74,6 +74,8 @@
 		70EABDD91FF9B6C600BA39B8 /* net.the-color-black.ZetaAuthorizationHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70EABDCA1FF9ACB300BA39B8 /* net.the-color-black.ZetaAuthorizationHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		70EABDDA1FF9C05700BA39B8 /* CommonAuthorization.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EABDC31FF9A8D100BA39B8 /* CommonAuthorization.m */; };
 		70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */ = {isa = PBXBuildFile; fileRef = 70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */; };
+		70F307CD23ACD917002C760A /* ZetaDictQueryDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70F307CC23ACD917002C760A /* ZetaDictQueryDialog.mm */; };
+		70F307D023ACE415002C760A /* NewFS.xib in Resources */ = {isa = PBXBuildFile; fileRef = 70F307CE23ACE415002C760A /* NewFS.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -217,6 +219,9 @@
 		70EABDD31FF9B21C00BA39B8 /* ZetaAuthorizationHelper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaAuthorizationHelper.mm; sourceTree = "<group>"; };
 		70EABDD51FF9B40F00BA39B8 /* Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Launchd.plist; sourceTree = "<group>"; };
 		70EABDDB1FF9C11E00BA39B8 /* CommonAuthorization.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; path = CommonAuthorization.strings; sourceTree = "<group>"; };
+		70F307CB23ACD917002C760A /* ZetaDictQueryDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaDictQueryDialog.h; sourceTree = "<group>"; };
+		70F307CC23ACD917002C760A /* ZetaDictQueryDialog.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaDictQueryDialog.mm; sourceTree = "<group>"; };
+		70F307CF23ACE415002C760A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/NewFS.xib; sourceTree = "<group>"; };
 		70F386AA22906D36002C760A /* ZetaWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ZetaWatch.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -328,6 +333,8 @@
 				70168B6522B64E48002C760A /* ZetaKeyLoader.mm */,
 				70DF66B0234A2884002C760A /* ZetaQueryDialog.h */,
 				70DF66AF234A2884002C760A /* ZetaQueryDialog.mm */,
+				70F307CB23ACD917002C760A /* ZetaDictQueryDialog.h */,
+				70F307CC23ACD917002C760A /* ZetaDictQueryDialog.mm */,
 				70BF21112353914F002C760A /* ZetaConfirmDialog.h */,
 				70BF210F23539130002C760A /* ZetaConfirmDialog.mm */,
 				709C1CAE1C354F9B00929DAE /* ZetaPoolWatcher.h */,
@@ -349,6 +356,7 @@
 				7006C4841C26CA1500929DAE /* Assets.xcassets */,
 				70C930D622122CBD00BA39B8 /* Localizable.strings */,
 				7006C4861C26CA1500929DAE /* MainMenu.xib */,
+				70F307CE23ACE415002C760A /* NewFS.xib */,
 				7006C4891C26CA1500929DAE /* Info.plist */,
 				70F386AA22906D36002C760A /* ZetaWatch.entitlements */,
 				7006C4811C26CA1500929DAE /* Supporting Files */,
@@ -625,6 +633,7 @@
 			files = (
 				70EABDDC1FF9C1F000BA39B8 /* CommonAuthorization.strings in Resources */,
 				70C930D822122CBD00BA39B8 /* Localizable.strings in Resources */,
+				70F307D023ACE415002C760A /* NewFS.xib in Resources */,
 				7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */,
 				7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */,
 			);
@@ -653,6 +662,7 @@
 			files = (
 				70B4E4CC22F469FC002C760A /* ZetaAutoImporter.mm in Sources */,
 				70EA5F5322BEC7B1002C760A /* ZetaFormatHelpers.cpp in Sources */,
+				70F307CD23ACD917002C760A /* ZetaDictQueryDialog.mm in Sources */,
 				709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */,
 				70B4E4C922F45E7C002C760A /* IDDiskArbitrationDispatcher.cpp in Sources */,
 				7006C4831C26CA1500929DAE /* main.m in Sources */,
@@ -753,6 +763,14 @@
 				70C930D722122CBD00BA39B8 /* Base */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		70F307CE23ACE415002C760A /* NewFS.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				70F307CF23ACE415002C760A /* Base */,
+			);
+			name = NewFS.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

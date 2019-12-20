@@ -20,6 +20,7 @@
                 <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
                 <outlet property="zetaConfirmDialog" destination="YY7-LW-cAD" id="N6U-3T-0X2"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="Uml-Lc-GeC"/>
+                <outlet property="zetaMainMenu" destination="8rf-zp-5r9" id="20J-Sj-1ol"/>
                 <outlet property="zetaMenu" destination="Xld-Up-BZ8" id="YRA-tL-FBE"/>
                 <outlet property="zetaQueryDialog" destination="TB2-7Z-kJ2" id="d4N-Ym-SU3"/>
             </connections>

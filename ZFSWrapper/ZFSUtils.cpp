@@ -1024,9 +1024,12 @@ namespace zfs
 		return ZFileSystem(fs);
 	}
 
-	int LibZFSHandle::createFilesystem(std::string const & name)
+	int LibZFSHandle::createFilesystem(std::string const & name,
+		std::string const & mountpoint)
 	{
 		NVList options(NVList::TakeOwnership{});
+		if (!mountpoint.empty())
+			options.add(zfs_prop_to_name(ZFS_PROP_MOUNTPOINT), mountpoint);
 		if (auto r = zfs_create_ancestors(m_handle, name.c_str()))
 			return r;
 		return zfs_create(m_handle, name.c_str(), ZFS_TYPE_FILESYSTEM, options.toList());

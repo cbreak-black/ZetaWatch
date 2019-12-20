@@ -15,6 +15,7 @@
 #import "ZetaMainMenu.h"
 #import "ZetaKeyLoader.h"
 #import "ZetaQueryDialog.h"
+#import "ZetaDictQueryDialog.h"
 #import "ZetaConfirmDialog.h"
 
 #import "ZFSUtils.hpp"
@@ -28,12 +29,15 @@
 }
 
 @property (weak) IBOutlet NSMenu * zetaMenu;
+@property (weak) IBOutlet ZetaMainMenu * zetaMainMenu;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
 @property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 @property (weak) IBOutlet SUUpdater * updater;
 @property (weak) IBOutlet NSPopover * settings;
+
+@property (strong) ZetaDictQueryDialog * zetaNewFSDialog;
 
 @end
 
@@ -51,6 +55,10 @@
 	_zetaKeyLoader.statusItem = _statusItem;
 	_zetaQueryDialog.statusItem = _statusItem;
 	_zetaConfirmDialog.statusItem = _statusItem;
+	// Dialogs
+	_zetaNewFSDialog = [[ZetaDictQueryDialog alloc] initWithDialog:@"NewFS"];
+	_zetaNewFSDialog.statusItem = _statusItem;
+	_zetaMainMenu.zetaNewFSDialog = _zetaNewFSDialog;
 	// Watcher
 	[[self poolWatcher] checkForChanges];
 	// User Notification Center Delegate

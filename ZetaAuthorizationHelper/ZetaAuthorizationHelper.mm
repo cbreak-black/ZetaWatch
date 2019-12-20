@@ -459,6 +459,7 @@
 	{
 		NSString * newFSName = [fsData objectForKey:@"filesystem"];
 		NSString * type = [fsData objectForKey:@"type"];
+		NSString * mountpoint = [fsData objectForKey:@"mountpoint"]; // only for datasets
 		NSNumber * size = [fsData objectForKey:@"size"]; // only for volumes
 		if (!newFSName || !type)
 		{
@@ -471,7 +472,8 @@
 			std::string newFSNameStr = [newFSName UTF8String];
 			if ([type isEqualToString:@"filesystem"])
 			{
-				if (zfs.createFilesystem(newFSNameStr) == 0)
+				std::string mountpointStr = mountpoint ? [mountpoint UTF8String] : "";
+				if (zfs.createFilesystem(newFSNameStr, mountpointStr) == 0)
 				{
 					auto newFS = zfs.filesystem(newFSNameStr);
 					if (newFS.mount() == 0)
