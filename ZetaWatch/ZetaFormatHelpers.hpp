@@ -13,25 +13,28 @@
 #include <string>
 #include <iomanip>
 
-struct MetricPrefix
+struct Prefix
 {
 	uint64_t factor;
 	char const * prefix;
 };
 
-extern MetricPrefix const metricPrefixes[];
+extern Prefix const metricPrefixes[];
 extern size_t const metricPrefixCount;
 
+extern Prefix const binaryPrefixes[];
+extern size_t const binaryPrefixCount;
+
 template<typename T>
-std::string formatPrefixedValue(T size)
+std::string formatPrefixedValue(T size, Prefix const * prefix, size_t prefixCount)
 {
-	for (size_t p = 0; p < metricPrefixCount; ++p)
+	for (size_t p = 0; p < prefixCount; ++p)
 	{
-		if (size > metricPrefixes[p].factor)
+		if (size > prefix[p].factor)
 		{
-			double scaledSize = size / double(metricPrefixes[p].factor);
+			double scaledSize = size / double(prefix[p].factor);
 			std::stringstream ss;
-			ss << std::setprecision(2) << std::fixed << scaledSize << " " << metricPrefixes[p].prefix;
+			ss << std::setprecision(2) << std::fixed << scaledSize << " " << prefix[p].prefix;
 			return ss.str();
 		}
 	}
@@ -39,9 +42,21 @@ std::string formatPrefixedValue(T size)
 }
 
 template<typename T>
+std::string formatInformationValue(T size)
+{
+	return formatPrefixedValue(size, binaryPrefixes, binaryPrefixCount);
+}
+
+template<typename T>
+std::string formatNormalValue(T size)
+{
+	return formatPrefixedValue(size, metricPrefixes, metricPrefixCount);
+}
+
+template<typename T>
 std::string formatBytes(T bytes)
 {
-	return formatPrefixedValue(bytes) + "B";
+	return formatInformationValue(bytes) + "B";
 }
 
 inline std::string formatRate(uint64_t bytes, std::chrono::seconds const & time)
