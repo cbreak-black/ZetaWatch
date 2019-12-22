@@ -50,8 +50,11 @@
 - (void)createFilesystem:(NSDictionary *)fsData
 			   withReply:(void(^)(NSError * error))reply;
 
-- (void)destroyFilesystem:(NSDictionary *)fsData
-				withReply:(void(^)(NSError * error))reply;
+- (void)createVolume:(NSDictionary *)fsData
+			   withReply:(void(^)(NSError * error))reply;
+
+- (void)destroy:(NSDictionary *)fsData
+	  withReply:(void(^)(NSError * error))reply;
 
 - (void)loadKeyForFilesystem:(NSDictionary *)loadData
 				   withReply:(void(^)(NSError * error))reply;

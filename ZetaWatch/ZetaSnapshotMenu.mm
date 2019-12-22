@@ -54,11 +54,11 @@ NSMenuItem * createSnapMenu(zfs::ZFileSystem const & snap, ZetaMainMenu * delega
 	[sMenu addItem:[NSMenuItem separatorItem]];
 	if (snap.cloneCount() == 0)
 	{
-		addSnapCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+		addSnapCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroy:));
 	}
 	else
 	{
-		addSnapCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyFilesystemRecursive:));
+		addSnapCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyRecursive:));
 	}
 	auto item = [[NSMenuItem alloc] initWithTitle:sName action:nullptr keyEquivalent:@""];
 	item.representedObject = sName;

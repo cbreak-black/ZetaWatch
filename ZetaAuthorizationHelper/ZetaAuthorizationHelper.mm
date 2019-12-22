@@ -392,43 +392,50 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	processWithExceptionForwarding(authData, _cmd, reply, [=]()
 	{
 		NSString * newFSName = [fsData objectForKey:@"filesystem"];
-		NSString * type = [fsData objectForKey:@"type"];
-		NSString * mountpoint = [fsData objectForKey:@"mountpoint"]; // only for datasets
-		NSNumber * size = [fsData objectForKey:@"size"]; // only for volumes
-		NSNumber * blocksize = [fsData objectForKey:@"blocksize"]; // only for volumes
-		if (!newFSName || !type)
+		NSString * mountpoint = [fsData objectForKey:@"mountpoint"];
+		if (!newFSName)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
 			return;
 		}
 		zfs::LibZFSHandle zfs;
 		std::string newFSNameStr = [newFSName UTF8String];
-		if ([type isEqualToString:@"filesystem"])
+		std::string mountpointStr = mountpoint ? [mountpoint UTF8String] : "";
+		if (zfs.createFilesystem(newFSNameStr, mountpointStr) == 0)
 		{
-			std::string mountpointStr = mountpoint ? [mountpoint UTF8String] : "";
-			if (zfs.createFilesystem(newFSNameStr, mountpointStr) == 0)
-			{
-				auto newFS = zfs.filesystem(newFSNameStr);
-				if (newFS.mount() == 0)
-				{
-					reply(nullptr);
-					return;
-				}
-			}
-		}
-		else if ([type isEqualToString:@"volume"])
-		{
-			auto s = [size unsignedLongLongValue];
-			auto bs = [blocksize unsignedLongLongValue];
-			if (zfs.createVolume(newFSNameStr, s, bs) == 0)
+			auto newFS = zfs.filesystem(newFSNameStr);
+			if (newFS.mount() == 0)
 			{
 				reply(nullptr);
 				return;
 			}
 		}
-		else
+		NSDictionary * userInfo = @{
+			NSLocalizedDescriptionKey: [NSString stringWithUTF8String:zfs.lastError().c_str()]
+		};
+		reply([NSError errorWithDomain:@"ZFSError" code:-1 userInfo:userInfo]);
+	});
+}
+
+- (void)createVolume:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+{
+	processWithExceptionForwarding(authData, _cmd, reply, [=]()
+	{
+		NSString * newFSName = [fsData objectForKey:@"filesystem"];
+		NSNumber * size = [fsData objectForKey:@"size"];
+		NSNumber * blocksize = [fsData objectForKey:@"blocksize"];
+		if (!newFSName || !size)
 		{
-			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Type Argument"}]);
+			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
+			return;
+		}
+		zfs::LibZFSHandle zfs;
+		std::string newFSNameStr = [newFSName UTF8String];
+		auto s = [size unsignedLongLongValue];
+		auto bs = blocksize ? [blocksize unsignedLongLongValue] : 0;
+		if (zfs.createVolume(newFSNameStr, s, bs) == 0)
+		{
+			reply(nullptr);
 			return;
 		}
 		NSDictionary * userInfo = @{
@@ -438,7 +445,7 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	});
 }
 
-- (void)destroyFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
+- (void)destroy:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
 	processWithExceptionForwarding(authData, _cmd, reply, [=]()
 	{

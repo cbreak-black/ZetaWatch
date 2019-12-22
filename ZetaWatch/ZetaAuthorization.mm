@@ -340,15 +340,28 @@
 		withNotification:notification];
 }
 
-- (void)destroyFilesystem:(NSDictionary *)fsData
-				withReply:(void(^)(NSError * error))reply
+- (void)createVolume:(NSDictionary *)fsData
+		   withReply:(void(^)(NSError * error))reply
+{
+	NSString * target = fsData[@"filesystem"];
+	if (target == nil)
+		std::logic_error("Missing required parameter \"filesystem\"");
+	ZetaNotification * notification = [self startNotificationForAction:
+		NSLocalizedString(@"Creating", @"Create Action") withTarget:target];
+	[self executeOnProxy:@selector(createVolume:authorization:withReply:)
+				withData:fsData withReply:reply
+		withNotification:notification];
+}
+
+- (void)destroy:(NSDictionary *)fsData
+	  withReply:(void(^)(NSError * error))reply
 {
 	NSString * target = fsData[@"filesystem"];
 	if (target == nil)
 		std::logic_error("Missing required parameter \"filesystem\"");
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Destroying", @"Destroy Action") withTarget:target];
-	[self executeOnProxy:@selector(destroyFilesystem:authorization:withReply:)
+	[self executeOnProxy:@selector(destroy:authorization:withReply:)
 				withData:fsData withReply:reply
 		withNotification:notification];
 }

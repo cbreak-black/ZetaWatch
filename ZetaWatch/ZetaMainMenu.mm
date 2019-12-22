@@ -188,9 +188,9 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	if (!fs.isRoot())
 	{
-		addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+		addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroy:));
 	}
-	addFSCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyFilesystemRecursive:));
+	addFSCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyRecursive:));
 	// Selected Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addMenuItem(fsMenu, delegate,
@@ -974,7 +974,6 @@ static NSString * formatRollbackDependents(
 	NSString * parentFilesyStem = [sender representedObject];
 	NSMutableDictionary * query = [NSMutableDictionary dictionary];
 	query[@"filesystem"] = [NSString stringWithFormat:@"%@/NewFilesystem", parentFilesyStem];
-	query[@"type"] = @"filesystem";
 	[_zetaNewFSDialog addQuery:query
 				  withCallback:^(NSDictionary * opts)
 	 {
@@ -1000,12 +999,11 @@ static NSString * formatRollbackDependents(
 	NSString * parentFilesyStem = [sender representedObject];
 	NSMutableDictionary * query = [NSMutableDictionary dictionary];
 	query[@"filesystem"] = [NSString stringWithFormat:@"%@/NewVolume", parentFilesyStem];
-	query[@"type"] = @"volume";
 	query[@"size"] = [NSNumber numberWithUnsignedLongLong:(1 << 30)];
 	[_zetaNewVolDialog addQuery:query
 				   withCallback:^(NSDictionary * opts)
 	 {
-		 [self->_authorization createFilesystem:opts withReply:^(NSError * error)
+		 [self->_authorization createVolume:opts withReply:^(NSError * error)
 		  {
 			  if (!error)
 			  {
@@ -1022,7 +1020,7 @@ static NSString * formatRollbackDependents(
 	 }];
 }
 
-- (IBAction)destroyFilesystem:(id)sender
+- (IBAction)destroy:(id)sender
 {
 	NSString * fsName = [sender representedObject];
 	zfs::LibZFSHandle lib;
@@ -1039,7 +1037,7 @@ static NSString * formatRollbackDependents(
 	else
 	{
 		NSDictionary * opts = @{@"filesystem": fsName};
-		[_authorization destroyFilesystem:opts withReply:^(NSError * error)
+		[_authorization destroy:opts withReply:^(NSError * error)
 		 {
 			 if (!error)
 			 {
@@ -1056,7 +1054,7 @@ static NSString * formatRollbackDependents(
 	}
 }
 
-- (IBAction)destroyFilesystemRecursive:(id)sender
+- (IBAction)destroyRecursive:(id)sender
 {
 	NSString * fsName = [sender representedObject];
 	zfs::LibZFSHandle lib;
@@ -1067,7 +1065,7 @@ static NSString * formatRollbackDependents(
 		if (ok)
 		{
 			NSDictionary * opts = @{@"filesystem": [sender representedObject], @"recursive": @TRUE};
-			[self->_authorization destroyFilesystem:opts withReply:^(NSError * error)
+			[self->_authorization destroy:opts withReply:^(NSError * error)
 			 {
 				 if (!error)
 				 {

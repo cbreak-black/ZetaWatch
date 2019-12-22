@@ -156,7 +156,9 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 			  dictClone,
 		  NSStringFromSelector(@selector(createFilesystem:authorization:withReply:)):
 			  dictCreate,
-		  NSStringFromSelector(@selector(destroyFilesystem:authorization:withReply:)):
+		  NSStringFromSelector(@selector(createVolume:authorization:withReply:)):
+			  dictCreate,
+		  NSStringFromSelector(@selector(destroy:authorization:withReply:)):
 			  dictDestroy,
 		  NSStringFromSelector(@selector(loadKeyForFilesystem:authorization:withReply:)): dictKey,
 		  NSStringFromSelector(@selector(unloadKeyForFilesystem:authorization:withReply:)): dictKey,

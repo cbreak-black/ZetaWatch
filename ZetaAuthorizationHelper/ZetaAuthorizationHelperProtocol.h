@@ -32,7 +32,9 @@
 
 - (void)createFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
-- (void)destroyFilesystem:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+- (void)createVolume:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+
+- (void)destroy:(NSDictionary *)fsData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 - (void)loadKeyForFilesystem:(NSDictionary *)loadData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 

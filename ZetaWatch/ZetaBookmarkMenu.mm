@@ -38,7 +38,7 @@ NSMenuItem * createBookmarkMenu(zfs::ZFileSystem const & bookmark, ZetaMainMenu 
 		item.representedObject = bName;
 		item.target = delegate;
 	};
-	addBookmarkCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroyFilesystem:));
+	addBookmarkCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroy:));
 	auto item = [[NSMenuItem alloc] initWithTitle:bName action:nullptr keyEquivalent:@""];
 	item.representedObject = bName;
 	item.submenu = bMenu;
