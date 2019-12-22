@@ -177,10 +177,12 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
 			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
 			NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Auto-importing %@", @"Pool AutoImport short format"),
+				NSLocalizedString(@"Auto-importing %@",
+								  @"Pool AutoImport short format"),
 					name];
 			NSString * text = [NSString stringWithFormat:
-				NSLocalizedString(@"Auto-importing Pool %@ (%@)", @"Pool AutoImport format"),
+				NSLocalizedString(@"Auto-importing Pool %@ (%@)",
+								  @"Pool AutoImport format"),
 								name, guid];
 			[self notifySuccessWithTitle:title text:text];
 			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name};
@@ -221,10 +223,12 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 	else
 	{
 		NSString * title = [NSString stringWithFormat:
-			NSLocalizedString(@"Pool %@ auto-imported", @"Pool AutoImport Success short format"),
+			NSLocalizedString(@"Pool %@ auto-imported",
+							  @"Pool AutoImport Success short format"),
 				pool[@"poolName"]];
 		NSString * text = [NSString stringWithFormat:
-			NSLocalizedString(@"Pool %@ (%@) auto-imported", @"Pool AutoImport Success format"),
+			NSLocalizedString(@"Pool %@ (%@) auto-imported",
+							  @"Pool AutoImport Success format"),
 			pool[@"poolName"], pool[@"poolGUID"]];
 		[self notifySuccessWithTitle:title text:text];
 	}

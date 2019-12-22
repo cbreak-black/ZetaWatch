@@ -42,7 +42,8 @@
 	}
 	else
 	{
-		[_importMenu addItemWithTitle:NSLocalizedString(@"No importable Pools found", @"No Importable Pools")
+		[_importMenu addItemWithTitle:NSLocalizedString(@"No importable Pools found",
+														@"No Importable Pools")
 							   action:NULL keyEquivalent:@""];
 	}
 }
@@ -71,9 +72,13 @@
 		 if (!error)
 		 {
 			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Pool %@ imported", @"Pool Import Success short format"), pool[@"poolName"]];
+				NSLocalizedString(@"Pool %@ imported",
+								  @"Pool Import Success short format"),
+				pool[@"poolName"]];
 			 NSString * text = [NSString stringWithFormat:
-				NSLocalizedString(@"Pool %@ (%@) imported", @"Pool Import Success format"), pool[@"poolName"], pool[@"poolGUID"]];
+				NSLocalizedString(@"%@ (%@) imported",
+								  @"Pool Import Success format"),
+				pool[@"poolName"], pool[@"poolGUID"]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handlePoolChangeReply:error];
@@ -93,7 +98,8 @@
 		 if (!error)
 		 {
 			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"All pools imported", @"Pool Import Success all")];
+				NSLocalizedString(@"All pools imported",
+								  @"Pool Import Success all")];
 			 [self notifySuccessWithTitle:title text:nil];
 		 }
 		 [self handlePoolChangeReply:error];

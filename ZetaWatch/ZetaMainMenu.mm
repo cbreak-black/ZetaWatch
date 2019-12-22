@@ -656,10 +656,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Pool %@ exported", @"Pool Export Success format"),
+			 NSString * title = NSLocalizedString(@"Export Success",
+												  @"Export Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ exported",
+								  @"Export Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handlePoolChangeReply:error];
 	 }];
@@ -672,10 +675,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Pool %@ force-exported", @"Pool ForceExport Success format"),
+			 NSString * title = NSLocalizedString(@"Force-Export Success",
+												  @"Force-Export Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ force-exported",
+								  @"Force-Export Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handlePoolChangeReply:error];
 	 }];
@@ -688,10 +694,12 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ mounted", @"FS Mount Success format"),
+			 NSString * title = NSLocalizedString(@"Mount Success",
+												  @"Mount Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ mounted", @"Mount Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -704,10 +712,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ mounted recursively", @"FS Mount Recursive Success format"),
+			 NSString * title = NSLocalizedString(@"Mount Recursive Success",
+												  @"Mount Recursive Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ mounted recursively",
+								  @"Mount Recursive Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -720,10 +731,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ unmounted", @"FS Unmount Success format"),
+			 NSString * title = NSLocalizedString(@"Unmount Success",
+												  @"Unmount Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ unmounted",
+								  @"FS Unmount Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -736,10 +750,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ unmounted recursively", @"FS Unmount Recursive Success format"),
+			 NSString * title = NSLocalizedString(@"Unmount Recursive Success",
+												  @"Unmount Recursive Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ unmounted recursively",
+								  @"Unmount Recursive Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -752,10 +769,13 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Filesystem %@ force-unmounted", @"FS ForceUnmount Success format"),
+			 NSString * title = NSLocalizedString(@"Filesystem Force-Unmount Success",
+												  @"FS Force-Unmount Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"%@ force-unmounted",
+								  @"FS ForceUnmount Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -782,10 +802,13 @@ static NSString * defaultSnapshotName()
 		  {
 			  if (!error)
 			  {
-				  NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Snapshot %@@%@ created", @"Snapshot Success format"),
+				  NSString * title = NSLocalizedString(@"Snapshot Success",
+													   @"Snapshot Success");
+				  NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"%@@%@ created",
+									  @"Snapshot Success format"),
 									  filesystem, snapshot];
-				  [self notifySuccessWithTitle:title text:nil];
+				  [self notifySuccessWithTitle:title text:text];
 			  }
 			  [self handleFileSystemChangeReply:error];
 		  }];
@@ -804,10 +827,13 @@ static NSString * defaultSnapshotName()
 		  {
 			  if (!error)
 			  {
-				  NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Recursive Snapshot %@@%@ created", @"RecursiveSnapshot Success format"),
+				  NSString * title = NSLocalizedString(@"Recursive Snapshot Success",
+													   @"Recursive Snapshot Success");
+				  NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"%@@%@ created recursively",
+									  @"RecursiveSnapshot Success format"),
 					filesystem, snapshot];
-				  [self notifySuccessWithTitle:title text:nil];
+				  [self notifySuccessWithTitle:title text:text];
 			  }
 			  [self handleFileSystemChangeReply:error];
 		  }];
@@ -883,10 +909,13 @@ static NSString * formatRollbackDependents(
 			 {
 				 if (!error)
 				 {
-					 NSString * title = [NSString stringWithFormat:
-						NSLocalizedString(@"Snapshot %@ rolled back", @"Rollback Success format"),
+					 NSString * title = NSLocalizedString(@"Rollback Success",
+														  @"Rollback Success");
+					 NSString * text = [NSString stringWithFormat:
+						NSLocalizedString(@"%@ rolled back",
+										  @"Rollback Success format"),
 										 snapNameStr];
-					 [self notifySuccessWithTitle:title text:nil];
+					 [self notifySuccessWithTitle:title text:text];
 				 }
 				 [self handleFileSystemChangeReply:error];
 			 }];
@@ -927,10 +956,13 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Snapshot %@ to %@ cloned", @"Clone Success format"),
+				  NSString * title = NSLocalizedString(@"Clone Success",
+													   @"Clone Success");
+				  NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"%@ cloned to %@",
+									  @"Clone Success format"),
 					snapshot, newFileSystem];
-				  [self notifySuccessWithTitle:title text:nil];
+				  [self notifySuccessWithTitle:title text:text];
 			  }
 			  [self handleFileSystemChangeReply:error];
 		  }];
@@ -950,10 +982,13 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Dataset %@ created", @"NewFS Success format"),
+				  NSString * title = NSLocalizedString(@"Filesystem creation Success",
+													   @"FS Create Success");
+				  NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"Filesystem %@ created",
+									  @"FS Create Success format"),
 					opts[@"filesystem"]];
-				  [self notifySuccessWithTitle:title text:nil];
+				  [self notifySuccessWithTitle:title text:text];
 			  }
 			  [self handleFileSystemChangeReply:error];
 		  }];
@@ -974,10 +1009,13 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Volume %@ created", @"NewFS Success format"),
+				  NSString * title = NSLocalizedString(@"Volume creation Success",
+													   @"Volume Create Success");
+				  NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"Volume %@ created",
+									  @"Volume Create Success format"),
 					opts[@"filesystem"]];
-				  [self notifySuccessWithTitle:title text:nil];
+				  [self notifySuccessWithTitle:title text:text];
 			  }
 			  [self handleFileSystemChangeReply:error];
 		  }];
@@ -1005,10 +1043,13 @@ static NSString * formatRollbackDependents(
 		 {
 			 if (!error)
 			 {
-				 NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Filesystem %@ destroyed", @"Destroy Success format"),
+				 NSString * title = NSLocalizedString(@"Destruction Success",
+													  @"Destroy Success");
+				 NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"%@ destroyed",
+									  @"Destroy Success format"),
 					[sender representedObject]];
-				 [self notifySuccessWithTitle:title text:nil];
+				 [self notifySuccessWithTitle:title text:text];
 			 }
 			 [self handleFileSystemChangeReply:error];
 		 }];
@@ -1030,10 +1071,13 @@ static NSString * formatRollbackDependents(
 			 {
 				 if (!error)
 				 {
-					 NSString * title = [NSString stringWithFormat:
-						NSLocalizedString(@"Filesystem %@ destroyed recursively", @"Destroy Recursive Success format"),
+					 NSString * title = NSLocalizedString(@"Recursive Destruction Success",
+														  @"Destroy Recursive Success");
+					 NSString * text = [NSString stringWithFormat:
+						NSLocalizedString(@"%@ destroyed recursively",
+										  @"Destroy Recursive Success format"),
 						[sender representedObject]];
-					 [self notifySuccessWithTitle:title text:nil];
+					 [self notifySuccessWithTitle:title text:text];
 				 }
 				 [self handleFileSystemChangeReply:error];
 			 }];
@@ -1072,10 +1116,13 @@ static NSString * formatRollbackDependents(
 	 {
 		 if (!error)
 		 {
-			 NSString * title = [NSString stringWithFormat:
-				NSLocalizedString(@"Key for %@ unloaded", @"Key Unload Success format"),
+			 NSString * title = NSLocalizedString(@"Key Unload Success",
+												  @"Key Unload Success");
+			 NSString * text = [NSString stringWithFormat:
+				NSLocalizedString(@"Key for %@ unloaded",
+								  @"Key Unload Success format"),
 				[sender representedObject]];
-			 [self notifySuccessWithTitle:title text:nil];
+			 [self notifySuccessWithTitle:title text:text];
 		 }
 		 [self handleFileSystemChangeReply:error];
 	 }];
@@ -1092,10 +1139,13 @@ static NSString * formatRollbackDependents(
 		 {
 			 if (!error)
 			 {
-				 NSString * title = [NSString stringWithFormat:
-					NSLocalizedString(@"Key for %@ unloaded", @"Key Unload Success format"),
+				 NSString * title = NSLocalizedString(@"Key Unload Success",
+													  @"Key Unload Success");
+				 NSString * text = [NSString stringWithFormat:
+					NSLocalizedString(@"Key for %@ unloaded",
+									  @"Key Unload Success format"),
 					fs];
-				 [self notifySuccessWithTitle:title text:nil];
+				 [self notifySuccessWithTitle:title text:text];
 			 }
 			 [self handleFileSystemChangeReply:error];
 			 [self unloadNextKey:fileSystems];

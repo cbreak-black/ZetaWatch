@@ -334,7 +334,7 @@
 	if (target == nil)
 		std::logic_error("Missing required parameter \"filesystem\"");
 	ZetaNotification * notification = [self startNotificationForAction:
-		NSLocalizedString(@"Creating", @"Destroy Action") withTarget:target];
+		NSLocalizedString(@"Creating", @"Create Action") withTarget:target];
 	[self executeOnProxy:@selector(createFilesystem:authorization:withReply:)
 				withData:fsData withReply:reply
 		withNotification:notification];
