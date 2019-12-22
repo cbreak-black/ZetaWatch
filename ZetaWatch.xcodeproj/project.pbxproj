@@ -851,7 +851,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				ZETA_VERSION = 38;
+				ZETA_VERSION = 39;
 				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Debug;
@@ -908,7 +908,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				ZETA_VERSION = 38;
+				ZETA_VERSION = 39;
 				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
 			};
 			name = Release;
@@ -927,7 +927,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				ZETA_VERSION = 39;
 			};
 			name = Debug;
 		};
@@ -945,7 +944,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				ZETA_VERSION = 39;
 			};
 			name = Release;
 		};
