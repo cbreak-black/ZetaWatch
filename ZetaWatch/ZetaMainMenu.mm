@@ -130,7 +130,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 		{
 			if (fs.keyStatus() != zfs::ZFileSystem::KeyStatus::available)
 			{
-				addFSCommand(NSLocalizedString(@"Load Key", @"Load Key"), @selector(loadKey:));
+				addFSCommand(NSLocalizedString(@"Load Key...", @"Load Key"), @selector(loadKey:));
 			}
 			else
 			{
@@ -152,8 +152,8 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	}
 	// Snapshots
 	[fsMenu addItem:[NSMenuItem separatorItem]];
-	addFSCommand(NSLocalizedString(@"Snapshot", @"Snapshot"), @selector(snapshotFilesystem:));
-	addFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"), @selector(snapshotFilesystemRecursive:));
+	addFSCommand(NSLocalizedString(@"Snapshot...", @"Snapshot"), @selector(snapshotFilesystem:));
+	addFSCommand(NSLocalizedString(@"Snapshot Recursive...", @"Snapshot Recursive"), @selector(snapshotFilesystemRecursive:));
 	{
 		// Snapshots submenu
 		NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
@@ -454,7 +454,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 						 @selector(unmountFilesystemRecursive:));
 		// Snapshot
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		addRootFSCommand(NSLocalizedString(@"Snapshot Recursive", @"Snapshot Recursive"),
+		addRootFSCommand(NSLocalizedString(@"Snapshot Recursive...", @"Snapshot Recursive"),
 						 @selector(snapshotFilesystemRecursive:));
 		// Create
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
@@ -540,7 +540,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	if (actionMenuIdx < 0)
 		return;
 	// Unlock
-	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
+	NSMenuItem * unlockItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Load Keys...", @"Load Key Menu Entry") action:NULL keyEquivalent:@""];
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
 	NSMutableArray<NSString*> * lockedEncryptionRoots = [NSMutableArray array];
@@ -553,7 +553,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSMenu * lockMenu = [[NSMenu alloc] init];
 	[lockItem setSubmenu:lockMenu];
 	NSMutableArray<NSString*> * unlockedEncryptionRoots = [NSMutableArray array];
-	NSMenuItem * lockAllItem = [lockMenu addItemWithTitle:NSLocalizedString(@"Unload all Keys...", @"Unload All Menu Entry") action:@selector(unloadAllKeys:) keyEquivalent:@""];
+	NSMenuItem * lockAllItem = [lockMenu addItemWithTitle:NSLocalizedString(@"Unload all Keys", @"Unload All Menu Entry") action:@selector(unloadAllKeys:) keyEquivalent:@""];
 	lockAllItem.target = self;
 	lockAllItem.representedObject = unlockedEncryptionRoots;
 	[lockMenu addItem:[NSMenuItem separatorItem]];
