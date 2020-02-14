@@ -134,7 +134,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			}
 			else
 			{
-				addFSCommand(NSLocalizedString(@"Unoad Key", @"Unoad Key"), @selector(unloadKey:));
+				addFSCommand(NSLocalizedString(@"Unload Key", @"Unload Key"), @selector(unloadKey:));
 			}
 			[fsMenu addItem:[NSMenuItem separatorItem]];
 		}
