@@ -145,6 +145,9 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 		std::string altroot;
 		if (id ar = [importData objectForKey:@"altroot"])
 			altroot.assign([ar UTF8String]);
+		bool allowHostIDMismatch = false;
+		if (id aidm = [importData objectForKey:@"allowHostIDMismatch"])
+			allowHostIDMismatch = [aidm boolValue];
 		std::vector<zfs::ZPool> importedPools;
 		zfs::LibZFSHandle zfs;
 		if (pool != nil)
@@ -153,7 +156,7 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 		}
 		else
 		{
-			importedPools = zfs.importAllPools(altroot);
+			importedPools = zfs.importAllPools(allowHostIDMismatch, altroot);
 		}
 		if (failures.empty())
 		{

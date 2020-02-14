@@ -998,7 +998,7 @@ namespace zfs
 		return m_handle;
 	}
 
-	bool healthy(uint64_t stat)
+	bool healthy(uint64_t stat, bool allowHostIDMismatch)
 	{
 		switch (zpool_status_t(stat))
 		{
@@ -1006,6 +1006,8 @@ namespace zfs
 			case ZPOOL_STATUS_VERSION_OLDER:
 			case ZPOOL_STATUS_FEAT_DISABLED:
 				return true;
+			case ZPOOL_STATUS_HOSTID_MISMATCH:
+				return allowHostIDMismatch;
 			default:
 				return false;
 		}
@@ -1144,7 +1146,8 @@ namespace zfs
 	}
 
 	static std::vector<ZPool> import_with_args(LibZFSHandle const & lib,
-		importargs_t * args, bool allowUnhealthy, std::string altroot)
+		importargs_t * args, bool allowUnhealthy, bool allowHostIDMismatch,
+		std::string altroot)
 	{
 		thread_init();
 		auto list = NVList(zpool_search_import(lib.handle(), args), zfs::NVList::TakeOwnership());
@@ -1159,7 +1162,7 @@ namespace zfs
 			char * msg = nullptr;
 			zpool_errata_t errata = {};
 			zpool_status_t status = zpool_import_status(l.toList(), &msg, &errata);
-			if (!allowUnhealthy && !healthy(status))
+			if (!allowUnhealthy && !healthy(status, allowHostIDMismatch))
 				continue; // Ignore pools that aren't healthy
 			char * ar = nullptr;
 			if (!altroot.empty())
@@ -1180,17 +1183,18 @@ namespace zfs
 		return pools;
 	}
 
-	std::vector<ZPool> LibZFSHandle::importAllPools(std::string const & altroot) const
+	std::vector<ZPool> LibZFSHandle::importAllPools(bool allowHostIDMismatch,
+		std::string const & altroot) const
 	{
 		importargs_t args = {};
-		return import_with_args(*this, &args, false, "");
+		return import_with_args(*this, &args, false, allowHostIDMismatch, "");
 	}
 
 	ZPool LibZFSHandle::import(std::string const & name, std::string const & altroot) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		auto pools = import_with_args(*this, &args, true, "");
+		auto pools = import_with_args(*this, &args, true, true, "");
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
@@ -1200,7 +1204,7 @@ namespace zfs
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		auto pools = import_with_args(*this, &args, true, altroot);
+		auto pools = import_with_args(*this, &args, true, true, altroot);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());

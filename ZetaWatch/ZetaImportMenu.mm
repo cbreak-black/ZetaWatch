@@ -89,6 +89,10 @@
 {
 	NSMutableDictionary * mutablePool = [NSMutableDictionary dictionary];
 	auto defaults = [NSUserDefaults standardUserDefaults];
+	if ([defaults boolForKey:@"allowHostIDMismatch"])
+	{
+		[mutablePool setObject:@YES forKey:@"allowHostIDMismatch"];
+	}
 	if ([defaults boolForKey:@"useAltroot"])
 	{
 		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];

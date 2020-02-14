@@ -167,16 +167,23 @@ namespace zfs
 
 		/*!
 		 Imports all pools.
+		 \param allowHostIDMismatch Permit the import even if a pool's host id
+		 does not match the current host.
+		 \param altroot Mount the pool relative to the given altroot instead of
+		 the actual root directory '/'.
 		 */
-		std::vector<ZPool> importAllPools(std::string const & altroot = std::string()) const;
+		std::vector<ZPool> importAllPools(bool allowHostIDMismatch = false,
+			std::string const & altroot = std::string()) const;
 
 		/*!
-		 Imports a pool by name
+		 Imports a pool by name. This functions allows importing unhealthy
+		 pools, similar to -f on the command line.
 		 */
 		ZPool import(std::string const & name, std::string const & altroot = std::string()) const;
 
 		/*!
-		 Imports a pool by guid
+		 Imports a pool by guid. This functions allows importing unhealthy
+		 pools, similar to -f on the command line.
 		 */
 		ZPool import(uint64_t guid, std::string const & altroot = std::string()) const;
 
@@ -480,9 +487,12 @@ namespace zfs
 	};
 
 	/*!
-	 Returns wether the given status indicates a healty pool.
+	 Returns whether the given status indicates a healty pool.
+	 \param zpoolStatus the status code to check
+	 \param allowHostIDMismatch whether host ID mismatches are still accepted
+	 as healthy.
 	 */
-	bool healthy(uint64_t zpoolStatus);
+	bool healthy(uint64_t zpoolStatus, bool allowHostIDMismatch);
 
 	/*!
 	 \returns A string describing the type of the vdev

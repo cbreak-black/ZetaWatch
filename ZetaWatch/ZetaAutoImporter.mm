@@ -168,11 +168,12 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 - (void)handleNewImportablePools:(std::vector<zfs::ImportablePool> const &)importableNew
 {
 	auto defaults = [NSUserDefaults standardUserDefaults];
+	bool allowHostIDMismatch = [defaults boolForKey:@"allowHostIDMismatch"];
 	if ([defaults boolForKey:@"autoImport"])
 	{
 		for (auto const & pool : importableNew)
 		{
-			if (!zfs::healthy(pool.status))
+			if (!zfs::healthy(pool.status, allowHostIDMismatch))
 				continue; // skip pools that aren't healthy
 			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
 			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
@@ -187,9 +188,12 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 			[self notifySuccessWithTitle:title text:text];
 			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name};
 			NSMutableDictionary * mutablePool = [poolDict mutableCopy];
+			[mutablePool setValue:[NSNumber numberWithBool:allowHostIDMismatch]
+						   forKey:@"allowHostIDMismatch"];
 			if ([defaults boolForKey:@"useAltroot"])
 			{
-				[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
+				[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"]
+								forKey:@"altroot"];
 			}
 			[_authorization importPools:mutablePool withReply:^(NSError * error)
 			 {

@@ -79,6 +79,7 @@
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
 		@"autoUnlock": @YES,
 		@"autoImport": @YES,
+		@"allowHostIDMismatch": @NO,
 		@"useKeychain": @NO,
 		@"startAtLogin": @YES,
 		@"keepAwakeDuringScrub": @YES,
