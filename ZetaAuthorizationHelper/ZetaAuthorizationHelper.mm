@@ -424,7 +424,7 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 		NSString * newFSName = [fsData objectForKey:@"filesystem"];
 		NSNumber * size = [fsData objectForKey:@"size"];
 		NSNumber * blocksize = [fsData objectForKey:@"blocksize"];
-		if (!newFSName || !size)
+		if (!newFSName || size == nullptr)
 		{
 			reply([NSError errorWithDomain:@"ZFSArgError" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Missing Arguments"}]);
 			return;
@@ -432,7 +432,7 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 		zfs::LibZFSHandle zfs;
 		std::string newFSNameStr = [newFSName UTF8String];
 		auto s = [size unsignedLongLongValue];
-		auto bs = blocksize ? [blocksize unsignedLongLongValue] : 0;
+		auto bs = blocksize != nullptr ? [blocksize unsignedLongLongValue] : 0;
 		if (zfs.createVolume(newFSNameStr, s, bs) == 0)
 		{
 			reply(nullptr);
