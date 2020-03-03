@@ -21,8 +21,7 @@
 //! Call this after the program finished starting
 -(void)connectToAuthorization;
 
-//! Internal function to force install the helper tool
--(void)install;
+- (void)stopHelper;
 
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply;

@@ -16,6 +16,7 @@
 
 @interface ZetaAuthorizationHelper () <NSXPCListenerDelegate, ZetaAuthorizationHelperProtocol>
 {
+	bool shouldRun;
 }
 
 @property (atomic, strong, readwrite) NSXPCListener * listener;
@@ -29,6 +30,7 @@
 	self = [super init];
 	if (self != nil)
 	{
+		shouldRun = true;
 		// Set up our XPC listener to handle requests on our Mach service.
 		self->_listener = [[NSXPCListener alloc] initWithMachServiceName:kHelperToolMachServiceName];
 		self->_listener.delegate = self;
@@ -40,8 +42,22 @@
 {
 	// Tell the XPC listener to start processing requests.
 	[self.listener resume];
-	// Run the run loop forever.
-	[[NSRunLoop currentRunLoop] run];
+	// Run the run loop until it's time to terminate.
+	bool runLoopSuccess = true;
+	while (shouldRun && runLoopSuccess)
+	{
+		// Wait at most 16 seconds, so stop requests can be handled in a
+		// timely manner.
+		runLoopSuccess = [[NSRunLoop currentRunLoop]
+			runMode:NSDefaultRunLoopMode
+			beforeDate:[NSDate dateWithTimeIntervalSinceNow:16]];
+	}
+}
+
+- (void)stop
+{
+	shouldRun = false;
+	[self.listener invalidate];
 }
 
 - (BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection
@@ -133,6 +149,17 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	{
 		reply([NSError errorWithDomain:@"ZFSException" code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithUTF8String:e.what()]}]);
 	}
+}
+
+- (void)stopHelperWithAuthorization:(NSData *)authData
+						  withReply:(void (^)(NSError *))reply
+{
+	processWithExceptionForwarding(authData, _cmd, reply, [=]()
+	{
+		// Acknowledge receipt of stop request, performed asyncronously
+		reply(nullptr);
+		[self stop];
+	});
 }
 
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData

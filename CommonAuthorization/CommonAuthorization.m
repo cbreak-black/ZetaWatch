@@ -41,6 +41,15 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 	static NSDictionary * sCommandInfo;
 
 	dispatch_once(&sOnceToken,^{
+		NSDictionary * dictStop =
+		@{
+		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.stop",
+		  kKeyAuthRightDefault: @kAuthorizationRuleClassAllow,
+		  kKeyAuthRightDesc: NSLocalizedString(
+											   @"ZetaWatch is trying stop its helper.",
+											   @"prompt shown when user is required to authorize helper termination"
+											   )
+		  };
 		NSDictionary * dictImport =
 		@{
 		  kKeyAuthRightName: @"net.the-color-black.ZetaWatch.import",
@@ -143,6 +152,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 
 		sCommandInfo =
 		@{
+		  NSStringFromSelector(@selector(stopHelperWithAuthorization:withReply:)): dictStop,
 		  NSStringFromSelector(@selector(importPools:authorization:withReply:)): dictImport,
 		  NSStringFromSelector(@selector(importablePoolsWithAuthorization:withReply:)): dictImport,
 		  NSStringFromSelector(@selector(exportPools:authorization:withReply:)): dictExport,

@@ -113,6 +113,23 @@
 	}
 }
 
+- (void)stopHelper
+{
+	id proxy = [self.helperToolConnection synchronousRemoteObjectProxyWithErrorHandler:^(NSError * error)
+	{
+		// Ignore errors, invalidate connection anyway
+		[self.helperToolConnection invalidate];
+		self.helperToolConnection = nil;
+	}];
+	[proxy stopHelperWithAuthorization:self->_authorization
+							 withReply:[=](NSError * error)
+	{
+		// Invalidate connection
+		[self.helperToolConnection invalidate];
+		self.helperToolConnection = nil;
+	}];
+}
+
 - (void)installIfNeeded
 {
 	// Ensure that there's a helper tool connection in place.

@@ -15,6 +15,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" userLabel="ZetaWatchDelegate" customClass="ZetaWatchDelegate">
             <connections>
+                <outlet property="authorization" destination="GUh-uV-dxo" id="989-1T-oct"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
                 <outlet property="settings" destination="h6V-8x-hYX" id="nvs-pP-koq"/>
                 <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
@@ -170,6 +171,7 @@
             <connections>
                 <outlet property="delegate" destination="8rf-zp-5r9" id="L78-mK-psa"/>
             </connections>
+            <point key="canvasLocation" x="132" y="183"/>
         </menu>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
@@ -799,6 +801,7 @@
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="159" y="1264"/>
         </menu>
         <customView id="40L-u9-aeI" userLabel="PasswordDialog">
             <rect key="frame" x="0.0" y="0.0" width="555" height="134"/>
@@ -1047,7 +1050,7 @@ Gw
                 <textField horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KzI-U2-jrx">
                     <rect key="frame" x="92" y="61" width="443" height="166"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="9lS-cc-3KX">
-                        <font key="font" metaFont="menu" size="11"/>
+                        <font key="font" metaFont="controlContent" size="11"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>

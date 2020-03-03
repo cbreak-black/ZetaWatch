@@ -14,6 +14,9 @@
 
 - (void)getVersionWithReply:(void(^)(NSError * error, NSString * version))reply;
 
+- (void)stopHelperWithAuthorization:(NSData *)authData
+						  withReply:(void(^)(NSError * error))reply;
+
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
 - (void)importablePoolsWithAuthorization:(NSData*)authData withReply:(void(^)(NSError * error, NSArray * importablePools))reply;

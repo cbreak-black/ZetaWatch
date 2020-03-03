@@ -12,6 +12,7 @@
 
 #import "ZetaWatchDelegate.h"
 
+#import "ZetaAuthorization.h"
 #import "ZetaMainMenu.h"
 #import "ZetaKeyLoader.h"
 #import "ZetaQueryDialog.h"
@@ -29,6 +30,7 @@
 }
 
 @property (weak) IBOutlet NSMenu * zetaMenu;
+@property (weak) IBOutlet ZetaAuthorization * authorization;
 @property (weak) IBOutlet ZetaMainMenu * zetaMainMenu;
 @property (weak) IBOutlet ZetaKeyLoader * zetaKeyLoader;
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
@@ -110,6 +112,7 @@
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
 	[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"startAtLogin"];
+	[self.authorization stopHelper];
 }
 
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
