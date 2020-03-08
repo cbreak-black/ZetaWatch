@@ -612,7 +612,7 @@
 			};
 			buildConfigurationList = 7006C4761C26CA1400929DAE /* Build configuration list for PBXProject "ZetaWatch" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
