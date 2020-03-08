@@ -137,7 +137,7 @@ namespace zfs
 
 	public:
 		/*!
-		 Returns a vector of all pools.
+		 Returns a vector of all pools, sorted by name.
 		 */
 		std::vector<ZPool> pools() const;
 
@@ -161,7 +161,7 @@ namespace zfs
 	public: // requires root permission
 
 		/*!
-		 Finds importable pools.
+		 Finds importable pools, sorted by name and GUID.
 		 */
 		std::vector<ImportablePool> importablePools() const;
 
@@ -273,10 +273,10 @@ namespace zfs
 		std::uint64_t cloneCount() const;
 
 	public:
-		//! \returns all direct child filesystems
+		//! \returns all direct child filesystems sorted by name
 		std::vector<ZFileSystem> childFileSystems() const;
 
-		//! \returns all direct and indirect child filesystems
+		//! \returns all direct and indirect child filesystems sorted by name
 		std::vector<ZFileSystem> allFileSystems() const;
 
 		//! \returns all snapshots
@@ -537,7 +537,22 @@ namespace zfs
 	// Helper Functions
 	inline bool operator<(ImportablePool const & a, ImportablePool const & b)
 	{
+		// Lexicographical comparison
+		if (a.name < b.name)
+			return true;
+		if (b.name < a.name)
+			return false;
 		return a.guid < b.guid;
+	}
+
+	inline bool operator<(ZFileSystem const & a, ZFileSystem const & b)
+	{
+		return std::strcmp(a.name(), b.name()) < 0;
+	}
+
+	inline bool operator<(ZPool const & a, ZPool const & b)
+	{
+		return std::strcmp(a.name(), b.name()) < 0;
 	}
 }
 

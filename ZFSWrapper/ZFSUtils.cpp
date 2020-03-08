@@ -669,6 +669,7 @@ namespace zfs
 			return 0;
 		});
 		zfs_iter_filesystems(m_handle, &cb.handle_s, &cb);
+		std::sort(children.begin(), children.end());
 		return children;
 	}
 
@@ -682,6 +683,7 @@ namespace zfs
 			return 0;
 		});
 		cb.handle(zfs_handle_dup(m_handle));
+		std::sort(children.begin(), children.end());
 		return children;
 	}
 
@@ -1081,6 +1083,7 @@ namespace zfs
 			 zpools.push_back(std::move(pool));
 		 });
 		zpool_iter(handle(), &ZPoolCallback::handle_s, &cb);
+		std::sort(zpools.begin(), zpools.end());
 		return zpools;
 	}
 
@@ -1142,6 +1145,7 @@ namespace zfs
 				status
 			});
 		}
+		std::sort(pools.begin(), pools.end());
 		return pools;
 	}
 
