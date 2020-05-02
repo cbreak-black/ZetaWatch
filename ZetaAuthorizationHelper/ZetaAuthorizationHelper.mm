@@ -46,11 +46,9 @@
 	bool runLoopSuccess = true;
 	while (shouldRun && runLoopSuccess)
 	{
-		// Wait at most 16 seconds, so stop requests can be handled in a
-		// timely manner.
-		runLoopSuccess = [[NSRunLoop currentRunLoop]
+		runLoopSuccess = [[NSRunLoop mainRunLoop]
 			runMode:NSDefaultRunLoopMode
-			beforeDate:[NSDate dateWithTimeIntervalSinceNow:16]];
+			beforeDate:[NSDate distantFuture]];
 	}
 }
 
@@ -58,6 +56,8 @@
 {
 	shouldRun = false;
 	[self.listener invalidate];
+	// Stop the run loop
+	CFRunLoopStop(CFRunLoopGetMain());
 }
 
 - (BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection
