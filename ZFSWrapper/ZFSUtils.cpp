@@ -886,8 +886,10 @@ namespace zfs
 
 	std::string ZPool::vdevName(zfs::NVList const & vdev) const
 	{
-		std::string name = zpool_vdev_name(
+		auto name_cstr = zpool_vdev_name(
 			zpool_get_handle(m_handle), m_handle, vdev.toList(), 0);
+		std::string name(name_cstr);
+		free(name_cstr);
 		if (zfs::vdevIsLog(vdev))
 			return "log: " + name;
 		return name;
@@ -895,9 +897,11 @@ namespace zfs
 
 	std::string ZPool::vdevDevice(zfs::NVList const & vdev) const
 	{
-		std::string name = zpool_vdev_name(
+		auto name_cstr = zpool_vdev_name(
 			zpool_get_handle(m_handle), m_handle, vdev.toList(),
 			VDEV_NAME_PATH | VDEV_NAME_FOLLOW_LINKS | VDEV_NAME_TYPE_ID);
+		std::string name(name_cstr);
+		free(name_cstr);
 		return name;
 	}
 
