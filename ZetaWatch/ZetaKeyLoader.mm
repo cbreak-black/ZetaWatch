@@ -15,10 +15,31 @@
 #include <deque>
 #include <type_traits>
 
+enum class LoaderState
+{
+	idle,
+	examineFilesystem,
+	loadKeyfile,
+	loadStoredKey,
+	loadInteractiveGet,
+	loadInteractiveUnlock,
+	loadCompleted,
+};
+
+enum class LoaderEvent
+{
+	newFilesystem,
+	unlockSucceeded,
+	unlockFailedPassword,
+	unlockFailedOther,
+	buttonLoad,
+	buttonSkip,
+};
+
 @interface ZetaKeyLoader ()
 {
 	std::deque<NSString*> filesystems;
-	bool unlockInProgress;
+	LoaderState state;
 	zfs::LibZFSHandle libZFS;
 }
 
@@ -28,49 +49,207 @@
 
 - (void)awakeFromNib
 {
-	unlockInProgress = false;
+	state = LoaderState::idle;
 	if (self.poolWatcher)
 	{
 		[self.poolWatcher.delegates addObject:self];
 	}
 }
 
+- (IBAction)loadKey:(id)sender
+{
+	[self handleLoaderEvent:LoaderEvent::buttonLoad];
+}
+
+- (IBAction)skipFileSystem:(id)sender
+{
+	[self handleLoaderEvent:LoaderEvent::buttonSkip];
+}
+
 - (void)unlockFileSystem:(NSString*)filesystem
 {
-	[self addFilesystemToUnlock:filesystem];
-	if (![_popover isShown])
-		[self show];
+	filesystems.push_back(filesystem);
+	[self handleLoaderEvent:LoaderEvent::newFilesystem];
+}
+
+- (void)advanceFilesystems
+{
+	filesystems.pop_front();
+	if (filesystems.size() > 0)
+		[self transitionToState:LoaderState::examineFilesystem];
+	else
+		[self transitionToState:LoaderState::idle];
+}
+
+// State transition function that enters a state, setting up UI, and starting
+// functions that might trigger further state transitions. Can include direct
+// transitions to other states.
+- (void)transitionToState:(LoaderState)nextState
+{
+	state = nextState;
+	switch (state)
+	{
+		case LoaderState::idle:
+		{
+			[self updateFileSystem];
+			[_popover performClose:self];
+			break;
+		}
+		case LoaderState::examineFilesystem:
+		{
+			[self updateFileSystem];
+			[self show];
+			[self examineFilesystem:filesystems.front()];
+			break;
+		}
+		case LoaderState::loadKeyfile:
+		{
+			[self showActionInProgress:
+			 NSLocalizedString(@"Loading Keyfile...",
+							   @"LoadingKeyfileStatus")];
+			[self loadKeyFileForFilesystem:filesystems.front()];
+			break;
+		}
+		case LoaderState::loadStoredKey:
+		{
+			[self showActionInProgress:
+			 NSLocalizedString(@"Loading stored Key...",
+							   @"LoadingNonInteractiveKeyStatus")];
+			[self loadStoredPasswordForFilesystem:filesystems.front()];
+			break;
+		}
+		case LoaderState::loadInteractiveGet:
+		{
+			[self requestPassword];
+			break;
+		}
+		case LoaderState::loadInteractiveUnlock:
+		{
+			[self showActionInProgress:
+			 NSLocalizedString(@"Loading entered Key...",
+							   @"LoadingInteractiveKeyStatus")];
+			[self loadInteractivePasswordForFilesystem:filesystems.front()];
+			break;
+		}
+		case LoaderState::loadCompleted:
+		{
+			[self advanceFilesystems];
+			break;
+		}
+	}
+}
+
+// Event state transition function that decides which state to go to based on
+// events it receives and the current state.
+- (void)handleLoaderEvent:(LoaderEvent)event
+{
+	switch (state)
+	{
+		case LoaderState::idle:
+		{
+			switch (event)
+			{
+				case LoaderEvent::newFilesystem:
+					[self transitionToState:LoaderState::examineFilesystem];
+					return;
+				default:
+					return;
+			}
+			break;
+		}
+		case LoaderState::examineFilesystem:
+		{
+			// Transitional state
+			break;
+		}
+		case LoaderState::loadKeyfile:
+		{
+			switch (event)
+			{
+				case LoaderEvent::unlockSucceeded:
+					[self transitionToState:LoaderState::loadCompleted];
+					return;
+				case LoaderEvent::unlockFailedPassword:
+				case LoaderEvent::unlockFailedOther:
+					[self transitionToState:LoaderState::loadStoredKey];
+					return;
+				default:
+					return;
+			}
+			break;
+		}
+		case LoaderState::loadStoredKey:
+		{
+			switch (event)
+			{
+				case LoaderEvent::unlockSucceeded:
+					[self transitionToState:LoaderState::loadCompleted];
+					return;
+				case LoaderEvent::unlockFailedPassword:
+				case LoaderEvent::unlockFailedOther:
+					[self transitionToState:LoaderState::loadInteractiveGet];
+					return;
+				default:
+					return;
+			}
+			break;
+		}
+		case LoaderState::loadInteractiveGet:
+		{
+			switch (event)
+			{
+				case LoaderEvent::buttonLoad:
+					[self transitionToState:LoaderState::loadInteractiveUnlock];
+					return;
+				case LoaderEvent::buttonSkip:
+					[self transitionToState:LoaderState::loadCompleted];
+					return;
+				default:
+					return;
+			}
+			break;
+		}
+		case LoaderState::loadInteractiveUnlock:
+		{
+			switch (event)
+			{
+				case LoaderEvent::unlockSucceeded:
+				case LoaderEvent::unlockFailedOther:
+					[self transitionToState:LoaderState::loadCompleted];
+					return;
+				case LoaderEvent::unlockFailedPassword:
+					[self transitionToState:LoaderState::loadInteractiveGet];
+					return;
+				default:
+					return;
+			}
+			break;
+		}
+		case LoaderState::loadCompleted:
+		{
+			// Transitional state
+			break;
+		}
+	}
 }
 
 - (void)show
 {
-	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+//	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 	NSView * positioningView = [_statusItem button];
 	[_popover showRelativeToRect:NSMakeRect(0, 0, 0, 0)
 						  ofView:positioningView
 				   preferredEdge:NSRectEdgeMinY];
 }
 
-- (IBAction)loadKey:(id)sender
-{
-	if (!unlockInProgress)
-	{
-		NSString * pass = [_passwordField stringValue];
-		NSString * filesystem = [self representedFilesystem];
-		bool storeInKeychain = [_useKeychainCheckbox state] == NSControlStateValueOn;
-		[self clearPassword];
-		[self loadKey:pass forFilesystem:filesystem storeInKeychain:storeInKeychain];
-	}
-}
-
 - (void)loadKey:(NSString*)password forFilesystem:(NSString*)filesystem
 		  storeInKeychain:(bool)storeInKeychain
 {
-	[self showActionInProgress:NSLocalizedString(@"Loading Key...", @"LoadingKeyStatus")];
 	NSDictionary * opts = @{@"filesystem": filesystem, @"key": password};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
-		 if ([self handleLoadKeyReply:error] && storeInKeychain)
+		bool success = [self handleLoadKeyReply:error];
+		 if (success && storeInKeychain)
 		 {
 			 [self storePassword:password forFilesystem:filesystem];
 		 }
@@ -79,78 +258,63 @@
 
 - (void)loadKeyFileForFilesystem:(NSString*)filesystem
 {
-	[self showActionInProgress:NSLocalizedString(@"Loading Keyfile...", @"LoadingKeyFileStatus")];
 	NSDictionary * opts = @{@"filesystem": filesystem};
 	[_authorization loadKeyForFilesystem:opts withReply:^(NSError * error)
 	 {
-		 if (![self handleLoadKeyReply:error])
-		 {
-			 // Try stored key next
-			 [self tryUnlockFromStoredPassword:filesystem];
-		 }
+		[self handleLoadKeyReply:error];
 	 }];
-}
-
-- (IBAction)skipFileSystem:(id)sender
-{
-	if (!unlockInProgress)
-		[self advanceFileSystem];
 }
 
 - (bool)handleLoadKeyReply:(NSError*)error
 {
-	[self completeAction];
 	if (error)
 	{
 		if ([error.domain isEqualToString:@"ZFSKeyError"])
 		{
 			[self showError:[error localizedDescription]];
+			[self handleLoaderEvent:LoaderEvent::unlockFailedPassword];
 		}
 		else
 		{
 			[self notifyErrorFromHelper:error];
-			[self advanceFileSystem];
-			return true;
+			[self handleLoaderEvent:LoaderEvent::unlockFailedOther];
 		}
+		return false;
 	}
 	else
 	{
-		[self advanceFileSystem];
+		[self handleLoaderEvent:LoaderEvent::unlockSucceeded];
 		return true;
 	}
-	return false;
 }
 
 - (void)showActionInProgress:(NSString*)action
 {
-	[_statusField setStringValue:action];
-	[_statusField setTextColor:[NSColor textColor]];
-	[_statusField setHidden:NO];
+	[self showStatus:action];
 	[_progressIndicator startAnimation:self];
 	[_loadButton setEnabled:NO];
 	[_skipButton setEnabled:NO];
-	unlockInProgress = true;
+	[_passwordField setEnabled:NO];
 }
 
-- (void)completeAction
+- (void)requestPassword
 {
 	[_progressIndicator stopAnimation:self];
-	[self hideStatus];
 	[_loadButton setEnabled:YES];
 	[_skipButton setEnabled:YES];
-	unlockInProgress = false;
+	[_passwordField setEnabled:YES];
+}
+
+- (void)showStatus:(NSString*)error
+{
+	[_statusField setStringValue:error];
+	[_statusField setTextColor:[NSColor textColor]];
 }
 
 - (void)showError:(NSString*)error
 {
 	[_statusField setStringValue:error];
 	[_statusField setTextColor:[NSColor systemRedColor]];
-	[_statusField setHidden:NO];
-}
-
-- (void)hideStatus
-{
-	[_statusField setHidden:YES];
 }
 
 - (void)clearPassword
@@ -160,38 +324,40 @@
 	[_passwordField setStringValue:@""];
 }
 
-- (BOOL)popoverShouldDetach:(NSPopover *)popover
-{
-	return YES;
-}
-
-- (void)tryUnlock:(NSString*)filesystem
+- (void)examineFilesystem:(NSString*)filesystem
 {
 	auto fs = libZFS.filesystem([filesystem UTF8String]);
 	if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
 	{
-		[self loadKeyFileForFilesystem:filesystem];
+		[self transitionToState:LoaderState::loadKeyfile];
 	}
 	else
 	{
-		[self tryUnlockFromStoredPassword:filesystem];
+		[self transitionToState:LoaderState::loadStoredKey];
 	}
 }
 
-- (void)tryUnlockFromStoredPassword:(NSString*)filesystem
+- (void)loadInteractivePasswordForFilesystem:(NSString*)filesystem
 {
-	auto fs = libZFS.filesystem([filesystem UTF8String]);
-	if (fs.keyLocation() == zfs::ZFileSystem::KeyLocation::uri)
+	NSString * pass = [_passwordField stringValue];
+	bool storeInKeychain = [_useKeychainCheckbox state] == NSControlStateValueOn;
+	[self clearPassword];
+	[self loadKey:pass forFilesystem:filesystem storeInKeychain:storeInKeychain];
+}
+
+- (void)loadStoredPasswordForFilesystem:(NSString*)filesystem
+{
+	NSString * password = [self retrievePasswordForFilesystem:filesystem];
+	if (password)
 	{
-		[self loadKeyFileForFilesystem:filesystem];
+		[self loadKey:password forFilesystem:filesystem storeInKeychain:false];
 	}
 	else
 	{
-		NSString * password = [self retrievePasswordForFilesystem:filesystem];
-		if (password)
-		{
-			[self loadKey:password forFilesystem:filesystem storeInKeychain:false];
-		}
+		[self showStatus:
+		 NSLocalizedString(@"No stored key found",
+						   @"NoStoredKeyStatus")];
+		[self handleLoaderEvent:LoaderEvent::unlockFailedOther];
 	}
 }
 
@@ -290,37 +456,6 @@ encoding:NSUTF8StringEncoding];
 	return true;
 }
 
-- (void)addFilesystemToUnlock:(NSString*)filesystem
-{
-	filesystems.push_back(filesystem);
-	if (filesystems.size() == 1)
-	{
-		[self updateFileSystem];
-		[self tryUnlock:filesystem];
-	}
-}
-
-- (NSString*)representedFilesystem
-{
-	if (filesystems.empty())
-		return nullptr;
-	return filesystems.front();
-}
-
-- (void)advanceFileSystem
-{
-	filesystems.pop_front();
-	[self updateFileSystem];
-	if (filesystems.empty())
-	{
-		[_popover performClose:self];
-	}
-	else
-	{
-		[self tryUnlock:filesystems.front()];
-	}
-}
-
 - (void)updateFileSystem
 {
 	if (filesystems.empty())
@@ -335,20 +470,14 @@ encoding:NSUTF8StringEncoding];
 	}
 }
 
+- (BOOL)popoverShouldDetach:(NSPopover *)popover
+{
+	return YES;
+}
+
 - (BOOL)popoverShouldClose:(NSPopover *)popover
 {
-	if (!filesystems.empty())
-	{
-		filesystems.pop_front();
-		[self updateFileSystem];
-		if (filesystems.empty())
-			return YES;
-		return NO;
-	}
-	else
-	{
-		return YES;
-	}
+	return filesystems.empty();
 }
 
 - (void)popoverWillShow:(NSNotification *)notification
@@ -359,11 +488,7 @@ encoding:NSUTF8StringEncoding];
 {
 	[self clearPassword];
 	[_passwordField abortEditing];
-	[self hideStatus];
-	filesystems.clear();
-	[self updateFileSystem];
 }
-
 
 - (void)newPoolDetected:(const zfs::ZPool &)pool
 {
