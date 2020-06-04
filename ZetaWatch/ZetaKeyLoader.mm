@@ -295,6 +295,7 @@ enum class LoaderEvent
 	[_loadButton setEnabled:NO];
 	[_skipButton setEnabled:NO];
 	[_passwordField setEnabled:NO];
+	[_useKeychainCheckbox setEnabled:NO];
 }
 
 - (void)requestPassword
@@ -303,6 +304,7 @@ enum class LoaderEvent
 	[_loadButton setEnabled:YES];
 	[_skipButton setEnabled:YES];
 	[_passwordField setEnabled:YES];
+	[_useKeychainCheckbox setEnabled:YES];
 }
 
 - (void)showStatus:(NSString*)error
