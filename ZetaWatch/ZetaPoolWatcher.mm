@@ -22,7 +22,6 @@ CFStringRef powerAssertionReason = CFSTR("ZFS Scrub in progress");
 @interface ZetaPoolWatcher ()
 {
 	// ZFS
-	zfs::LibZFSHandle _zfsHandle;
 	std::vector<uint64_t> _knownPools;
 
 	// Statistics
@@ -76,7 +75,8 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 {
 	try
 	{
-		auto p = _zfsHandle.pools();
+		zfs::LibZFSHandle zfs;
+		auto p = zfs.pools();
 		[self checkForNewPools:p];
 		[self checkForNewErrors:p];
 		auto scrubCounter = [self countScrubsInProgress:p];
@@ -171,11 +171,9 @@ bool containsMoreErrors(zfs::VDevStat const & a, zfs::VDevStat const & b)
 
 std::vector<uint64_t> poolsToGUID(std::vector<zfs::ZPool> const & pools)
 {
-	std::vector<uint64_t> guids;
-	for (auto const & p : pools)
-	{
-		guids.push_back(p.guid());
-	}
+	std::vector<uint64_t> guids(pools.size());
+	std::transform(pools.begin(), pools.end(), guids.begin(),
+				   [](auto const & pool) { return pool.guid(); });
 	std::sort(guids.begin(), guids.end());
 	return guids;
 }
