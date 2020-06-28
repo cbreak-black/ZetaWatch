@@ -236,9 +236,13 @@
 - (void)importPools:(NSDictionary *)importData
 		  withReply:(void(^)(NSError * error))reply
 {
-	NSString * target = importData[@"poolGUID"];
-	if (target == nil)
+	NSString * targetGUID = importData[@"poolGUID"];
+	NSString * targetName = importData[@"poolName"];
+	NSString * target;
+	if (targetGUID == nil)
 		target = @"all pools";
+	else
+		target = [NSString stringWithFormat:@"%@ (%@)", targetName, targetGUID];
 	ZetaNotification * notification = [self startNotificationForAction:
 		NSLocalizedString(@"Importing", @"Importing Action") withTarget:target];
 	[self executeOnProxy:@selector(importPools:authorization:withReply:)

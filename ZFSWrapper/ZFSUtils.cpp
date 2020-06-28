@@ -1154,8 +1154,7 @@ namespace zfs
 	}
 
 	static std::vector<ZPool> import_with_args(LibZFSHandle const & lib,
-		importargs_t * args, bool allowUnhealthy, bool allowHostIDMismatch,
-		std::string altroot)
+		importargs_t * args, LibZFSHandle::ImportProps const & props)
 	{
 		thread_init();
 		auto list = NVList(zpool_search_import(lib.handle(), args), zfs::NVList::TakeOwnership());
@@ -1170,12 +1169,30 @@ namespace zfs
 			char * msg = nullptr;
 			zpool_errata_t errata = {};
 			zpool_status_t status = zpool_import_status(l.toList(), &msg, &errata);
-			if (!allowUnhealthy && !healthy(status, allowHostIDMismatch))
+			if (!props.allowUnhealthy && !healthy(status, props.allowHostIDMismatch))
 				continue; // Ignore pools that aren't healthy
-			char * ar = nullptr;
-			if (!altroot.empty())
-				ar = altroot.data();
-			auto r = zpool_import(lib.handle(), l.toList(), nullptr, ar);
+
+			NVList propsNVL(NVList::TakeOwnership{});
+			char const * tempname = nullptr;
+			int importFlags = ZFS_IMPORT_NORMAL;
+			if (!props.altroot.empty())
+			{
+				propsNVL.add(zpool_prop_to_name(ZPOOL_PROP_CACHEFILE), "none");
+				propsNVL.add(zpool_prop_to_name(ZPOOL_PROP_ALTROOT), props.altroot);
+			}
+			if (!props.newName.empty())
+			{
+				propsNVL.add(zpool_prop_to_name(ZPOOL_PROP_CACHEFILE), "none");
+				tempname = props.newName.data();
+			}
+			if (props.readOnly.has_value())
+			{
+				propsNVL.add(zpool_prop_to_name(ZPOOL_PROP_READONLY),
+							 *props.readOnly ? "on" : "off");
+			}
+
+			auto r = zpool_import_props(lib.handle(), l.toList(), tempname,
+										propsNVL.toList(), importFlags);
 			if (r)
 			{
 				throw std::runtime_error("Error importing pool " + pair.name() + ": " + lib.lastError());
@@ -1191,28 +1208,29 @@ namespace zfs
 		return pools;
 	}
 
-	std::vector<ZPool> LibZFSHandle::importAllPools(bool allowHostIDMismatch,
-		std::string const & altroot) const
+	std::vector<ZPool> LibZFSHandle::importAllPools(LibZFSHandle::ImportProps const & props) const
 	{
 		importargs_t args = {};
-		return import_with_args(*this, &args, false, allowHostIDMismatch, "");
+		return import_with_args(*this, &args, props);
 	}
 
-	ZPool LibZFSHandle::import(std::string const & name, std::string const & altroot) const
+	ZPool LibZFSHandle::import(std::string const & name,
+							   LibZFSHandle::ImportProps const & props) const
 	{
 		importargs_t args = {};
 		args.poolname = const_cast<char*>(name.c_str());
-		auto pools = import_with_args(*this, &args, true, true, "");
+		auto pools = import_with_args(*this, &args, props);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());
 	}
 
-	ZPool LibZFSHandle::import(uint64_t guid, std::string const & altroot) const
+	ZPool LibZFSHandle::import(uint64_t guid,
+							   LibZFSHandle::ImportProps const & props) const
 	{
 		importargs_t args = {};
 		args.guid = guid;
-		auto pools = import_with_args(*this, &args, true, true, altroot);
+		auto pools = import_with_args(*this, &args, props);
 		if (pools.size() != 1)
 			throw std::runtime_error("Invalid number of pools imported");
 		return std::move(pools.front());

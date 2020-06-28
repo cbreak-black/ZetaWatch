@@ -425,6 +425,7 @@ NVLIST_ADDV(externaltype, internaltype, funcsuffix)
 	NVLIST_ADDV(bool, boolean_t, boolean)
 	NVLIST_ADDP(double, double, double)
 	NVLIST_ADD(char, uchar_t, byte)
+	NVLIST_ADDP(char const *, char const*, string)
 	NVLIST_ADDP(std::string, char const*, string)
 	NVLIST_ADDV(std::string, char*, string)
 	NVLIST_ADD(NVList, nvlist_t*, nvlist)
@@ -441,6 +442,11 @@ NVLIST_ADDV(externaltype, internaltype, funcsuffix)
 #undef NVLIST_ADD
 #undef NVLIST_ADDP
 #undef NVLIST_ADDV
+
+	void NVList::add(char const * key, char const * value)
+	{
+		return add<char const *>(key, value);
+	}
 
 	void NVList::remove(char const * key)
 	{

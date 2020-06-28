@@ -220,6 +220,13 @@ namespace zfs
 		void add(char const * key, T const & value);
 
 		/*!
+		 Adds a C-String value with the given key.
+		 \param key The key string
+		 \param value A value of C-String type
+		 */
+		void add(char const * key, char const * value);
+
+		/*!
 		 Removes the value with the given key.
 		 \param key The key string to remove
 		 */

@@ -18,6 +18,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <optional>
 #include <cstdint>
 
 // libzfs.h forward declarations
@@ -166,26 +167,50 @@ namespace zfs
 		std::vector<ImportablePool> importablePools() const;
 
 		/*!
-		 Imports all pools.
-		 \param allowHostIDMismatch Permit the import even if a pool's host id
-		 does not match the current host.
-		 \param altroot Mount the pool relative to the given altroot instead of
-		 the actual root directory '/'.
+		 Parameter struct for importing pools. It can be filled with non-default
+		 properties, or left in its default state.
 		 */
-		std::vector<ZPool> importAllPools(bool allowHostIDMismatch = false,
-			std::string const & altroot = std::string()) const;
+		struct ImportProps
+		{
+			//! \brief Permit the import even if it is unhealthy
+			bool allowUnhealthy = false;
+
+			//! \brief Permit the import even if a pool's host id does not match
+			//! the current host.
+			bool allowHostIDMismatch = false;
+
+			//! \brief Temporarily override the pool name
+			std::string newName;
+
+			//! \brief Mount the pool relative to the given altroot instead of
+			//! the actual root directory '/'
+			std::string altroot;
+
+			//! \brief Temporarily override the pool read only poroperty
+			std::optional<bool> readOnly;
+		};
+
+		/*!
+		 Imports all pools.
+		 \param props The import properties, \see ImportProps
+		 */
+		std::vector<ZPool> importAllPools(ImportProps const & props) const;
 
 		/*!
 		 Imports a pool by name. This functions allows importing unhealthy
-		 pools, similar to -f on the command line.
+		 pools, similar to -f on the command line by default.
+		 \param props The import properties, \see ImportProps
 		 */
-		ZPool import(std::string const & name, std::string const & altroot = std::string()) const;
+		ZPool import(std::string const & name,
+					 ImportProps const & props = { true, true }) const;
 
 		/*!
 		 Imports a pool by guid. This functions allows importing unhealthy
-		 pools, similar to -f on the command line.
+		 pools, similar to -f on the command line by default.
+		 \param props The import properties, \see ImportProps
 		 */
-		ZPool import(uint64_t guid, std::string const & altroot = std::string()) const;
+		ZPool import(uint64_t guid,
+					 ImportProps const & props = { true, true }) const;
 
 	public:
 		libzfs_handle_t * handle() const;

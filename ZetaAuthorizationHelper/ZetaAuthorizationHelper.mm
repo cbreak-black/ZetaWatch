@@ -169,21 +169,24 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	{
 		std::vector<std::string> failures;
 		NSNumber * pool = [importData objectForKey:@"poolGUID"];
-		std::string altroot;
+		zfs::LibZFSHandle::ImportProps props;
 		if (id ar = [importData objectForKey:@"altroot"])
-			altroot.assign([ar UTF8String]);
-		bool allowHostIDMismatch = false;
+			props.altroot.assign([ar UTF8String]);
 		if (id aidm = [importData objectForKey:@"allowHostIDMismatch"])
-			allowHostIDMismatch = [aidm boolValue];
+			props.allowHostIDMismatch = [aidm boolValue];
+		if (id auh = [importData objectForKey:@"allowUnhealthy"])
+			props.allowUnhealthy = [auh boolValue];
+		if (id ro = [importData objectForKey:@"readOnly"])
+			props.readOnly = [ro boolValue];
 		std::vector<zfs::ZPool> importedPools;
 		zfs::LibZFSHandle zfs;
 		if (pool != nil)
 		{
-			importedPools.emplace_back(zfs.import([pool unsignedLongLongValue], altroot));
+			importedPools.emplace_back(zfs.import([pool unsignedLongLongValue], props));
 		}
 		else
 		{
-			importedPools = zfs.importAllPools(allowHostIDMismatch, altroot);
+			importedPools = zfs.importAllPools(props);
 		}
 		if (failures.empty())
 		{

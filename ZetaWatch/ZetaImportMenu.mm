@@ -24,20 +24,48 @@
 	auto importablePools = [self.autoImporter importablePools];
 	if (importablePools.size() > 0)
 	{
-		for (auto const & pool : importablePools)
+		auto addPoolImportMenu = [self](NSMenu * menu, auto const & pool)
 		{
 			NSString * title = [NSString stringWithFormat:@"%s %@ (%llu)",
 				pool.name.c_str(),
 				zfs::emojistring_pool_status_t(pool.status),
 				pool.guid];
-			NSMenuItem * item = [_importMenu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
+			NSMenuItem * item = [menu addItemWithTitle:title action:@selector(importPool:) keyEquivalent:@""];
 			[item setAction:@selector(importPool:)];
 			[item setTarget:self];
 			// Communicate pool to callback
 			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
 			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
-			NSDictionary * poolDict = @{ @"poolGUID": guid, @"poolName": name };
+			NSMutableDictionary * poolDict = [NSMutableDictionary dictionary];
+			poolDict[@"poolGUID"] = guid;
+			poolDict[@"poolName"] = name;
 			[item setRepresentedObject:poolDict];
+			return poolDict;
+		};
+		for (auto const & pool : importablePools)
+		{
+			addPoolImportMenu(menu, pool);
+		}
+		[menu addItem:[NSMenuItem separatorItem]];
+		// Read-Only Menu
+		NSMenuItem * importROItem = [menu addItemWithTitle:
+			NSLocalizedString(@"Import Read Only", @"Import Read Only") action:NULL keyEquivalent:@""];
+		NSMenu * importROMenu = [[NSMenu alloc] init];
+		importROItem.submenu = importROMenu;
+		for (auto const & pool : importablePools)
+		{
+			auto dict = addPoolImportMenu(importROMenu, pool);
+			dict[@"readOnly"] = @YES;
+		}
+		// Read-Write Menu
+		NSMenuItem * importRWItem = [menu addItemWithTitle:
+			NSLocalizedString(@"Import Read Write", @"Import Read Write") action:NULL keyEquivalent:@""];
+		NSMenu * importRWMenu = [[NSMenu alloc] init];
+		importRWItem.submenu = importRWMenu;
+		for (auto const & pool : importablePools)
+		{
+			auto dict = addPoolImportMenu(importRWMenu, pool);
+			dict[@"readOnly"] = @NO;
 		}
 	}
 	else
@@ -67,6 +95,9 @@
 	{
 		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
 	}
+	// Direct imports always allow unhealthy pools with mismatching host IDs.
+	[mutablePool setObject:@YES forKey:@"allowUnhealthy"];
+	[mutablePool setObject:@YES forKey:@"allowHostIDMismatch"];
 	[_authorization importPools:mutablePool withReply:^(NSError * error)
 	 {
 		 if (!error)
