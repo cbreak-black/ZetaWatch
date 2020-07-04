@@ -448,6 +448,11 @@ namespace zfs
 
 	public:
 		/*!
+		 \returns An nvlist containing the vdev tree hierarchy
+		 */
+		zfs::NVList vdevTree() const;
+
+		/*!
 		 \returns A vector containing the children of this pool
 		 */
 		std::vector<zfs::NVList> vdevs() const;

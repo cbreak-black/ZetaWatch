@@ -858,30 +858,31 @@ namespace zfs
 		return NVList(zpool_get_config(m_handle, nullptr));
 	}
 
+	zfs::NVList ZPool::vdevTree() const
+	{
+		return config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+	}
+
 	std::vector<zfs::NVList> ZPool::vdevs() const
 	{
-		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
-		return vdevChildren(vdevtree);
+		return vdevChildren(vdevTree());
 	}
 
 	std::vector<zfs::NVList> ZPool::caches() const
 	{
-		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
-		return vdevCaches(vdevtree);
+		return vdevCaches(vdevTree());
 	}
 
 	VDevStat ZPool::vdevStat() const
 	{
 		VDevStat vdevStat(NVList const & vdev);
-		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
-		return vdevStat(vdevtree);
+		return vdevStat(vdevTree());
 	}
 
 	ScanStat ZPool::scanStat() const
 	{
 		ScanStat scanStat(NVList const & vdev);
-		auto vdevtree = config().lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
-		return scanStat(vdevtree);
+		return scanStat(vdevTree());
 	}
 
 	std::string ZPool::vdevName(zfs::NVList const & vdev) const
