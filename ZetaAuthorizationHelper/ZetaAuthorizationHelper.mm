@@ -203,6 +203,16 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	});
 }
 
+NSMutableArray<NSString*> * toArray(std::vector<std::string> const & strings)
+{
+	NSMutableArray<NSString*> * array = [[NSMutableArray<NSString*> alloc] initWithCapacity:strings.size()];
+	for (auto const & s : strings)
+	{
+		[array addObject:[NSString stringWithUTF8String:s.c_str()]];
+	}
+	return array;
+}
+
 - (void)importablePoolsWithAuthorization:(NSData *)authData withReply:(void (^)(NSError *, NSArray *))reply
 {
 	NSError * error = checkAuthorization(authData, _cmd);
@@ -221,8 +231,9 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 			NSString * name = [NSString stringWithUTF8String:pool.name.c_str()];
 			NSNumber * guid = [NSNumber numberWithUnsignedLongLong:pool.guid];
 			NSNumber * status = [NSNumber numberWithUnsignedLongLong:pool.status];
+			NSMutableArray<NSString*> * deviceArray = toArray(pool.devices);
 			NSDictionary * poolDict =
-			@{@"name": name, @"guid": guid, @"status": status};
+			@{@"name": name, @"guid": guid, @"status": status, @"devices": deviceArray};
 			[poolsArray addObject:poolDict];
 		}
 		reply(nullptr, poolsArray);

@@ -895,14 +895,21 @@ namespace zfs
 		return name;
 	}
 
-	std::string ZPool::vdevDevice(zfs::NVList const & vdev) const
+	static std::string vdevDevice(libzfs_handle_t * libHandle,
+								  zpool_handle_t * poolHandle,
+								  NVList const & vdev)
 	{
 		auto name_cstr = zpool_vdev_name(
-			zpool_get_handle(m_handle), m_handle, vdev.toList(),
+			libHandle, poolHandle, vdev.toList(),
 			VDEV_NAME_PATH | VDEV_NAME_FOLLOW_LINKS | VDEV_NAME_TYPE_ID);
 		std::string name(name_cstr);
 		free(name_cstr);
 		return name;
+	}
+
+	std::string ZPool::vdevDevice(zfs::NVList const & vdev) const
+	{
+		return zfs::vdevDevice(zpool_get_handle(m_handle), m_handle, vdev);
 	}
 
 	std::vector<ZPool::Property> ZPool::properties() const
@@ -1127,6 +1134,32 @@ namespace zfs
 		throw std::runtime_error("Error in " + action + ": " + lastError());
 	}
 
+	std::vector<std::string> LibZFSHandle::devicesFromPoolConfig(NVList const & config) const
+	{
+		std::vector<std::string> devices;
+		auto vdevtree = config.lookup<zfs::NVList>(ZPOOL_CONFIG_VDEV_TREE);
+		for (auto const & directChild : vdevChildren(vdevtree))
+		{
+			auto type = zfs::vdevType(directChild);
+			if (type == VDEV_TYPE_DISK)
+			{
+				devices.push_back(vdevDevice(handle(), nullptr, directChild));
+			}
+			else
+			{
+				for (auto const & indirectChild: vdevChildren(directChild))
+				{
+					auto type = zfs::vdevType(indirectChild);
+					if (type == VDEV_TYPE_DISK)
+					{
+						devices.push_back(vdevDevice(handle(), nullptr, indirectChild));
+					}
+				}
+			}
+		}
+		return devices;
+	}
+
 	std::vector<ImportablePool> LibZFSHandle::importablePools() const
 	{
 		importargs_t args = {};
@@ -1146,7 +1179,8 @@ namespace zfs
 			pools.push_back({
 				pair.name(),
 				l.lookup<uint64_t>(ZPOOL_CONFIG_POOL_GUID),
-				status
+				status,
+				devicesFromPoolConfig(l),
 			});
 		}
 		std::sort(pools.begin(), pools.end());

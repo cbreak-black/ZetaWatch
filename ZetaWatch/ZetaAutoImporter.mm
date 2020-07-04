@@ -120,6 +120,16 @@ private:
 	 }];
 }
 
+std::vector<std::string> arrayToStringVec(NSArray<NSString*> * stringArray)
+{
+	std::vector<std::string> strings;
+	for (NSString * string in stringArray)
+	{
+		strings.push_back([string UTF8String]);
+	}
+	return strings;
+}
+
 std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 {
 	std::vector<zfs::ImportablePool> pools;
@@ -128,7 +138,8 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 		pools.push_back({
 			[poolDict[@"name"] UTF8String],
 			[poolDict[@"guid"] unsignedLongLongValue],
-			[poolDict[@"status"] unsignedLongLongValue]
+			[poolDict[@"status"] unsignedLongLongValue],
+			arrayToStringVec(poolDict[@"devices"]),
 		});
 	}
 	std::sort(pools.begin(), pools.end());

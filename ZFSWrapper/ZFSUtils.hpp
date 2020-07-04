@@ -36,6 +36,7 @@ namespace zfs
 		std::string name;
 		uint64_t guid;
 		uint64_t status;
+		std::vector<std::string> devices;
 	};
 
 	/*!
@@ -165,6 +166,12 @@ namespace zfs
 		 Finds importable pools, sorted by name and GUID.
 		 */
 		std::vector<ImportablePool> importablePools() const;
+
+		/*!
+		 Extracts the underlying devices from a pool config nvlist. This
+		 function is used internally to create the output for importablePools().
+		 */
+		std::vector<std::string> devicesFromPoolConfig(NVList const & config) const;
 
 		/*!
 		 Parameter struct for importing pools. It can be filled with non-default
