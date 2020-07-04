@@ -10,6 +10,7 @@
 
 #include "IDDiskArbitrationDispatcher.hpp"
 #include "IDDiskArbitrationHandler.hpp"
+#include "IDDiskArbitrationUtils.hpp"
 
 #include <vector>
 #include <set>
@@ -22,8 +23,7 @@
  have not been seen recently are importable and are imported automatically. This
  set prevents attempting to import a pool multiple times in case of an error.
  Pools that were imported previously are added to the knownPools set and are
- not imported. They are ignored until they vanish from being importable, at
- which point they are removed from the known pools set.
+ not imported. They are ignored until one of their underlying devices disappears.
  */
 @interface ZetaAutoImporter ()
 {
@@ -33,11 +33,11 @@
 
 	// Management
 	std::vector<zfs::ImportablePool> _importable;
-	std::vector<zfs::ImportablePool> _importableKnown;
-	std::set<zfs::ImportablePool> _knownPools;
+	std::vector<zfs::ImportablePool> _importedBefore;
 }
 
 - (void)scheduleChecking;
+- (void)handleDisappearedDevice:(ID::DiskInformation const &)info;
 
 @end
 
@@ -58,6 +58,7 @@ public:
 	virtual void diskDisappeared(DADiskRef disk, ID::DiskInformation const & info)
 	{
 		scheduleChecking();
+		[watcher handleDisappearedDevice:info];
 	}
 
 private:
@@ -79,16 +80,10 @@ private:
 		// ID
 		_idDispatcher.addHandler(std::make_shared<ZetaIDHandler>(self));
 		_idDispatcher.start();
+		// Auto-Import handling
+		[self seedKnownPools];
 	}
 	return self;
-}
-
-- (void)awakeFromNib
-{
-	if (self.poolWatcher)
-	{
-		[self.poolWatcher.delegates addObject:self];
-	}
 }
 
 - (void)dealloc
@@ -106,6 +101,22 @@ private:
 		selector:@selector(checkForImportablePools) userInfo:nil repeats:NO];
 	checkTimer.tolerance = 2;
 	[[NSRunLoop currentRunLoop] addTimer:checkTimer forMode:NSDefaultRunLoopMode];
+}
+
+- (void)handleDisappearedDevice:(ID::DiskInformation const &)info
+{
+	if (info.mediaBSDName.empty())
+		return;
+	std::string devicePath = "/dev/" + info.mediaBSDName;
+	// Forget pools that were once importable but now are no longer since at
+	// least one device was removed
+	_importedBefore.erase(
+		std::remove_if(_importedBefore.begin(), _importedBefore.end(),
+					   [&](zfs::ImportablePool const & pool)
+	{
+		auto const & devices = pool.devices;
+		return std::find(devices.begin(), devices.end(), devicePath) != devices.end();
+	}), _importedBefore.end());
 }
 
 - (void)checkForImportablePools
@@ -146,38 +157,45 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 	return pools;
 }
 
-- (void)handleImportablePools:(NSArray*)importablePools
+- (void)seedKnownPools
 {
-	std::vector<zfs::ImportablePool> importableAll = arrayToPoolVec(importablePools);
-	// Find the pools that had not been imported before
-	std::vector<zfs::ImportablePool> importableFresh;
-	std::set_difference(importableAll.begin(), importableAll.end(),
-						_knownPools.begin(), _knownPools.end(),
-						std::back_inserter(importableFresh));
-	// Find the pools that had been imported before
-	std::vector<zfs::ImportablePool> importableKnown;
-	std::set_difference(importableAll.begin(), importableAll.end(),
-						importableFresh.begin(), importableFresh.end(),
-						std::back_inserter(importableKnown));
-	// Find new importable pools
-	std::vector<zfs::ImportablePool> importableNew;
-	std::set_difference(importableFresh.begin(), importableFresh.end(),
-						_importable.begin(), _importable.end(),
-						std::back_inserter(importableNew));
-	// Find no longer importable pools that were known before
-	std::vector<zfs::ImportablePool> importableKnownRemoved;
-	std::set_difference(_importableKnown.begin(), _importableKnown.end(),
-						importableAll.begin(), importableAll.end(),
-						std::back_inserter(importableKnownRemoved));
-	// Update currently importable pools collection
-	_importable = std::move(importableAll);
-	_importableKnown = std::move(importableKnown);
-	[self handleNewImportablePools:importableNew];
-	[self handleRemovedKnownImportablePools:importableKnownRemoved];
+	zfs::LibZFSHandle lib;
+	std::vector<zfs::ImportablePool> knownPools;
+	for (auto const & pool : lib.pools())
+	{
+		knownPools.push_back({
+			pool.name(),
+			pool.guid(),
+			pool.status(),
+			lib.devicesFromPoolConfig(pool.config()),
+		});
+	}
+	std::sort(knownPools.begin(), knownPools.end());
+	_importedBefore = std::move(knownPools);
 }
 
-- (void)handleNewImportablePools:(std::vector<zfs::ImportablePool> const &)importableNew
+- (void)handleImportablePools:(NSArray*)importablePools
 {
+	std::vector<zfs::ImportablePool> importableCurrent = arrayToPoolVec(importablePools);
+	// Find the pools that had not been imported before, for auto import
+	std::vector<zfs::ImportablePool> importableNew;
+	std::set_difference(importableCurrent.begin(), importableCurrent.end(),
+						_importedBefore.begin(), _importedBefore.end(),
+						std::back_inserter(importableNew));
+	auto importedPools = [self handleNewImportablePools:importableNew];
+	// Aggregate all known pools to prevent double-auto import
+	std::vector<zfs::ImportablePool> importedBefore;
+	std::set_union(_importedBefore.begin(), _importedBefore.end(),
+				   importedPools.begin(), importedPools.end(),
+				   std::back_inserter(importedBefore));
+	// Update currently importable pools collection
+	_importable = std::move(importableCurrent);
+	_importedBefore = std::move(importedBefore);
+}
+
+- (std::vector<zfs::ImportablePool>)handleNewImportablePools:(std::vector<zfs::ImportablePool> const &)importableNew
+{
+	std::vector<zfs::ImportablePool> importedPools;
 	auto defaults = [NSUserDefaults standardUserDefaults];
 	bool allowHostIDMismatch = [defaults boolForKey:@"allowHostIDMismatch"];
 	if ([defaults boolForKey:@"autoImport"])
@@ -210,23 +228,10 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 			 {
 				 [self handlePoolImportReply:error forPool:poolDict];
 			 }];
+			importedPools.push_back(pool);
 		}
 	}
-}
-
-- (void)handleRemovedKnownImportablePools:(std::vector<zfs::ImportablePool> const &)importableKnownRemoved
-{
-	for (auto const & p : importableKnownRemoved)
-	{
-		_knownPools.erase(p);
-	}
-}
-
-- (void)newPoolDetected:(zfs::ZPool const &)pool
-{
-	_knownPools.insert({pool.name(), pool.guid(), 0});
-	// An imported pool might have changed which pools can be imported
-	[self scheduleChecking];
+	return importedPools;
 }
 
 - (void)handlePoolImportReply:(NSError*)error forPool:(NSDictionary*)pool
@@ -247,7 +252,6 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 			pool[@"poolName"], pool[@"poolGUID"]];
 		[self notifySuccessWithTitle:title text:text];
 	}
-	[[self poolWatcher] checkForChanges];
 }
 
 - (std::vector<zfs::ImportablePool> const &)importablePools

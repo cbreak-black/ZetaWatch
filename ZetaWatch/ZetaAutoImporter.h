@@ -15,11 +15,9 @@
 
 #include <vector>
 
-@interface ZetaAutoImporter : ZetaCommanderBase<ZetaPoolWatcherDelegate>
+@interface ZetaAutoImporter : ZetaCommanderBase
 
 - (id)init;
-
-@property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
 
 @property (readonly) std::vector<zfs::ImportablePool> const & importablePools;
 

@@ -76,7 +76,6 @@
         <customObject id="PVX-FU-gbc" userLabel="ZetaAutoImporter" customClass="ZetaAutoImporter">
             <connections>
                 <outlet property="_authorization" destination="GUh-uV-dxo" id="hKw-Oj-ONj"/>
-                <outlet property="poolWatcher" destination="Gim-eq-VbR" id="SfY-Cy-iuS"/>
             </connections>
         </customObject>
         <customObject id="ZZj-pd-85j" userLabel="ZetaNotificationCenter" customClass="ZetaNotificationCenter">
