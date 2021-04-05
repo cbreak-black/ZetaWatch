@@ -373,7 +373,7 @@ void createScrubMenu(zfs::ZPool & pool, ZetaMainMenu * delegate, NSMenu * vdevMe
 								formatBytes(scrub.issued).c_str(),
 								formatRate(scrub.passIssued, elapsed).c_str()];
 		NSString * scanLine2 = [NSString stringWithFormat:NSLocalizedString(
-			@"%s total, %0.2f %% done, %s remaining, %i errors", @"Scrub Menu Entry 2"),
+			@"%s total, %0.2f %% done, %s remaining, %llu errors", @"Scrub Menu Entry 2"),
 								formatBytes(scrub.total).c_str(),
 								100.0*scrub.issued/scrub.total,
 								formatTimeRemaining(scrub, elapsed).c_str(),

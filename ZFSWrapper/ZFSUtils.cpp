@@ -125,7 +125,7 @@ namespace zfs
 	{
 		auto vk = versionKernel();
 		auto vu = versionUserland();
-		if (vk.major != vu.major || vk.minor != vk.minor || vk.patch != vu.patch)
+		if (vk.major != vu.major || vk.minor != vu.minor || vk.patch != vu.patch)
 		{
 			std::stringstream ss;
 			ss << "ZFS Kernel Module " << vk << " and ZFS Userland Library " << vu << " do not match";
