@@ -165,7 +165,8 @@ namespace zfs
 		/*!
 		 Finds importable pools, sorted by name and GUID.
 		 */
-		std::vector<ImportablePool> importablePools() const;
+		std::vector<ImportablePool> importablePools(
+			std::vector<std::string> const & searchPathOverride) const;
 
 		/*!
 		 Extracts the underlying devices from a pool config nvlist. This
@@ -195,6 +196,9 @@ namespace zfs
 
 			//! \brief Temporarily override the pool read only poroperty
 			std::optional<bool> readOnly;
+
+			//! \brief Override the pool search path, leave empty for default
+			std::vector<std::string> searchPathOverride;
 		};
 
 		/*!

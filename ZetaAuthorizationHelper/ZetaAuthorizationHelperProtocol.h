@@ -19,7 +19,7 @@
 
 - (void)importPools:(NSDictionary *)importData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 
-- (void)importablePoolsWithAuthorization:(NSData*)authData withReply:(void(^)(NSError * error, NSArray * importablePools))reply;
+- (void)importablePools:(NSDictionary *)importData authorization:(NSData*)authData withReply:(void(^)(NSError * error, NSArray * importablePools))reply;
 
 - (void)exportPools:(NSDictionary *)exportData authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 

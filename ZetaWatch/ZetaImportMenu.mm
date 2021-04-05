@@ -95,6 +95,10 @@
 	{
 		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
 	}
+	if (auto spo = [defaults arrayForKey:@"searchPathOverride"])
+	{
+		[mutablePool setObject:spo forKey:@"searchPathOverride"];
+	}
 	// Direct imports always allow unhealthy pools with mismatching host IDs.
 	[mutablePool setObject:@YES forKey:@"allowUnhealthy"];
 	[mutablePool setObject:@YES forKey:@"allowHostIDMismatch"];
@@ -127,6 +131,10 @@
 	if ([defaults boolForKey:@"useAltroot"])
 	{
 		[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"] forKey:@"altroot"];
+	}
+	if (auto spo = [defaults arrayForKey:@"searchPathOverride"])
+	{
+		[mutablePool setObject:spo forKey:@"searchPathOverride"];
 	}
 	[_authorization importPools:mutablePool withReply:^(NSError * error)
 	 {

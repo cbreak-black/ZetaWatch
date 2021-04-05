@@ -154,7 +154,7 @@ static NSString * kKeyAuthRightDesc    = @"authRightDescription";
 		@{
 		  NSStringFromSelector(@selector(stopHelperWithAuthorization:withReply:)): dictStop,
 		  NSStringFromSelector(@selector(importPools:authorization:withReply:)): dictImport,
-		  NSStringFromSelector(@selector(importablePoolsWithAuthorization:withReply:)): dictImport,
+		  NSStringFromSelector(@selector(importablePools:authorization:withReply:)): dictImport,
 		  NSStringFromSelector(@selector(exportPools:authorization:withReply:)): dictExport,
 		  NSStringFromSelector(@selector(mountFilesystems:authorization:withReply:)): dictMount,
 		  NSStringFromSelector(@selector(unmountFilesystems:authorization:withReply:)): dictUnmount,

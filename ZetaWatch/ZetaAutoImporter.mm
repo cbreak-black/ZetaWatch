@@ -121,7 +121,13 @@ private:
 
 - (void)checkForImportablePools
 {
-	[_authorization importablePoolsWithReply:
+	auto defaults = [NSUserDefaults standardUserDefaults];
+	NSMutableDictionary * importData = [[NSMutableDictionary alloc] init];
+	if (auto spo = [defaults arrayForKey:@"searchPathOverride"])
+	{
+		[importData setObject:spo forKey:@"searchPathOverride"];
+	}
+	[_authorization importablePools:importData withReply:
 	 ^(NSError * error, NSArray * importablePools)
 	 {
 		if (error)
@@ -223,6 +229,10 @@ std::vector<zfs::ImportablePool> arrayToPoolVec(NSArray * poolsArray)
 			{
 				[mutablePool setObject:[defaults stringForKey:@"defaultAltroot"]
 								forKey:@"altroot"];
+			}
+			if (auto spo = [defaults arrayForKey:@"searchPathOverride"])
+			{
+				[mutablePool setObject:spo forKey:@"searchPathOverride"];
 			}
 			[_authorization importPools:mutablePool withReply:^(NSError * error)
 			 {

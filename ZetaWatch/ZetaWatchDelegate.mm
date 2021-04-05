@@ -87,6 +87,10 @@
 		@"keepAwakeDuringScrub": @YES,
 		@"defaultAltroot": @"/Volumes",
 		@"useAltroot": @NO,
+		@"searchPathOverride": @[
+				@"/var/run/disk/by-serial",
+				@"/var/run/disk/by-id",
+		],
 	}];
 	try
 	{

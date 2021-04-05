@@ -1161,9 +1161,34 @@ namespace zfs
 		return devices;
 	}
 
-	std::vector<ImportablePool> LibZFSHandle::importablePools() const
+	/*!
+	 Requires that the lifetime of the passed searchPaths is at least
+	 as long as that of the passed args, and that the returned vector
+	 is also kept alive until args is discarded.
+	 */
+	[[nodiscard]] std::vector<char*> setImportSearchPaths(importargs_t * args,
+		std::vector<std::string> const & searchPaths)
+	{
+		std::vector<char*> pointers;
+		if (searchPaths.empty())
+			return pointers;
+		pointers.reserve(searchPaths.size());
+		for (auto const & path : searchPaths)
+		{
+			// The data shouldn't be modified, but the C API is not
+			// const correct, so const cast is required
+			pointers.push_back(const_cast<char*>(path.data()));
+		}
+		args->path = pointers.data();
+		args->paths = static_cast<int>(pointers.size());
+		return pointers;
+	}
+
+	std::vector<ImportablePool> LibZFSHandle::importablePools(
+		std::vector<std::string> const & searchPathOverride) const
 	{
 		importargs_t args = {};
+		auto keep = setImportSearchPaths(&args, searchPathOverride);
 		thread_init();
 		auto list = NVList(zpool_search_import(handle(), &args), zfs::NVList::TakeOwnership());
 		thread_fini();
@@ -1191,6 +1216,7 @@ namespace zfs
 	static std::vector<ZPool> import_with_args(LibZFSHandle const & lib,
 		importargs_t * args, LibZFSHandle::ImportProps const & props)
 	{
+		auto keep = setImportSearchPaths(args, props.searchPathOverride);
 		thread_init();
 		auto list = NVList(zpool_search_import(lib.handle(), args), zfs::NVList::TakeOwnership());
 		thread_fini();

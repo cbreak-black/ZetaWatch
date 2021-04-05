@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -1110,11 +1110,11 @@ Gw
             </connections>
         </popover>
         <view id="lzX-XA-XzO" userLabel="SettingsView">
-            <rect key="frame" x="0.0" y="0.0" width="555" height="94"/>
+            <rect key="frame" x="0.0" y="0.0" width="563" height="178"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3QB-P7-si2">
-                    <rect key="frame" x="116" y="14" width="422" height="25"/>
+                    <rect key="frame" x="116" y="14" width="430" height="25"/>
                     <pathCell key="cell" selectable="YES" editable="YES" alignment="left" placeholderString="Default Mountpoint" pathStyle="popUp" id="tfh-lb-I0Y">
                         <font key="font" metaFont="system"/>
                         <url key="url" string="file:///Volumes/"/>
@@ -1141,7 +1141,7 @@ Gw
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="owe-My-lsx">
-                    <rect key="frame" x="18" y="38" width="519" height="18"/>
+                    <rect key="frame" x="18" y="38" width="527" height="18"/>
                     <buttonCell key="cell" type="check" title="Keep awake during Scrub" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dX7-Wx-70H">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1151,7 +1151,7 @@ Gw
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Pt1-2o-MSz">
-                    <rect key="frame" x="18" y="58" width="519" height="18"/>
+                    <rect key="frame" x="18" y="58" width="527" height="18"/>
                     <buttonCell key="cell" type="check" title="Allow host id mismatch" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GxS-Vj-BcC">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1160,23 +1160,116 @@ Gw
                         </connections>
                     </buttonCell>
                 </button>
+                <scrollView verticalHuggingPriority="200" verticalCompressionResistancePriority="1000" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" usesPredominantAxisScrolling="NO" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="qzi-84-8Hb">
+                    <rect key="frame" x="20" y="82" width="523" height="76"/>
+                    <clipView key="contentView" ambiguous="YES" id="fKK-4M-wy0">
+                        <rect key="frame" x="1" y="0.0" width="521" height="75"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" ambiguous="YES" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" rowSizeStyle="automatic" headerView="8kc-tN-1kV" viewBased="YES" floatsGroupRows="NO" id="Op4-MF-bkS">
+                                <rect key="frame" x="0.0" y="0.0" width="521" height="50"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <size key="intercellSpacing" width="3" height="2"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn width="518" minWidth="40" maxWidth="1000" id="xU7-mk-oli">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Search Path">
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="fAD-76-93W">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <prototypeCellViews>
+                                            <tableCellView id="eD7-n2-0Ve">
+                                                <rect key="frame" x="1" y="1" width="518" height="20"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <pathControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0aW-al-p9r">
+                                                        <rect key="frame" x="2" y="0.0" width="496" height="20"/>
+                                                        <pathCell key="cell" controlSize="small" selectable="YES" alignment="left" id="5dc-aU-BGm">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <url key="url" string="file://localhost/Applications/"/>
+                                                        </pathCell>
+                                                        <connections>
+                                                            <binding destination="eD7-n2-0Ve" name="value" keyPath="objectValue" id="Nal-1Z-Efh">
+                                                                <dictionary key="options">
+                                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                                    <string key="NSValueTransformerName">PathValueTransformer</string>
+                                                                </dictionary>
+                                                            </binding>
+                                                        </connections>
+                                                    </pathControl>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="0aW-al-p9r" secondAttribute="trailing" constant="20" symbolic="YES" id="MJu-VA-Vk7"/>
+                                                    <constraint firstItem="0aW-al-p9r" firstAttribute="leading" secondItem="eD7-n2-0Ve" secondAttribute="leading" constant="2" id="MVD-8c-nqY"/>
+                                                    <constraint firstAttribute="bottom" secondItem="0aW-al-p9r" secondAttribute="bottom" id="UiB-2d-Zxj"/>
+                                                    <constraint firstItem="0aW-al-p9r" firstAttribute="top" secondItem="eD7-n2-0Ve" secondAttribute="top" id="vk8-tQ-CiF"/>
+                                                </constraints>
+                                            </tableCellView>
+                                        </prototypeCellViews>
+                                    </tableColumn>
+                                </tableColumns>
+                                <connections>
+                                    <binding destination="JiR-wc-2kO" name="content" keyPath="arrangedObjects" id="xc3-po-ZOI"/>
+                                    <binding destination="JiR-wc-2kO" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="xc3-po-ZOI" id="6B1-9o-UpY"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                    </clipView>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="64" id="s8e-Sk-EIe"/>
+                    </constraints>
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="enK-Gr-bvp">
+                        <rect key="frame" x="1" y="118" width="238" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="vG5-V5-ygO">
+                        <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <tableHeaderView key="headerView" id="8kc-tN-1kV">
+                        <rect key="frame" x="0.0" y="0.0" width="521" height="25"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </tableHeaderView>
+                </scrollView>
             </subviews>
             <constraints>
+                <constraint firstItem="Pt1-2o-MSz" firstAttribute="top" secondItem="qzi-84-8Hb" secondAttribute="bottom" constant="8" symbolic="YES" id="3dG-kN-FVm"/>
                 <constraint firstAttribute="bottom" secondItem="O5K-Z7-VRD" secondAttribute="bottom" constant="20" symbolic="YES" id="CHT-u3-7ne"/>
                 <constraint firstItem="owe-My-lsx" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="leading" id="FYT-Pg-8s0"/>
                 <constraint firstAttribute="trailing" secondItem="Pt1-2o-MSz" secondAttribute="trailing" constant="20" symbolic="YES" id="Hlb-0P-HXl"/>
+                <constraint firstAttribute="trailing" secondItem="qzi-84-8Hb" secondAttribute="trailing" constant="20" symbolic="YES" id="KPS-Wl-ZNb"/>
                 <constraint firstAttribute="trailing" secondItem="owe-My-lsx" secondAttribute="trailing" constant="20" symbolic="YES" id="SFA-sa-jNk"/>
                 <constraint firstItem="O5K-Z7-VRD" firstAttribute="top" secondItem="owe-My-lsx" secondAttribute="bottom" constant="6" symbolic="YES" id="T5M-wM-ZpK"/>
-                <constraint firstItem="Pt1-2o-MSz" firstAttribute="top" secondItem="lzX-XA-XzO" secondAttribute="top" constant="20" symbolic="YES" id="VrA-og-fDN"/>
+                <constraint firstItem="qzi-84-8Hb" firstAttribute="top" secondItem="lzX-XA-XzO" secondAttribute="top" constant="20" symbolic="YES" id="Tuz-OK-yTc"/>
                 <constraint firstItem="3QB-P7-si2" firstAttribute="leading" secondItem="O5K-Z7-VRD" secondAttribute="trailing" constant="8" symbolic="YES" id="csk-OS-mva"/>
                 <constraint firstItem="owe-My-lsx" firstAttribute="top" secondItem="Pt1-2o-MSz" secondAttribute="bottom" constant="6" symbolic="YES" id="dc1-XQ-HyI"/>
                 <constraint firstItem="3QB-P7-si2" firstAttribute="firstBaseline" secondItem="O5K-Z7-VRD" secondAttribute="firstBaseline" id="j1W-kM-lY5"/>
                 <constraint firstItem="owe-My-lsx" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="mhR-Hz-n9N"/>
+                <constraint firstItem="qzi-84-8Hb" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="mmv-DP-j88"/>
                 <constraint firstItem="Pt1-2o-MSz" firstAttribute="leading" secondItem="lzX-XA-XzO" secondAttribute="leading" constant="20" symbolic="YES" id="nyW-Kp-F2F"/>
                 <constraint firstAttribute="trailing" secondItem="3QB-P7-si2" secondAttribute="trailing" constant="20" symbolic="YES" id="x30-HK-XS1"/>
             </constraints>
-            <point key="canvasLocation" x="144.5" y="1387"/>
+            <point key="canvasLocation" x="144.5" y="1491"/>
         </view>
+        <arrayController objectClassName="NSMutableString" automaticallyPreparesContent="YES" id="JiR-wc-2kO" userLabel="SearchPathOverride Controller">
+            <connections>
+                <binding destination="oMO-Og-s5N" name="contentArray" keyPath="values.searchPathOverride" id="0CQ-4D-uxB">
+                    <dictionary key="options">
+                        <bool key="NSConditionallySetsEditable" value="NO"/>
+                        <bool key="NSDeletesObjectsOnRemove" value="YES"/>
+                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
+                    </dictionary>
+                </binding>
+            </connections>
+        </arrayController>
     </objects>
     <resources>
         <image name="NSApplicationIcon" width="32" height="32"/>

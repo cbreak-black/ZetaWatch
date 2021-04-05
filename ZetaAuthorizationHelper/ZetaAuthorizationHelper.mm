@@ -23,6 +23,26 @@
 
 @end
 
+NSMutableArray<NSString*> * toArray(std::vector<std::string> const & strings)
+{
+	NSMutableArray<NSString*> * array = [[NSMutableArray<NSString*> alloc] initWithCapacity:strings.size()];
+	for (auto const & s : strings)
+	{
+		[array addObject:[NSString stringWithUTF8String:s.c_str()]];
+	}
+	return array;
+}
+
+std::vector<std::string> fromArray(NSArray<NSString*> * array)
+{
+	std::vector<std::string> vec;
+	for (NSString * string in array)
+	{
+		vec.push_back([string UTF8String]);
+	}
+	return vec;
+}
+
 @implementation ZetaAuthorizationHelper
 
 - (id)init
@@ -178,6 +198,8 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 			props.allowUnhealthy = [auh boolValue];
 		if (id ro = [importData objectForKey:@"readOnly"])
 			props.readOnly = [ro boolValue];
+		if (id spo = [importData objectForKey:@"searchPathOverride"])
+			props.searchPathOverride = fromArray(spo);
 		std::vector<zfs::ZPool> importedPools;
 		zfs::LibZFSHandle zfs;
 		if (pool != nil)
@@ -203,17 +225,9 @@ void processWithExceptionForwarding(NSData * authData, SEL command,
 	});
 }
 
-NSMutableArray<NSString*> * toArray(std::vector<std::string> const & strings)
-{
-	NSMutableArray<NSString*> * array = [[NSMutableArray<NSString*> alloc] initWithCapacity:strings.size()];
-	for (auto const & s : strings)
-	{
-		[array addObject:[NSString stringWithUTF8String:s.c_str()]];
-	}
-	return array;
-}
-
-- (void)importablePoolsWithAuthorization:(NSData *)authData withReply:(void (^)(NSError *, NSArray *))reply
+- (void)importablePools:(NSDictionary *)importData
+		  authorization:(NSData *)authData
+			  withReply:(void (^)(NSError *, NSArray *))reply
 {
 	NSError * error = checkAuthorization(authData, _cmd);
 	if (error)
@@ -224,7 +238,10 @@ NSMutableArray<NSString*> * toArray(std::vector<std::string> const & strings)
 	try
 	{
 		zfs::LibZFSHandle zfs;
-		auto pools = zfs.importablePools();
+		std::vector<std::string> searchPathOverride;
+		if (id spo = [importData objectForKey:@"searchPathOverride"])
+			searchPathOverride = fromArray(spo);
+		auto pools = zfs.importablePools(searchPathOverride);
 		NSMutableArray * poolsArray = [[NSMutableArray alloc] initWithCapacity:pools.size()];
 		for (auto const & pool : pools)
 		{
