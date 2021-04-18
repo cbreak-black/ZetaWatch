@@ -31,7 +31,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019 the-color-black.net. All rights reserved.</string>
+	<string>Copyright © 2021 the-color-black.net. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -41,10 +41,10 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>net.the-color-black.ZetaAuthorizationHelper</key>
-		<string>anchor apple generic and identifier "net.the-color-black.ZetaAuthorizationHelper" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "8THUW5GT6P")</string>
+		<string>anchor apple generic and identifier &quot;net.the-color-black.ZetaAuthorizationHelper&quot; and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = &quot;8THUW5GT6P&quot;)</string>
 	</dict>
 	<key>SUFeedURL</key>
-	<string>https://zetawatch.the-color-black.net/download/1.9/appcast.xml</string>
+	<string>https://zetawatch.the-color-black.net/download/2.0/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>Ed/JNtoVf4G8CX7qffgoFFHmb4303SFsmJ3yh2vAhyc=</string>
 </dict>

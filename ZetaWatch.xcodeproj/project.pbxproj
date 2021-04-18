@@ -16,30 +16,33 @@
 		7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		7018764220E7B45B00BA39B8 /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
 		7018764320E7B45E00BA39B8 /* ZFSNVList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */; };
-		7018764420E7B48A00BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
-		7018764520E7B48C00BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
-		7018764620E7B48E00BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
 		7018764720E7B49A00BA39B8 /* ZFSWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FE41C316E8F00929DAE /* ZFSWrapper.h */; };
 		7018764820E7B4A100BA39B8 /* ZFSNVList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */; };
 		7018764920E7B4A300BA39B8 /* ZFSStrings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */; };
 		7018764A20E7B4A600BA39B8 /* ZFSUtils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */; };
 		7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */; };
-		7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
-		7018764D20E7B57700BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
-		7018764E20E7B57900BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
 		7018765120E7B6A500BA39B8 /* ZFSUtils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		7018765220E7B6A700BA39B8 /* ZFSStrings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		7018765320E7B6B500BA39B8 /* ZFSNVList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */; };
-		7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
-		7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
-		7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
-		7018765B20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
-		7018765C20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
-		7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
-		7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */; };
 		703811A12312A2CB002C760A /* ZetaNotificationCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 703811A02312A2CB002C760A /* ZetaNotificationCenter.mm */; };
 		703811A42312C833002C760A /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 703811A32312C833002C760A /* ServiceManagement.framework */; };
+		703B1754262C6A31002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
+		703B1755262C6A31002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
+		703B1756262C6A31002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
+		703B1757262C6A31002C760A /* libzpool.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1753262C6A31002C760A /* libzpool.4.dylib */; };
+		703B1758262C6A74002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
+		703B1759262C6A74002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
+		703B175A262C6A74002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
+		703B175B262C6A74002C760A /* libzpool.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1753262C6A31002C760A /* libzpool.4.dylib */; };
+		703B176C262C6B0F002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
+		703B176D262C6B0F002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
+		703B176E262C6B0F002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
+		703B176F262C6B0F002C760A /* libzpool.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1753262C6A31002C760A /* libzpool.4.dylib */; };
+		703B1774262C6B2D002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
+		703B1775262C6B2D002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
+		703B1776262C6B2D002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
+		703B1777262C6B2D002C760A /* libzpool.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1753262C6A31002C760A /* libzpool.4.dylib */; };
 		70552BC62336AFD8002C760A /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70552BC42336AEB2002C760A /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		70552BC82336B196002C760A /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70552BC42336AEB2002C760A /* Sparkle.framework */; };
 		7068A94623ACFB0A002C760A /* NewVol.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7068A94423ACFB0A002C760A /* NewVol.xib */; };
@@ -61,9 +64,6 @@
 		70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		70D85FF01C316F3100929DAE /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.mm */; };
 		70D85FF11C316F3100929DAE /* ZFSNVList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */; };
-		70D85FF21C316FCB00929DAE /* libnvpair.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */; };
-		70D85FF31C316FCB00929DAE /* libzfs_core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */; };
-		70D85FF41C316FCB00929DAE /* libzfs.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */; };
 		70DF66B1234A2884002C760A /* ZetaQueryDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70DF66AF234A2884002C760A /* ZetaQueryDialog.mm */; };
 		70E4A229236DF7D7002C760A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E4A228236DF7D7002C760A /* main.m */; };
 		70EA5F5022BEC358002C760A /* ZetaFileSystemPropertyMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70EA5F4F22BEC358002C760A /* ZetaFileSystemPropertyMenu.mm */; };
@@ -162,6 +162,10 @@
 		703811A02312A2CB002C760A /* ZetaNotificationCenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaNotificationCenter.mm; sourceTree = "<group>"; };
 		703811A22312A2E6002C760A /* ZetaNotificationCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaNotificationCenter.h; sourceTree = "<group>"; };
 		703811A32312C833002C760A /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		703B1750262C6A31002C760A /* libzfs.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs.4.dylib; path = ../../../../usr/local/zfs/lib/libzfs.4.dylib; sourceTree = "<group>"; };
+		703B1751262C6A31002C760A /* libzfs_core.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs_core.3.dylib; path = ../../../../usr/local/zfs/lib/libzfs_core.3.dylib; sourceTree = "<group>"; };
+		703B1752262C6A31002C760A /* libnvpair.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libnvpair.3.dylib; path = ../../../../usr/local/zfs/lib/libnvpair.3.dylib; sourceTree = "<group>"; };
+		703B1753262C6A31002C760A /* libzpool.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzpool.4.dylib; path = ../../../../usr/local/zfs/lib/libzpool.4.dylib; sourceTree = "<group>"; };
 		70552BC42336AEB2002C760A /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Sparkle/DerivedData/Sparkle/Build/Products/Release/Sparkle.framework; sourceTree = "<group>"; };
 		7068A94523ACFB0A002C760A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/NewVol.xib; sourceTree = "<group>"; };
 		7068A94723ACFBB1002C760A /* SizeTransformer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SizeTransformer.mm; sourceTree = "<group>"; };
@@ -237,10 +241,10 @@
 				703811A42312C833002C760A /* ServiceManagement.framework in Frameworks */,
 				70703F3722AD7633002C760A /* DiskArbitration.framework in Frameworks */,
 				7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
-				7018765E20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */,
-				7018764C20E7B57600BA39B8 /* libnvpair.1.dylib in Frameworks */,
-				7018764D20E7B57700BA39B8 /* libzfs_core.1.dylib in Frameworks */,
-				7018764E20E7B57900BA39B8 /* libzfs.2.dylib in Frameworks */,
+				703B176C262C6B0F002C760A /* libnvpair.3.dylib in Frameworks */,
+				703B176D262C6B0F002C760A /* libzfs_core.3.dylib in Frameworks */,
+				703B176E262C6B0F002C760A /* libzfs.4.dylib in Frameworks */,
+				703B176F262C6B0F002C760A /* libzpool.4.dylib in Frameworks */,
 				70552BC82336B196002C760A /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,10 +253,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7018765C20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */,
-				7018764520E7B48C00BA39B8 /* libzfs_core.1.dylib in Frameworks */,
-				7018764620E7B48E00BA39B8 /* libzfs.2.dylib in Frameworks */,
-				7018764420E7B48A00BA39B8 /* libnvpair.1.dylib in Frameworks */,
+				703B175A262C6A74002C760A /* libzfs.4.dylib in Frameworks */,
+				703B1759262C6A74002C760A /* libzfs_core.3.dylib in Frameworks */,
+				703B175B262C6A74002C760A /* libzpool.4.dylib in Frameworks */,
+				703B1758262C6A74002C760A /* libnvpair.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,10 +264,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7018765B20E7DA8100BA39B8 /* libzpool.1.dylib in Frameworks */,
-				70D85FF31C316FCB00929DAE /* libzfs_core.1.dylib in Frameworks */,
-				70D85FF21C316FCB00929DAE /* libnvpair.1.dylib in Frameworks */,
-				70D85FF41C316FCB00929DAE /* libzfs.2.dylib in Frameworks */,
+				703B1754262C6A31002C760A /* libzfs.4.dylib in Frameworks */,
+				703B1755262C6A31002C760A /* libzfs_core.3.dylib in Frameworks */,
+				703B1757262C6A31002C760A /* libzpool.4.dylib in Frameworks */,
+				703B1756262C6A31002C760A /* libnvpair.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,10 +283,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
-				7018765D20E7DA9900BA39B8 /* libzpool.1.dylib in Frameworks */,
-				7018765720E7B7A200BA39B8 /* libnvpair.1.dylib in Frameworks */,
-				7018765820E7B7A300BA39B8 /* libzfs_core.1.dylib in Frameworks */,
-				7018765920E7B7A500BA39B8 /* libzfs.2.dylib in Frameworks */,
+				703B1774262C6B2D002C760A /* libnvpair.3.dylib in Frameworks */,
+				703B1775262C6B2D002C760A /* libzfs_core.3.dylib in Frameworks */,
+				703B1776262C6B2D002C760A /* libzfs.4.dylib in Frameworks */,
+				703B1777262C6B2D002C760A /* libzpool.4.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +413,10 @@
 		70DB77B11FFAD8E300BA39B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				703B1752262C6A31002C760A /* libnvpair.3.dylib */,
+				703B1751262C6A31002C760A /* libzfs_core.3.dylib */,
+				703B1750262C6A31002C760A /* libzfs.4.dylib */,
+				703B1753262C6A31002C760A /* libzpool.4.dylib */,
 				70552BC42336AEB2002C760A /* Sparkle.framework */,
 				703811A32312C833002C760A /* ServiceManagement.framework */,
 				70703F3622AD7633002C760A /* DiskArbitration.framework */,
@@ -842,18 +850,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libzpool/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				ZETA_VERSION = 47;
-				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
+				ZETA_VERSION = 48;
+				ZFS_DIR = /usr/local/zfs;
 			};
 			name = Debug;
 		};
@@ -901,17 +903,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libzpool/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = NO;
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
-				ZETA_VERSION = 47;
-				ZFS_DIR = "$(PROJECT_DIR)/zfs/zfs";
+				ZETA_VERSION = 48;
+				ZFS_DIR = /usr/local/zfs;
 			};
 			name = Release;
 		};
@@ -928,6 +924,10 @@
 				);
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/zfs/lib,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -946,6 +946,10 @@
 				);
 				INFOPLIST_FILE = ZetaWatch/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/zfs/lib,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaWatch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -966,13 +970,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
-					"$(ZFS_DIR)/lib/libspl/include",
+					"$(ZFS_DIR)/include/libzfs",
+					"$(ZFS_DIR)/include/libspl",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -993,13 +994,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
-					"$(ZFS_DIR)/lib/libspl/include",
+					"$(ZFS_DIR)/include/libzfs",
+					"$(ZFS_DIR)/include/libspl",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -1019,16 +1017,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
-					"$(ZFS_DIR)/lib/libspl/include",
+					"$(ZFS_DIR)/include/libzfs",
+					"$(ZFS_DIR)/include/libspl",
 				);
 				INFOPLIST_FILE = ZFSWrapper/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZFSWrapper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1051,16 +1046,13 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
-					"$(ZFS_DIR)/lib/libspl/include",
+					"$(ZFS_DIR)/include/libzfs",
+					"$(ZFS_DIR)/include/libspl",
 				);
 				INFOPLIST_FILE = ZFSWrapper/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(ZFS_DIR)/lib/libzfs/.libs/",
-					"$(ZFS_DIR)/lib/libzfs_core/.libs/",
-					"$(ZFS_DIR)/lib/libnvpair/.libs/",
-				);
+				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZFSWrapper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1083,8 +1075,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZetaLoginItemHelper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaLoginItemHelper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1106,7 +1096,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ZetaLoginItemHelper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.the-color-black.ZetaLoginItemHelper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1133,6 +1122,10 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/zfs/lib,
+				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -1164,6 +1157,10 @@
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/ZetaAuthorizationHelper/Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/zfs/lib,
+				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,

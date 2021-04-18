@@ -19,19 +19,18 @@
 
 #include <libzfs.h>
 #include <libzfs_core.h>
+#include <libzutil.h>
 
-#include <sys/zfs_mount.h>
+//#include <sys/zfs_mount.h>
 #include <sys/mount.h>
-
-extern "C"
-{
-	// From #include <sys/zfs_context_userland.h>
-	extern void thread_init(void);
-	extern void thread_fini(void);
-}
 
 namespace zfs
 {
+	inline auto to_boolean_t(bool flag)
+	{
+		return flag ? B_TRUE : B_FALSE;
+	}
+
 	LibZFSHandle::LibZFSHandle() :
 		m_handle(libzfs_init()), m_owned(true)
 	{
@@ -145,7 +144,7 @@ namespace zfs
 	{
 		PropList pl(nullptr, &zprop_free_list);
 		zprop_list_t * plRaw = nullptr;
-		int ec = zfs_expand_proplist(handle, &plRaw, true, false);
+		int ec = zfs_expand_proplist(handle, &plRaw, B_TRUE, B_FALSE);
 		if (ec == 0)
 			pl.reset(plRaw);
 		return pl;
@@ -155,7 +154,7 @@ namespace zfs
 	{
 		PropList pl(nullptr, &zprop_free_list);
 		zprop_list_t * plRaw = nullptr;
-		int ec = zpool_expand_proplist(handle, &plRaw);
+		int ec = zpool_expand_proplist(handle, &plRaw, B_TRUE);
 		if (ec == 0)
 			pl.reset(plRaw);
 		return pl;
@@ -174,7 +173,7 @@ namespace zfs
 	{
 		std::string s;
 		s.resize(ZFS_MAXPROPLEN);
-		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, false);
+		int ec = zfs_prop_get(handle, prop, s.data(), s.size(), nullptr, nullptr, 0, B_FALSE);
 		if (ec != 0)
 			s.clear(); // Maybe report error in some form?
 		else
@@ -190,7 +189,7 @@ namespace zfs
 		zprop_source_t source = {};
 		int ec = zfs_prop_get(handle, prop,
 							  p.value.data(), p.value.size(), &source,
-							  p.source.data(), p.source.size(), false);
+							  p.source.data(), p.source.size(), B_FALSE);
 		truncateString(p.value);
 		truncateString(p.source);
 		return ec == 0;
@@ -205,7 +204,7 @@ namespace zfs
 		p.value.resize(64);
 		zprop_source_t source = {};
 		int ec = zpool_get_prop(handle, prop,
-								p.value.data(), p.value.size(), &source, false);
+								p.value.data(), p.value.size(), &source, B_FALSE);
 		truncateString(p.value);
 		return ec == 0;
 	}
@@ -347,7 +346,7 @@ namespace zfs
 		fullName += '@';
 		fullName += snapName;
 		auto lib = libHandle();
-		return zfs_snapshot(lib.handle(), fullName.c_str(), recursive, nullptr);
+		return zfs_snapshot(lib.handle(), fullName.c_str(), to_boolean_t(recursive), nullptr);
 	}
 
 	int ZFileSystem::rollback(bool force)
@@ -359,7 +358,7 @@ namespace zfs
 			throw std::runtime_error(snapName + " is not a snapshot");
 		}
 		auto baseFS = libHandle().filesystem(baseName);
-		return zfs_rollback(baseFS.m_handle, m_handle, force);
+		return zfs_rollback(baseFS.m_handle, m_handle, to_boolean_t(force));
 	}
 
 	int ZFileSystem::clone(std::string const & newFSName)
@@ -379,7 +378,7 @@ namespace zfs
 		if (auto error = unmount(force))
 			return error;
 		// This requires that there are no dependents left
-		return zfs_destroy(m_handle, false);
+		return zfs_destroy(m_handle, B_FALSE);
 	}
 
 	static int destroySnapshots(libzfs_handle_t * libHandle, std::vector<ZFileSystem> & snaps)
@@ -392,7 +391,7 @@ namespace zfs
 			snapList.addBoolean(s.name());
 		}
 		snaps.clear();
-		return zfs_destroy_snaps_nvl(libHandle, snapList.toList(), false);
+		return zfs_destroy_snaps_nvl(libHandle, snapList.toList(), B_FALSE);
 	}
 
 	int ZFileSystem::destroyRecursive(bool force)
@@ -747,7 +746,7 @@ namespace zfs
 			dependents.push_back(std::move(fs));
 			return 0;
 		});
-		zfs_iter_dependents(m_handle, false, &cb.handle_s, &cb);
+		zfs_iter_dependents(m_handle, B_FALSE, &cb.handle_s, &cb);
 		return dependents;
 	}
 
@@ -791,7 +790,7 @@ namespace zfs
 	int ZFileSystem::iterDependents(std::function<int(ZFileSystem)> callback) const
 	{
 		ZFileSystemCallback cb(std::move(callback));
-		return zfs_iter_dependents(m_handle, false, &cb.handle_s, &cb);
+		return zfs_iter_dependents(m_handle, B_FALSE, &cb.handle_s, &cb);
 	}
 
 	ZPool::ZPool(libzfs_handle_t * zfsHandle, std::string const & name) :
@@ -973,7 +972,7 @@ namespace zfs
 	{
 		std::stringstream ss;
 		ss << "export " << (force ? "-f" : "") << name();
-		boolean_t forceBT = force ? B_TRUE : B_FALSE;
+		boolean_t forceBT = to_boolean_t(force);
 		int res = 0;
 		res = zpool_disable_datasets(m_handle, forceBT);
 		if (res != 0)
@@ -1189,9 +1188,7 @@ namespace zfs
 	{
 		importargs_t args = {};
 		auto keep = setImportSearchPaths(&args, searchPathOverride);
-		thread_init();
-		auto list = NVList(zpool_search_import(handle(), &args), zfs::NVList::TakeOwnership());
-		thread_fini();
+		auto list = NVList(zpool_search_import(handle(), &args, &libzfs_config_ops), zfs::NVList::TakeOwnership());
 		std::vector<ImportablePool> pools;
 		for (auto pair : list)
 		{
@@ -1217,9 +1214,7 @@ namespace zfs
 		importargs_t * args, LibZFSHandle::ImportProps const & props)
 	{
 		auto keep = setImportSearchPaths(args, props.searchPathOverride);
-		thread_init();
-		auto list = NVList(zpool_search_import(lib.handle(), args), zfs::NVList::TakeOwnership());
-		thread_fini();
+		auto list = NVList(zpool_search_import(lib.handle(), args, &libzfs_config_ops), zfs::NVList::TakeOwnership());
 		std::vector<ZPool> pools;
 		for (auto pair : list)
 		{
