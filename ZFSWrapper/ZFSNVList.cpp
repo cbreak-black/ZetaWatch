@@ -199,6 +199,8 @@ namespace zfs
 	{
 		switch (data_type_t(type()))
 		{
+			case DATA_TYPE_DONTCARE:
+				os << "dontcare";
 			case DATA_TYPE_UNKNOWN:
 				os << "unknown";
 				return true;
