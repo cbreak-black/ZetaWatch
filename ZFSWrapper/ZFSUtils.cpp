@@ -38,11 +38,13 @@ namespace zfs
 		{
 			throw std::runtime_error(libzfs_error_init(errno));
 		}
+		libzfs_mnttab_cache(m_handle, B_TRUE);
 	}
 
 	LibZFSHandle::LibZFSHandle(libzfs_handle_t * handle) :
 		m_handle(handle), m_owned(false)
 	{
+		libzfs_mnttab_cache(m_handle, B_TRUE);
 	}
 
 	LibZFSHandle::~LibZFSHandle()
@@ -69,14 +71,7 @@ namespace zfs
 
 	void LibZFSHandle::reset()
 	{
-		if (m_handle && m_owned)
-			libzfs_fini(m_handle);
-		m_owned = true;
-		m_handle = libzfs_init();
-		if (m_handle == nullptr)
-		{
-			throw std::runtime_error(libzfs_error_init(errno));
-		}
+		*this = LibZFSHandle();
 	}
 
 	libzfs_handle_t * LibZFSHandle::handle() const
