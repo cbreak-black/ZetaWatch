@@ -18,7 +18,6 @@
                 <outlet property="authorization" destination="GUh-uV-dxo" id="989-1T-oct"/>
                 <outlet property="poolWatcher" destination="Gim-eq-VbR" id="l93-hb-HuX"/>
                 <outlet property="settings" destination="h6V-8x-hYX" id="nvs-pP-koq"/>
-                <outlet property="updater" destination="7Va-uZ-m1K" id="VUM-ji-fYM"/>
                 <outlet property="zetaConfirmDialog" destination="YY7-LW-cAD" id="N6U-3T-0X2"/>
                 <outlet property="zetaKeyLoader" destination="R7D-cp-kuE" id="Uml-Lc-GeC"/>
                 <outlet property="zetaMainMenu" destination="8rf-zp-5r9" id="20J-Sj-1ol"/>
@@ -139,15 +138,9 @@
                             <menuItem isSeparatorItem="YES" id="wz1-YY-4Wk"/>
                             <menuItem title="Auto Update" id="PuO-P5-LRP">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <binding destination="7Va-uZ-m1K" name="value" keyPath="automaticallyChecksForUpdates" id="cJl-aO-zqY"/>
-                                </connections>
                             </menuItem>
                             <menuItem title="Check for Updates now..." id="e40-VT-eEj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="checkForUpdates:" target="7Va-uZ-m1K" id="yj1-Ju-zDX"/>
-                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="438-n3-d29"/>
                             <menuItem title="More Settings..." id="2HR-5O-7CX">
@@ -946,7 +939,6 @@ Gw
             </connections>
         </popover>
         <userDefaultsController representsSharedInstance="YES" id="oMO-Og-s5N"/>
-        <customObject id="7Va-uZ-m1K" customClass="SUUpdater"/>
         <customView id="xBy-DS-Zxq" userLabel="QueryDialog">
             <rect key="frame" x="0.0" y="0.0" width="555" height="115"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

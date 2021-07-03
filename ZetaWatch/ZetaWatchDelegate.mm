@@ -21,7 +21,7 @@
 
 #import "ZFSUtils.hpp"
 
-#import <Sparkle/Sparkle.h>
+//#import <Sparkle/Sparkle.h>
 #import <ServiceManagement/SMLoginItem.h>
 
 @interface ZetaWatchDelegate ()
@@ -36,7 +36,6 @@
 @property (weak) IBOutlet ZetaQueryDialog * zetaQueryDialog;
 @property (weak) IBOutlet ZetaConfirmDialog * zetaConfirmDialog;
 @property (weak) IBOutlet ZetaPoolWatcher * poolWatcher;
-@property (weak) IBOutlet SUUpdater * updater;
 @property (weak) IBOutlet NSPopover * settings;
 
 @property (strong) ZetaDictQueryDialog * zetaNewFSDialog;
@@ -92,25 +91,25 @@
 				@"/var/run/disk/by-id",
 		],
 	}];
-	try
-	{
-		// Update Feed URL to the one matching the current ZFS version, even if
-		// ZetaWatch was not compiled for it.
-		auto version = zfs::LibZFSHandle::version();
-		NSString * feedString = [NSString stringWithFormat:
-			@"https://zetawatch.the-color-black.net/download/%i.%i/appcast.xml",
-								 version.major, version.minor];
-		NSURL * feedURL = [NSURL URLWithString:feedString];
-		[self.updater setFeedURL:feedURL];
-		// TODO: Check for compatibility
-	}
-	catch (std::exception const & e)
-	{
-		NSLog(@"Error querying ZFS Version: %s", e.what());
-		// Disable auto update
-		[self.updater setAutomaticallyChecksForUpdates:NO];
-		[self.updater setAutomaticallyDownloadsUpdates:NO];
-	}
+//	try
+//	{
+//		// Update Feed URL to the one matching the current ZFS version, even if
+//		// ZetaWatch was not compiled for it.
+//		auto version = zfs::LibZFSHandle::version();
+//		NSString * feedString = [NSString stringWithFormat:
+//			@"https://zetawatch.the-color-black.net/download/%i.%i/appcast.xml",
+//								 version.major, version.minor];
+//		NSURL * feedURL = [NSURL URLWithString:feedString];
+//		[self.updater setFeedURL:feedURL];
+//		// TODO: Check for compatibility
+//	}
+//	catch (std::exception const & e)
+//	{
+//		NSLog(@"Error querying ZFS Version: %s", e.what());
+//		// Disable auto update
+//		[self.updater setAutomaticallyChecksForUpdates:NO];
+//		[self.updater setAutomaticallyDownloadsUpdates:NO];
+//	}
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

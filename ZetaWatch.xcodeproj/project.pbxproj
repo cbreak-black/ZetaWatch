@@ -12,6 +12,8 @@
 		7006C4851C26CA1500929DAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4841C26CA1500929DAE /* Assets.xcassets */; };
 		7006C4881C26CA1500929DAE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7006C4861C26CA1500929DAE /* MainMenu.xib */; };
 		7006C4AC1C26D3E700929DAE /* ZetaMainMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7006C4AB1C26D3E700929DAE /* ZetaMainMenu.mm */; };
+		700E99DF26E3AA90002C760A /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 700E99DE26E3AA90002C760A /* ZFSStrings.mm */; };
+		700E99E426E3ABFF002C760A /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 700E99DE26E3AA90002C760A /* ZFSStrings.mm */; };
 		70168B6622B64E48002C760A /* ZetaKeyLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70168B6522B64E48002C760A /* ZetaKeyLoader.mm */; };
 		7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */; };
 		7018764220E7B45B00BA39B8 /* ZFSStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70D85FBF1C2D9CB900929DAE /* ZFSStrings.cpp */; };
@@ -24,32 +26,21 @@
 		7018765220E7B6A700BA39B8 /* ZFSStrings.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		7018765320E7B6B500BA39B8 /* ZFSNVList.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */; };
-		7023C1FB26C1C768002C760A /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7023C1FA26C1C768002C760A /* ZFSStrings.mm */; };
-		7023C1FC26C1C768002C760A /* ZFSStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7023C1FA26C1C768002C760A /* ZFSStrings.mm */; };
 		703811A12312A2CB002C760A /* ZetaNotificationCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 703811A02312A2CB002C760A /* ZetaNotificationCenter.mm */; };
 		703811A42312C833002C760A /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 703811A32312C833002C760A /* ServiceManagement.framework */; };
-		703B176C262C6B0F002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
-		703B176D262C6B0F002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
-		703B176E262C6B0F002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
-		70552BC62336AFD8002C760A /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70552BC42336AEB2002C760A /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		70552BC82336B196002C760A /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70552BC42336AEB2002C760A /* Sparkle.framework */; };
+		7047EB6C269094D5002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5C2690945C002C760A /* libnvpair.3.dylib */; };
+		7047EB6D269094D5002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5B2690945C002C760A /* libzfs_core.3.dylib */; };
+		7047EB6E269094D5002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5A2690945C002C760A /* libzfs.4.dylib */; };
+		7047EB6F269094D5002C760A /* libzpool.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5D2690945C002C760A /* libzpool.5.dylib */; };
+		7047EB78269094E1002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5C2690945C002C760A /* libnvpair.3.dylib */; };
+		7047EB79269094E1002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5B2690945C002C760A /* libzfs_core.3.dylib */; };
+		7047EB7A269094E1002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5A2690945C002C760A /* libzfs.4.dylib */; };
+		7047EB7B269094E1002C760A /* libzpool.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7047EB5D2690945C002C760A /* libzpool.5.dylib */; };
 		7068A94623ACFB0A002C760A /* NewVol.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7068A94423ACFB0A002C760A /* NewVol.xib */; };
 		7068A94823ACFBB1002C760A /* SizeTransformer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7068A94723ACFBB1002C760A /* SizeTransformer.mm */; };
 		70703F3722AD7633002C760A /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70703F3622AD7633002C760A /* DiskArbitration.framework */; };
 		70703F3922AD7A17002C760A /* IDDiskArbitrationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */; };
 		7075BE36236E09DF002C760A /* ZetaLoginItemHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 70E4A21D236DF7D6002C760A /* ZetaLoginItemHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		708112B726D993F3002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
-		708112B826D993F4002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
-		708112B926D993F4002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
-		708112BB26D993F4002C760A /* libzpool.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 708112BA26D993F4002C760A /* libzpool.5.dylib */; };
-		708112C026D99413002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
-		708112C126D99413002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
-		708112C226D99413002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
-		708112C326D99413002C760A /* libzpool.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 708112BA26D993F4002C760A /* libzpool.5.dylib */; };
-		708112CC26D99470002C760A /* libzpool.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 708112BA26D993F4002C760A /* libzpool.5.dylib */; };
-		708112CD26D99473002C760A /* libnvpair.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1752262C6A31002C760A /* libnvpair.3.dylib */; };
-		708112CE26D99475002C760A /* libzfs_core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1751262C6A31002C760A /* libzfs_core.3.dylib */; };
-		708112CF26D99479002C760A /* libzfs.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 703B1750262C6A31002C760A /* libzfs.4.dylib */; };
 		7099FB4523A575F9002C760A /* ZetaBookmarkMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7099FB4323A575F8002C760A /* ZetaBookmarkMenu.mm */; };
 		709C1CAD1C354F8B00929DAE /* ZetaPoolWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */; };
 		70AE5AB222A3DBAA002C760A /* ZetaImportMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 70AE5AB122A3DBAA002C760A /* ZetaImportMenu.mm */; };
@@ -117,7 +108,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				70552BC62336AFD8002C760A /* Sparkle.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,24 +144,22 @@
 		7006C4891C26CA1500929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7006C4AB1C26D3E700929DAE /* ZetaMainMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaMainMenu.mm; sourceTree = "<group>"; };
 		7006C4AD1C26D3FA00929DAE /* ZetaMainMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaMainMenu.h; sourceTree = "<group>"; };
+		700E99DE26E3AA90002C760A /* ZFSStrings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZFSStrings.mm; sourceTree = "<group>"; };
 		70168B6422B64E48002C760A /* ZetaKeyLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaKeyLoader.h; sourceTree = "<group>"; };
 		70168B6522B64E48002C760A /* ZetaKeyLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaKeyLoader.mm; sourceTree = "<group>"; };
 		7018763D20E7B44800BA39B8 /* libZFSWrapperStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZFSWrapperStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzpool.1.dylib; sourceTree = "<group>"; };
-		7023C1FA26C1C768002C760A /* ZFSStrings.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZFSStrings.mm; sourceTree = "<group>"; };
 		703811A02312A2CB002C760A /* ZetaNotificationCenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaNotificationCenter.mm; sourceTree = "<group>"; };
 		703811A22312A2E6002C760A /* ZetaNotificationCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZetaNotificationCenter.h; sourceTree = "<group>"; };
 		703811A32312C833002C760A /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		703B1750262C6A31002C760A /* libzfs.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs.4.dylib; path = ../../../../usr/local/zfs/lib/libzfs.4.dylib; sourceTree = "<group>"; };
-		703B1751262C6A31002C760A /* libzfs_core.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs_core.3.dylib; path = ../../../../usr/local/zfs/lib/libzfs_core.3.dylib; sourceTree = "<group>"; };
-		703B1752262C6A31002C760A /* libnvpair.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libnvpair.3.dylib; path = ../../../../usr/local/zfs/lib/libnvpair.3.dylib; sourceTree = "<group>"; };
-		70552BC42336AEB2002C760A /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Sparkle/DerivedData/Sparkle/Build/Products/Release/Sparkle.framework; sourceTree = "<group>"; };
+		7047EB5A2690945C002C760A /* libzfs.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs.4.dylib; path = "../../../Users/cbreak/Downloads/zfs-arm64-2.1/usr/local/zfs/lib/libzfs.4.dylib"; sourceTree = "<group>"; };
+		7047EB5B2690945C002C760A /* libzfs_core.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzfs_core.3.dylib; path = "../../../Users/cbreak/Downloads/zfs-arm64-2.1/usr/local/zfs/lib/libzfs_core.3.dylib"; sourceTree = "<group>"; };
+		7047EB5C2690945C002C760A /* libnvpair.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libnvpair.3.dylib; path = "../../../Users/cbreak/Downloads/zfs-arm64-2.1/usr/local/zfs/lib/libnvpair.3.dylib"; sourceTree = "<group>"; };
+		7047EB5D2690945C002C760A /* libzpool.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzpool.5.dylib; path = "../../../Users/cbreak/Downloads/zfs-arm64-2.1/usr/local/zfs/lib/libzpool.5.dylib"; sourceTree = "<group>"; };
 		7068A94523ACFB0A002C760A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/NewVol.xib; sourceTree = "<group>"; };
 		7068A94723ACFBB1002C760A /* SizeTransformer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SizeTransformer.mm; sourceTree = "<group>"; };
 		70703F3622AD7633002C760A /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		70703F3822AD7A16002C760A /* IDDiskArbitrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDDiskArbitrationUtils.cpp; path = InvariantDisks/IDDiskArbitrationUtils.cpp; sourceTree = "<group>"; };
 		7072697B22EDB2BE002C760A /* ZetaCPPUtils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ZetaCPPUtils.hpp; sourceTree = "<group>"; };
-		708112BA26D993F4002C760A /* libzpool.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libzpool.5.dylib; path = ../../../../usr/local/zfs/lib/libzpool.5.dylib; sourceTree = "<group>"; };
 		7099FB4323A575F8002C760A /* ZetaBookmarkMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaBookmarkMenu.mm; sourceTree = "<group>"; };
 		7099FB4423A575F8002C760A /* ZetaBookmarkMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZetaBookmarkMenu.h; sourceTree = "<group>"; };
 		709C1CAC1C354F8B00929DAE /* ZetaPoolWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaPoolWatcher.mm; sourceTree = "<group>"; };
@@ -194,13 +182,10 @@
 		70D118B62375FE28002C760A /* PathValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PathValueTransformer.m; sourceTree = "<group>"; };
 		70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSUtils.cpp; sourceTree = "<group>"; };
 		70D85FB81C2C076E00929DAE /* ZFSUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSUtils.hpp; sourceTree = "<group>"; };
-		70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs_core.1.dylib; sourceTree = "<group>"; };
-		70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libzfs.2.dylib; sourceTree = "<group>"; };
 		70D85FBF1C2D9CB900929DAE /* ZFSStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSStrings.cpp; sourceTree = "<group>"; };
 		70D85FC11C2D9CC900929DAE /* ZFSStrings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ZFSStrings.hpp; sourceTree = "<group>"; };
 		70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZFSNVList.cpp; sourceTree = "<group>"; };
 		70D85FC31C2EAE5A00929DAE /* ZFSNVList.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZFSNVList.hpp; sourceTree = "<group>"; };
-		70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libnvpair.1.dylib; sourceTree = "<group>"; };
 		70D85FE21C316E8F00929DAE /* ZFSWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZFSWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70D85FE61C316E8F00929DAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		70DF66AF234A2884002C760A /* ZetaQueryDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZetaQueryDialog.mm; sourceTree = "<group>"; };
@@ -240,10 +225,10 @@
 				703811A42312C833002C760A /* ServiceManagement.framework in Frameworks */,
 				70703F3722AD7633002C760A /* DiskArbitration.framework in Frameworks */,
 				7018764B20E7B55700BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
-				703B176C262C6B0F002C760A /* libnvpair.3.dylib in Frameworks */,
-				703B176D262C6B0F002C760A /* libzfs_core.3.dylib in Frameworks */,
-				703B176E262C6B0F002C760A /* libzfs.4.dylib in Frameworks */,
-				70552BC82336B196002C760A /* Sparkle.framework in Frameworks */,
+				7047EB78269094E1002C760A /* libnvpair.3.dylib in Frameworks */,
+				7047EB79269094E1002C760A /* libzfs_core.3.dylib in Frameworks */,
+				7047EB7A269094E1002C760A /* libzfs.4.dylib in Frameworks */,
+				7047EB7B269094E1002C760A /* libzpool.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,10 +236,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				708112BB26D993F4002C760A /* libzpool.5.dylib in Frameworks */,
-				708112B726D993F3002C760A /* libnvpair.3.dylib in Frameworks */,
-				708112B826D993F4002C760A /* libzfs_core.3.dylib in Frameworks */,
-				708112B926D993F4002C760A /* libzfs.4.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,10 +243,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				708112C026D99413002C760A /* libnvpair.3.dylib in Frameworks */,
-				708112C126D99413002C760A /* libzfs_core.3.dylib in Frameworks */,
-				708112C226D99413002C760A /* libzfs.4.dylib in Frameworks */,
-				708112C326D99413002C760A /* libzpool.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,10 +258,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				7018765620E7B79E00BA39B8 /* libZFSWrapperStatic.a in Frameworks */,
-				708112CC26D99470002C760A /* libzpool.5.dylib in Frameworks */,
-				708112CD26D99473002C760A /* libnvpair.3.dylib in Frameworks */,
-				708112CE26D99475002C760A /* libzfs_core.3.dylib in Frameworks */,
-				708112CF26D99479002C760A /* libzfs.4.dylib in Frameworks */,
+				7047EB6C269094D5002C760A /* libnvpair.3.dylib in Frameworks */,
+				7047EB6D269094D5002C760A /* libzfs_core.3.dylib in Frameworks */,
+				7047EB6E269094D5002C760A /* libzfs.4.dylib in Frameworks */,
+				7047EB6F269094D5002C760A /* libzpool.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,9 +370,9 @@
 		7023C21A26C1DFA2002C760A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				700E99DE26E3AA90002C760A /* ZFSStrings.mm */,
 				70D85FB71C2C076E00929DAE /* ZFSUtils.cpp */,
 				70D85FBF1C2D9CB900929DAE /* ZFSStrings.cpp */,
-				7023C1FA26C1C768002C760A /* ZFSStrings.mm */,
 				70D85FC21C2EAE5A00929DAE /* ZFSNVList.cpp */,
 			);
 			path = src;
@@ -412,10 +389,10 @@
 		70D85FBE1C2C1D9100929DAE /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				70D85FC51C2EBC5000929DAE /* libnvpair.1.dylib */,
-				70D85FBA1C2C18BE00929DAE /* libzfs_core.1.dylib */,
-				70D85FBB1C2C18BE00929DAE /* libzfs.2.dylib */,
-				7018765A20E7DA8100BA39B8 /* libzpool.1.dylib */,
+				7047EB5C2690945C002C760A /* libnvpair.3.dylib */,
+				7047EB5B2690945C002C760A /* libzfs_core.3.dylib */,
+				7047EB5A2690945C002C760A /* libzfs.4.dylib */,
+				7047EB5D2690945C002C760A /* libzpool.5.dylib */,
 			);
 			name = lib;
 			path = /usr/local/lib;
@@ -435,11 +412,6 @@
 		70DB77B11FFAD8E300BA39B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				708112BA26D993F4002C760A /* libzpool.5.dylib */,
-				703B1752262C6A31002C760A /* libnvpair.3.dylib */,
-				703B1751262C6A31002C760A /* libzfs_core.3.dylib */,
-				703B1750262C6A31002C760A /* libzfs.4.dylib */,
-				70552BC42336AEB2002C760A /* Sparkle.framework */,
 				703811A32312C833002C760A /* ServiceManagement.framework */,
 				70703F3622AD7633002C760A /* DiskArbitration.framework */,
 			);
@@ -727,7 +699,7 @@
 			files = (
 				7018764120E7B45900BA39B8 /* ZFSUtils.cpp in Sources */,
 				7018764220E7B45B00BA39B8 /* ZFSStrings.cpp in Sources */,
-				7023C1FB26C1C768002C760A /* ZFSStrings.mm in Sources */,
+				700E99E426E3ABFF002C760A /* ZFSStrings.mm in Sources */,
 				7018764320E7B45E00BA39B8 /* ZFSNVList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,7 +710,7 @@
 			files = (
 				70D85FF01C316F3100929DAE /* ZFSStrings.cpp in Sources */,
 				70D85FF11C316F3100929DAE /* ZFSNVList.cpp in Sources */,
-				7023C1FC26C1C768002C760A /* ZFSStrings.mm in Sources */,
+				700E99DF26E3AA90002C760A /* ZFSStrings.mm in Sources */,
 				70D85FEF1C316F3100929DAE /* ZFSUtils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -826,7 +798,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = arm64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -873,11 +845,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ONLY_ACTIVE_ARCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				ZETA_VERSION = 49;
-				ZFS_DIR = /usr/local/zfs;
+				ZFS_DIR = "zfs-pkg/my_package.pkg/Payload/usr/local/zfs";
 			};
 			name = Debug;
 		};
@@ -885,7 +857,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = arm64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -926,10 +898,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				SDKROOT = macosx;
 				ZETA_VERSION = 49;
-				ZFS_DIR = /usr/local/zfs;
+				ZFS_DIR = "zfs-pkg/my_package.pkg/Payload/usr/local/zfs";
 			};
 			name = Release;
 		};
