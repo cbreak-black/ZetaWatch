@@ -25,6 +25,11 @@ Currently supported features are:
 Installation
 ------------
 
+ZetaWatch Releases can be downloaded from the [GitHub Releases Page](https://github.com/cbreak-black/ZetaWatch/releases).
+Please verify that the Version of ZetaWatch matches your ZFS Version. Usually,
+only the newest official Release is supported, since code changes are sometimes
+required to be fully compatible with the new library version.
+
 ZetaWatch does not require manual installation. Simply copy it into /Application or where
 ever else it fits. The bundled helper tool gets installed automatically the first time the
 program is started. This requires user-authentication.
