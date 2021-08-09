@@ -1,3 +1,6 @@
 [submodule "ThirdParty/Sparkle"]
 	path = ThirdParty/Sparkle
 	url = ../Sparkle.git
+[submodule "ZFSWrapper"]
+	path = ZFSWrapper
+	url = ../ZFSWrapper
