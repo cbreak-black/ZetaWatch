@@ -236,13 +236,15 @@ NSString * formatStatus(zfs::ZFileSystem const & fs)
 			encStatus = @"";
 			break;
 		case zfs::ZFileSystem::KeyStatus::unavailable:
-			encStatus = NSLocalizedString(@", 🔒", @"locked status");
+			encStatus = NSLocalizedString(@"🔒", @"locked status");
 			break;
 		case zfs::ZFileSystem::KeyStatus::available:
 			encStatus = NSLocalizedString(@"🔑", @"unlocked status");
 			break;
 	}
-	NSString * fsLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@%@)", @"File System Menu Entry"), fs.name(), mountStatus, encStatus];
+	auto [encRoot, isRoot] = fs.encryptionRoot();
+	NSString * encRootStr = isRoot ? @"🎁" : @"";
+	NSString * fsLine = [NSString stringWithFormat:NSLocalizedString(@"%s (%@%@%@)", @"File System Menu Entry"), fs.name(), mountStatus, encStatus, encRootStr];
 	return fsLine;
 }
 
