@@ -44,7 +44,7 @@
 		<string>anchor apple generic and identifier &quot;net.the-color-black.ZetaAuthorizationHelper&quot; and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = &quot;8THUW5GT6P&quot;)</string>
 	</dict>
 	<key>SUFeedURL</key>
-	<string>https://zetawatch.the-color-black.net/download/2.0/appcast.xml</string>
+	<string>https://zetawatch.the-color-black.net/download/2.1/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>Ed/JNtoVf4G8CX7qffgoFFHmb4303SFsmJ3yh2vAhyc=</string>
 </dict>
