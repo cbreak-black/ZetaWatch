@@ -873,10 +873,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				ZETA_VERSION = 49;
+				ZETA_VERSION = 50;
 				ZFS_DIR = /usr/local/zfs;
 			};
 			name = Debug;
@@ -926,9 +926,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
-				ZETA_VERSION = 49;
+				ZETA_VERSION = 50;
 				ZFS_DIR = /usr/local/zfs;
 			};
 			name = Release;
@@ -993,11 +993,12 @@
 					ZFSW_HAS_ZPOOL_STATUS_COMPATIBILITY_ERR,
 					ZFSW_HAS_ZPOOL_STATUS_INCOMPATIBLE_FEAT,
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
 					"$(ZFS_DIR)/include/libzfs",
 					"$(ZFS_DIR)/include/libspl",
+					"$(ZFS_DIR)/include/libspl/os/macos",
 				);
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1021,11 +1022,12 @@
 					ZFSW_HAS_ZPOOL_STATUS_COMPATIBILITY_ERR,
 					ZFSW_HAS_ZPOOL_STATUS_INCOMPATIBLE_FEAT,
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(ZFS_DIR)/include",
 					"$(ZFS_DIR)/include/libzfs",
 					"$(ZFS_DIR)/include/libspl",
+					"$(ZFS_DIR)/include/libspl/os/macos",
 				);
 				LIBRARY_SEARCH_PATHS = "$(ZFS_DIR)/lib";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1049,6 +1051,7 @@
 					"$(ZFS_DIR)/include",
 					"$(ZFS_DIR)/include/libzfs",
 					"$(ZFS_DIR)/include/libspl",
+					"$(ZFS_DIR)/include/libspl/os/macos",
 				);
 				INFOPLIST_FILE = ZFSWrapper/misc/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1078,6 +1081,7 @@
 					"$(ZFS_DIR)/include",
 					"$(ZFS_DIR)/include/libzfs",
 					"$(ZFS_DIR)/include/libspl",
+					"$(ZFS_DIR)/include/libspl/os/macos",
 				);
 				INFOPLIST_FILE = ZFSWrapper/misc/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
