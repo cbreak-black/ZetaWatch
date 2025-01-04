@@ -138,12 +138,12 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 			}
 			[fsMenu addItem:[NSMenuItem separatorItem]];
 		}
-		addFSCommand(NSLocalizedString(@"Mount Recursive", @"Mount Recursive"), @selector(mountFilesystemRecursive:));
+		addFSCommand(NSLocalizedString(@"Mount Recursively", @"Mount Recursively"), @selector(mountFilesystemRecursive:));
 		if (!fs.mounted() && fs.mountable())
 		{
 			addFSCommand(NSLocalizedString(@"Mount", @"Mount"), @selector(mountFilesystem:));
 		}
-		addFSCommand(NSLocalizedString(@"Unmount Recursive", @"Unmount Recursive"), @selector(unmountFilesystemRecursive:));
+		addFSCommand(NSLocalizedString(@"Unmount Recursively", @"Unmount Recursively"), @selector(unmountFilesystemRecursive:));
 		if (fs.mounted())
 		{
 			addFSCommand(NSLocalizedString(@"Unmount", @"Unmount"), @selector(unmountFilesystem:));
@@ -153,7 +153,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	// Snapshots
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addFSCommand(NSLocalizedString(@"Snapshot...", @"Snapshot"), @selector(snapshotFilesystem:));
-	addFSCommand(NSLocalizedString(@"Snapshot Recursive...", @"Snapshot Recursive"), @selector(snapshotFilesystemRecursive:));
+	addFSCommand(NSLocalizedString(@"Snapshot Recursively...", @"Snapshot Recursively"), @selector(snapshotFilesystemRecursive:));
 	{
 		// Snapshots submenu
 		NSString * snapsTitle = NSLocalizedString(@"Snapshots", @"Snapshots");
@@ -190,7 +190,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 	{
 		addFSCommand(NSLocalizedString(@"Destroy", @"Destroy"), @selector(destroy:));
 	}
-	addFSCommand(NSLocalizedString(@"Destroy Recursive", @"Destroy Recursive"), @selector(destroyRecursive:));
+	addFSCommand(NSLocalizedString(@"Destroy Recursively", @"Destroy Recursively"), @selector(destroyRecursive:));
 	// Selected Properties
 	[fsMenu addItem:[NSMenuItem separatorItem]];
 	addMenuItem(fsMenu, delegate,
@@ -206,7 +206,7 @@ NSMenu * createFSMenu(zfs::ZFileSystem && fs, ZetaMainMenu * delegate)
 				NSLocalizedString(@"Logical Used:       \t %s", @"FS Logically Used Menu Entry"),
 				formatBytes(fs.logicalused()));
 	addMenuItem(fsMenu, delegate,
-				NSLocalizedString(@"Compress Ratio:     \t %1.2fx", @"FS Compress Menu Entry"),
+				NSLocalizedString(@"Compression Ratio:  \t %1.2fx", @"FS Compression Menu Entry"),
 				fs.compressRatio());
 	addMenuItem(fsMenu, delegate,
 				NSLocalizedString(@"Mount Point:        \t %s", @"FS Mountpoint Menu Entry"),
@@ -305,27 +305,27 @@ void createScrubMenu(zfs::ZPool & pool, ZetaMainMenu * delegate, NSMenu * vdevMe
 		case zfs::ScanStat::stateNone:
 		{
 			scanLine0 = [NSString stringWithFormat:NSLocalizedString(
-				@"Never scrubed", @"Scrub None")];
+				@"Never scrubbed", @"Scrub None")];
 			break;
 		}
 		case zfs::ScanStat::scanning:
 		{
 			scanLine0 = [NSString stringWithFormat:NSLocalizedString(
-				@"Last scrub from %@ is still in progress", @"Scrub Scanning"),
+				@"Scrub started %@ still in progress", @"Scrub Scanning"),
 				startString];
 			break;
 		}
 		case zfs::ScanStat::finished:
 		{
 			scanLine0 = [NSString stringWithFormat:NSLocalizedString(
-				@"Last scrub from %@ to %@ finished successfully", @"Scrub Finished"),
+				@"Scrub started %@ finished successfully at %@", @"Scrub Finished"),
 				startString, endString];
 			break;
 		}
 		case zfs::ScanStat::canceled:
 		{
 			scanLine0 = [NSString stringWithFormat:NSLocalizedString(
-				@"Last scrub from %@ to %@ was canceled", @"Scrub Canceled"),
+				@"Scrub started %@ was canceled at $@", @"Scrub Canceled"),
 				startString, endString];
 			break;
 		}
@@ -364,7 +364,7 @@ void createScrubMenu(zfs::ZPool & pool, ZetaMainMenu * delegate, NSMenu * vdevMe
 			auto pauseDate = [NSDate dateWithTimeIntervalSince1970:scrub.passPauseTime];
 			auto pauseString = [NSDateFormatter localizedStringFromDate:pauseDate dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterMediumStyle];
 			NSString * scanLinePaused = [NSString stringWithFormat:NSLocalizedString(
-				@"Scrub Paused since %@", @"Scrub Paused"), pauseString];
+				@"Scrub Paused at %@", @"Scrub Paused"), pauseString];
 			auto m = [vdevMenu addItemWithTitle:scanLinePaused action:nullptr keyEquivalent:@""];
 			m.indentationLevel = 1;
 		}
@@ -448,15 +448,15 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 			item.representedObject = poolName;
 			item.target = delegate;
 		};
-		// Mount Recursive
+		// Mount Recursively
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		addRootFSCommand(NSLocalizedString(@"Mount Recursive", @"Mount Recursive"),
+		addRootFSCommand(NSLocalizedString(@"Mount Recursively", @"Mount Recursively"),
 						 @selector(mountFilesystemRecursive:));
-		addRootFSCommand(NSLocalizedString(@"Unmount Recursive", @"Unmount Recursive"),
+		addRootFSCommand(NSLocalizedString(@"Unmount Recursively", @"Unmount Recursively"),
 						 @selector(unmountFilesystemRecursive:));
 		// Snapshot
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
-		addRootFSCommand(NSLocalizedString(@"Snapshot Recursive...", @"Snapshot Recursive"),
+		addRootFSCommand(NSLocalizedString(@"Snapshot Recursively...", @"Snapshot Recursively"),
 						 @selector(snapshotFilesystemRecursive:));
 		// Create
 		[vdevMenu addItem:[NSMenuItem separatorItem]];
@@ -546,7 +546,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSMenu * unlockMenu = [[NSMenu alloc] init];
 	[unlockItem setSubmenu:unlockMenu];
 	NSMutableArray<NSString*> * lockedEncryptionRoots = [NSMutableArray array];
-	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:NSLocalizedString(@"Load all Keys...", @"Load All Menu Entry") action:@selector(loadAllKeys:) keyEquivalent:@""];
+	NSMenuItem * unlockAllItem = [unlockMenu addItemWithTitle:NSLocalizedString(@"Load All Keys...", @"Load All Menu Entry") action:@selector(loadAllKeys:) keyEquivalent:@""];
 	unlockAllItem.target = self;
 	unlockAllItem.representedObject = lockedEncryptionRoots;
 	[unlockMenu addItem:[NSMenuItem separatorItem]];
@@ -555,7 +555,7 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	NSMenu * lockMenu = [[NSMenu alloc] init];
 	[lockItem setSubmenu:lockMenu];
 	NSMutableArray<NSString*> * unlockedEncryptionRoots = [NSMutableArray array];
-	NSMenuItem * lockAllItem = [lockMenu addItemWithTitle:NSLocalizedString(@"Unload all Keys", @"Unload All Menu Entry") action:@selector(unloadAllKeys:) keyEquivalent:@""];
+	NSMenuItem * lockAllItem = [lockMenu addItemWithTitle:NSLocalizedString(@"Unload All Keys", @"Unload All Menu Entry") action:@selector(unloadAllKeys:) keyEquivalent:@""];
 	lockAllItem.target = self;
 	lockAllItem.representedObject = unlockedEncryptionRoots;
 	[lockMenu addItem:[NSMenuItem separatorItem]];
@@ -658,8 +658,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Export Success",
-												  @"Export Success");
+			 NSString * title = NSLocalizedString(@"Export succeeded",
+												  @"Export succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ exported",
 								  @"Export Success format"),
@@ -677,11 +677,11 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Force-Export Success",
-												  @"Force-Export Success");
+			 NSString * title = NSLocalizedString(@"Forced export succeeded",
+												  @"Forced export succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ force-exported",
-								  @"Force-Export Success format"),
+								  @"Force-Export Successful format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
@@ -696,10 +696,10 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Mount Success",
-												  @"Mount Success");
+			 NSString * title = NSLocalizedString(@"Mount succeeded",
+												  @"Mount succeeded");
 			 NSString * text = [NSString stringWithFormat:
-				NSLocalizedString(@"%@ mounted", @"Mount Success format"),
+				NSLocalizedString(@"%@ mounted", @"Mount Successful format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
@@ -714,11 +714,11 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Mount Recursive Success",
-												  @"Mount Recursive Success");
+			 NSString * title = NSLocalizedString(@"Recursive mount succeeded",
+												  @"Recursive mount succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ mounted recursively",
-								  @"Mount Recursive Success format"),
+								  @"Recursive Mount Success format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
@@ -733,11 +733,11 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Unmount Success",
-												  @"Unmount Success");
+			 NSString * title = NSLocalizedString(@"Unmount succeeded",
+												  @"Unmount succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ unmounted",
-								  @"FS Unmount Success format"),
+								  @"FS Unmount Successful format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
@@ -752,11 +752,11 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Unmount Recursive Success",
-												  @"Unmount Recursive Success");
+			 NSString * title = NSLocalizedString(@"Recursive unmount succeeded",
+												  @"Recursive unmount succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ unmounted recursively",
-								  @"Unmount Recursive Success format"),
+								  @"Recursive Unmount Success format"),
 				[sender representedObject]];
 			 [self notifySuccessWithTitle:title text:text];
 		 }
@@ -771,8 +771,8 @@ NSMenu * createVdevMenu(zfs::ZPool && pool, ZetaMainMenu * delegate, DASessionRe
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Filesystem Force-Unmount Success",
-												  @"FS Force-Unmount Success");
+			 NSString * title = NSLocalizedString(@"Filesystem unmount (forced) succeeded",
+												  @"Filesystem unmount (forced) succeeded");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ force-unmounted",
 								  @"FS ForceUnmount Success format"),
@@ -804,8 +804,8 @@ static NSString * defaultSnapshotName()
 		  {
 			  if (!error)
 			  {
-				  NSString * title = NSLocalizedString(@"Snapshot Success",
-													   @"Snapshot Success");
+				  NSString * title = NSLocalizedString(@"Snapshot succeeded",
+													   @"Snapshot succeeded");
 				  NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"%@@%@ created",
 									  @"Snapshot Success format"),
@@ -829,8 +829,8 @@ static NSString * defaultSnapshotName()
 		  {
 			  if (!error)
 			  {
-				  NSString * title = NSLocalizedString(@"Recursive Snapshot Success",
-													   @"Recursive Snapshot Success");
+				  NSString * title = NSLocalizedString(@"Recursive snapshot succeeded",
+													   @"Recursive snapshot succeeded");
 				  NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"%@@%@ created recursively",
 									  @"RecursiveSnapshot Success format"),
@@ -911,8 +911,8 @@ static NSString * formatRollbackDependents(
 			 {
 				 if (!error)
 				 {
-					 NSString * title = NSLocalizedString(@"Rollback Success",
-														  @"Rollback Success");
+					 NSString * title = NSLocalizedString(@"Rollback succeeded",
+														  @"Rollback succeeded");
 					 NSString * text = [NSString stringWithFormat:
 						NSLocalizedString(@"%@ rolled back",
 										  @"Rollback Success format"),
@@ -958,8 +958,8 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = NSLocalizedString(@"Clone Success",
-													   @"Clone Success");
+				  NSString * title = NSLocalizedString(@"Clone succeeded",
+													   @"Clone succeeded");
 				  NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"%@ cloned to %@",
 									  @"Clone Success format"),
@@ -983,8 +983,8 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = NSLocalizedString(@"Filesystem creation Success",
-													   @"FS Create Success");
+				  NSString * title = NSLocalizedString(@"Filesystem creation succeeded",
+													   @"Filesystem creation succeeded");
 				  NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"Filesystem %@ created",
 									  @"FS Create Success format"),
@@ -1009,8 +1009,8 @@ static NSString * formatRollbackDependents(
 		  {
 			  if (!error)
 			  {
-				  NSString * title = NSLocalizedString(@"Volume creation Success",
-													   @"Volume Create Success");
+				  NSString * title = NSLocalizedString(@"Volume creation succeeded",
+													   @"Volume creation succeeded");
 				  NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"Volume %@ created",
 									  @"Volume Create Success format"),
@@ -1030,7 +1030,8 @@ static NSString * formatRollbackDependents(
 	auto dependents = fs.dependents();
 	if (!dependents.empty())
 	{
-		[_zetaConfirmDialog addQuery:NSLocalizedString(@"Unable to destroy, the following dependent file systems would be destroyed", @"Destroy Dep Failure")
+  // cannot destroy 'tank/nuts': filesystem has children
+		[_zetaConfirmDialog addQuery:NSLocalizedString(@"Unable to destroy, the filesystem has dependent datasets", @"Destroy Dep Failure")
 					 withInformation:toString(dependents)
 						withCallback:^(bool ok)
 		 {
@@ -1043,8 +1044,8 @@ static NSString * formatRollbackDependents(
 		 {
 			 if (!error)
 			 {
-				 NSString * title = NSLocalizedString(@"Destruction Success",
-													  @"Destroy Success");
+				 NSString * title = NSLocalizedString(@"Destroy succeeded",
+													  @"Destroy Succeeded");
 				 NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"%@ destroyed",
 									  @"Destroy Success format"),
@@ -1071,8 +1072,8 @@ static NSString * formatRollbackDependents(
 			 {
 				 if (!error)
 				 {
-					 NSString * title = NSLocalizedString(@"Recursive Destruction Success",
-														  @"Destroy Recursive Success");
+					 NSString * title = NSLocalizedString(@"Recursive destroy succeeded",
+														  @"Recursive destroy succeeded");
 					 NSString * text = [NSString stringWithFormat:
 						NSLocalizedString(@"%@ destroyed recursively",
 										  @"Destroy Recursive Success format"),
@@ -1085,7 +1086,7 @@ static NSString * formatRollbackDependents(
 	};
 	if (!dependents.empty())
 	{
-		[_zetaConfirmDialog addQuery:NSLocalizedString(@"The following dependent file systems will be destroyed", @"Destroy Dep Query")
+		[_zetaConfirmDialog addQuery:NSLocalizedString(@"The following dependent datasets will be destroyed", @"Destroy Dep Query")
 					 withInformation:toString(dependents)
 						withCallback:destroyBlock];
 	}
@@ -1116,8 +1117,8 @@ static NSString * formatRollbackDependents(
 	 {
 		 if (!error)
 		 {
-			 NSString * title = NSLocalizedString(@"Key Unload Success",
-												  @"Key Unload Success");
+			 NSString * title = NSLocalizedString(@"Key unloaded successfully",
+												  @"Key unloaded successfully");
 			 NSString * text = [NSString stringWithFormat:
 				NSLocalizedString(@"Key for %@ unloaded",
 								  @"Key Unload Success format"),
@@ -1139,8 +1140,8 @@ static NSString * formatRollbackDependents(
 		 {
 			 if (!error)
 			 {
-				 NSString * title = NSLocalizedString(@"Key Unload Success",
-													  @"Key Unload Success");
+				 NSString * title = NSLocalizedString(@"Key unloaded successfully",
+													  @"Key unloaded successfully");
 				 NSString * text = [NSString stringWithFormat:
 					NSLocalizedString(@"Key for %@ unloaded",
 									  @"Key Unload Success format"),
